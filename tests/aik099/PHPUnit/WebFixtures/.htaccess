@@ -1,0 +1,3 @@
+php_value auto_prepend_file "../../../../library/aik099/PHPUnit/Common/prepend.php"
+php_value auto_append_file "../../../../library/aik099/PHPUnit/Common/append.php"
+

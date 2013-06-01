@@ -1,0 +1,27 @@
+{
+	"name": "aik099/phpunit-mink",
+	"description": "Library using Mink in PHPUnit functional tests",
+	"keywords": ["PHPUnit", "Selenium"],
+
+	"require": {
+		"php": ">=5.3.1",
+		"behat/mink": "1.5",
+		"behat/mink-selenium2-driver": "1.1.0",
+		"phpunit/phpunit": "3.7.19",
+		"phpunit/phpunit-selenium": "1.2.12"
+	},
+
+	"autoload": {
+		"psr-0": {
+			"aik099\\": "./library/",
+			"tests\\aik099\\": "./"
+		}
+	},
+
+	"authors": [
+		{
+			"name":  "Alexander Obuhovich",
+			"email": "aik.bold@gmail.com"
+		}
+	]
+}
