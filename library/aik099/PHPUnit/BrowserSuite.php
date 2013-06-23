@@ -11,43 +11,11 @@
 namespace aik099\PHPUnit;
 
 
-use aik099\PHPUnit\SessionStrategy\ISessionStrategy;
-
 /**
  * TestSuite class for a set of tests from a single TestCase Class executed with a particular browser.
  */
-class BrowserSuite extends \PHPUnit_Framework_TestSuite
+class BrowserSuite extends TestSuiteBase
 {
-
-	/**
-	 * Overriding the default: Mink suites are always built from a TestCase class.
-	 *
-	 * @var boolean
-	 */
-	protected $testCase = true;
-
-	/**
-	 * Session strategy, used currently.
-	 *
-	 * @var ISessionStrategy
-	 * @access protected
-	 */
-	protected $localSessionStrategy;
-
-	/**
-	 * Override to make public.
-	 *
-	 * @param \ReflectionClass  $class  Class.
-	 * @param \ReflectionMethod $method Method.
-	 *
-	 * @return void
-	 * @access public
-	 * @see    TestSuite::fromTestCaseClass
-	 */
-	public function addTestMethod(\ReflectionClass $class, \ReflectionMethod $method)
-	{
-		parent::addTestMethod($class, $method);
-	}
 
 	/**
 	 * Create test suite based on given class name on browser configuration.
@@ -55,15 +23,15 @@ class BrowserSuite extends \PHPUnit_Framework_TestSuite
 	 * @param string $class_name Class name.
 	 * @param array  $browser    Browser configuration.
 	 *
-	 * @return BrowserSuite
+	 * @return self
 	 * @access public
 	 */
 	public static function fromClassAndBrowser($class_name, array $browser)
 	{
-		$browser_suite = new self();
+		$suite = new static();
 
 		$name = 'undefined';
-		$try_settings = array('alias', 'browserName', 'name', 'browser');
+		$try_settings = array('alias', 'browserName', 'name');
 
 		foreach ($try_settings as $try_setting) {
 			if ( isset($browser[$try_setting]) ) {
@@ -72,9 +40,9 @@ class BrowserSuite extends \PHPUnit_Framework_TestSuite
 			}
 		}
 
-		$browser_suite->setName($class_name . ': ' . $name);
+		$suite->setName($class_name . ': ' . $name);
 
-		return $browser_suite;
+		return $suite;
 	}
 
 	/**
@@ -82,12 +50,14 @@ class BrowserSuite extends \PHPUnit_Framework_TestSuite
 	 *
 	 * @param array $browser Browser configuration.
 	 *
-	 * @return void
+	 * @return self
 	 * @access public
 	 */
 	public function setupSpecificBrowser(array $browser)
 	{
 		$this->_browserOnAllTests($this, $browser);
+
+		return $this;
 	}
 
 	/**
@@ -101,13 +71,13 @@ class BrowserSuite extends \PHPUnit_Framework_TestSuite
 	 */
 	private function _browserOnAllTests(\PHPUnit_Framework_TestSuite $suite, array $browser)
 	{
+		/* @var $test self */
+
 		foreach ($suite->tests() as $test) {
-			if ( $test instanceof \PHPUnit_Framework_TestSuite ) {
-				// could be TestSuite or BrowserSuite
+			if ( $test instanceof self ) {
 				$this->_browserOnAllTests($test, $browser);
 			}
-			else {
-				/* @var $test BrowserTestCase */
+			elseif ( $test instanceof BrowserTestCase ) {
 				$test->setupSpecificBrowser($browser);
 			}
 		}

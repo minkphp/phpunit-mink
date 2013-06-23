@@ -14,41 +14,20 @@ namespace aik099\PHPUnit;
 /**
  * TestSuite class for Mink tests.
  */
-class TestSuite extends \PHPUnit_Framework_TestSuite
+class TestSuite extends TestSuiteBase
 {
-
-	/**
-	 * Overriding the default: Selenium suites are always built from a TestCase class.
-	 *
-	 * @var boolean
-	 */
-	protected $testCase = true;
-
-	/**
-	 * Override to make public.
-	 *
-	 * @param \ReflectionClass  $class  Class reflection.
-	 * @param \ReflectionMethod $method Method reflection.
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function addTestMethod(\ReflectionClass $class, \ReflectionMethod $method)
-	{
-		parent::addTestMethod($class, $method);
-	}
 
 	/**
 	 * Creating TestSuite from given class.
 	 *
 	 * @param string $class_name Descendant of TestCase class.
 	 *
-	 * @return TestSuite
+	 * @return self
 	 * @access public
 	 */
 	public static function fromTestCaseClass($class_name)
 	{
-		$suite = new self();
+		$suite = new static();
 		$suite->setName($class_name);
 
 		$class = new \ReflectionClass($class_name);
@@ -57,23 +36,31 @@ class TestSuite extends \PHPUnit_Framework_TestSuite
 		// create tests from test methods for multiple browsers
 		if ( !empty($static_properties['browsers']) ) {
 			foreach ($static_properties['browsers'] as $browser) {
-				$browser_suite = BrowserSuite::fromClassAndBrowser($class_name, $browser);
-
-				foreach ($class->getMethods() as $method) {
-					$browser_suite->addTestMethod($class, $method);
-				}
-
-				$browser_suite->setupSpecificBrowser($browser);
-
-				$suite->addTest($browser_suite);
+				$suite->addTest(static::createBrowserSuite($class, $browser));
 			}
 		}
 		else {
 			// create tests from test methods for single browser
-			foreach ($class->getMethods() as $method) {
-				$suite->addTestMethod($class, $method);
-			}
+			$suite->addTestMethods($class);
 		}
+
+		return $suite;
+	}
+
+	/**
+	 * Creates browser suite.
+	 *
+	 * @param \ReflectionClass $class   Class.
+	 * @param array            $browser Browser configuration.
+	 *
+	 * @return BrowserSuite
+	 */
+	protected static function createBrowserSuite(\ReflectionClass $class, array $browser)
+	{
+		$suite = BrowserSuite::fromClassAndBrowser($class->name, $browser);
+
+		$suite->addTestMethods($class);
+		$suite->setupSpecificBrowser($browser);
 
 		return $suite;
 	}
@@ -86,10 +73,8 @@ class TestSuite extends \PHPUnit_Framework_TestSuite
 	 */
 	protected function tearDown()
 	{
-		/* @var $test BrowserTestCase */
-
 		foreach ($this->tests() as $test) {
-			if ( $test instanceof \PHPUnit_Framework_TestCase ) {
+			if ( $test instanceof BrowserTestCase ) {
 				$test->endOfTestCase();
 			}
 		}
