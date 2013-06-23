@@ -40,7 +40,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Browser list to be used in tests.
 	 *
 	 * @var array
-	 * @access public
 	 */
 	public static $browsers = array();
 
@@ -48,7 +47,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Remote coverage collection url.
 	 *
 	 * @var string Override to provide code coverage data from the server
-	 * @access protected
 	 */
 	protected $coverageScriptUrl;
 
@@ -56,7 +54,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Reference to Mink session.
 	 *
 	 * @var Session
-	 * @access private
 	 */
 	private $_session;
 
@@ -64,7 +61,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Current browser configuration.
 	 *
 	 * @var array
-	 * @access private
 	 */
 	private $_parameters;
 
@@ -72,7 +68,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Session strategy, requested by test case (in setUpBeforeClass method).
 	 *
 	 * @var ISessionStrategy
-	 * @access protected
 	 */
 	protected static $sessionStrategy;
 
@@ -96,7 +91,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Session strategy, used currently.
 	 *
 	 * @var ISessionStrategy
-	 * @access protected
 	 */
 	protected $localSessionStrategy;
 
@@ -104,7 +98,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Test ID.
 	 *
 	 * @var string
-	 * @access private
 	 */
 	private $_testId;
 
@@ -112,7 +105,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Whatever or not code coverage information should be gathered.
 	 *
 	 * @var boolean
-	 * @access private
 	 */
 	private $_collectCodeCoverageInformation;
 
@@ -122,8 +114,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param string $name     Test case name.
 	 * @param array  $data     Data.
 	 * @param string $dataName Data name.
-	 *
-	 * @access public
 	 */
 	public function __construct($name = null, array $data = array(), $dataName = '')
 	{
@@ -181,7 +171,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	/**
 	 * Set session meta-info for "Sauce Labs".
 	 *
-	 * @access protected
 	 * @return void
 	 */
 	protected function setUp()
@@ -207,7 +196,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Returns Job name for "Sauce Labs" service.
 	 *
 	 * @return string
-	 * @access protected
 	 */
 	protected function getSauceLabsJobName()
 	{
@@ -224,7 +212,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param array $params Browser configuration.
 	 *
 	 * @return self
-	 * @access public
 	 */
 	public function setupSpecificBrowser(array $params)
 	{
@@ -279,7 +266,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param array $array2 Second array.
 	 *
 	 * @return array
-	 * @access protected
 	 */
 	protected function array_merge_recursive(array $array1, array $array2)
 	{
@@ -369,7 +355,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Called, when last test in a test case has ended.
 	 *
 	 * @return void
-	 * @access public
 	 */
 	public function endOfTestCase()
 	{
@@ -380,7 +365,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Tells if session is shared across tests in a test case.
 	 *
 	 * @return boolean
-	 * @access protected
 	 */
 	protected function isShared()
 	{
@@ -423,7 +407,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Creates Mink session using current session strategy and returns it.
 	 *
 	 * @return Session
-	 * @access protected
 	 */
 	protected function getSession()
 	{
@@ -456,7 +439,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param \PHPUnit_Framework_TestResult $result Test result.
 	 *
 	 * @return \PHPUnit_Framework_TestResult
-	 * @access public
 	 * @throws \PHPUnit_Framework_Exception When exception was thrown during a test.
 	 */
 	public function run(\PHPUnit_Framework_TestResult $result = null)
@@ -502,7 +484,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param string $item Item code.
 	 *
 	 * @return self
-	 * @access private
 	 * @throws \InvalidArgumentException When incorrect item to handle is given.
 	 */
 	private function _handleEnd($item)
@@ -528,7 +509,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Override to tell remote website, that code coverage information needs to be collected.
 	 *
 	 * @return mixed
-	 * @access protected
 	 * @throws \Exception When exception was thrown inside the test.
 	 */
 	protected function runTest()
@@ -564,7 +544,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param string $class_name Test case class name.
 	 *
 	 * @return TestSuite
-	 * @access public
 	 */
 	public static function suite($class_name)
 	{
@@ -577,7 +556,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param \Exception $e Exception.
 	 *
 	 * @return void
-	 * @access protected
 	 */
 	protected function onNotSuccessfulTest(\Exception $e)
 	{
@@ -594,7 +572,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param string $host Hostname.
 	 *
 	 * @return self
-	 * @access public
 	 * @throws \PHPUnit_Framework_Exception When host is not a string.
 	 */
 	public function setHost($host)
@@ -617,7 +594,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Returns hostname from browser configuration.
 	 *
 	 * @return string
-	 * @access public
 	 */
 	public function getHost()
 	{
@@ -632,7 +608,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param integer $port Port.
 	 *
 	 * @return self
-	 * @access public
 	 * @throws \PHPUnit_Framework_Exception When port isn't a number.
 	 */
 	public function setPort($port)
@@ -654,7 +629,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Returns port from browser configuration.
 	 *
 	 * @return integer
-	 * @access public
 	 */
 	public function getPort()
 	{
@@ -669,7 +643,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param string $browser_name Browser name.
 	 *
 	 * @return self
-	 * @access public
 	 * @throws \PHPUnit_Framework_Exception When browser name isn't a string.
 	 */
 	public function setBrowser($browser_name)
@@ -691,7 +664,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Returns browser name from browser configuration.
 	 *
 	 * @return string
-	 * @access public
 	 */
 	public function getBrowser()
 	{
@@ -706,7 +678,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param string $base_url Default browser url.
 	 *
 	 * @return self
-	 * @access public
 	 * @throws \PHPUnit_Framework_Exception When browser url isn't a string.
 	 */
 	public function setBaseUrl($base_url)
@@ -724,7 +695,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Returns default browser url from browser configuration.
 	 *
 	 * @return string
-	 * @access public
 	 */
 	public function getBaseUrl()
 	{
@@ -739,7 +709,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param array $capabilities Desired capabilities.
 	 *
 	 * @return self
-	 * @access public
 	 * @link http://code.google.com/p/selenium/wiki/JsonWireProtocol
 	 */
 	public function setDesiredCapabilities(array $capabilities)
@@ -762,8 +731,7 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	/**
 	 * Returns desired capabilities from browser configuration.
 	 *
-	 * @return array|null
-	 * @access public
+	 * @return array
 	 */
 	public function getDesiredCapabilities()
 	{
@@ -778,7 +746,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param integer $timeout Server timeout in seconds.
 	 *
 	 * @return self
-	 * @access public
 	 */
 	public function setSeleniumServerRequestsTimeout($timeout)
 	{
@@ -791,7 +758,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Returns server timeout.
 	 *
 	 * @return integer
-	 * @access public
 	 */
 	public function getSeleniumServerRequestsTimeout()
 	{
@@ -806,7 +772,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param array $sauce Connection details.
 	 *
 	 * @return self
-	 * @access public
 	 * @link https://saucelabs.com/php
 	 */
 	public function setSauce(array $sauce)
@@ -820,7 +785,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Returns "Sauce Labs" connection details.
 	 *
 	 * @return array
-	 * @access public
 	 * @link https://saucelabs.com/php
 	 */
 	public function getSauce()
@@ -832,7 +796,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Get test id (generated internally).
 	 *
 	 * @return string
-	 * @access public
 	 */
 	public function getTestId()
 	{
@@ -843,7 +806,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Get Selenium2 current session id.
 	 *
 	 * @return string
-	 * @access protected
 	 */
 	protected function getSessionId()
 	{
@@ -865,7 +827,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Allows to decouple actual test server connection details from test cases.
 	 *
 	 * @return array
-	 * @access protected
 	 */
 	protected function getBrowserAliases()
 	{
@@ -876,7 +837,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Tells, that "Sauce Labs" is used by current browser configuration.
 	 *
 	 * @return boolean
-	 * @access protected
 	 */
 	protected function withSauce()
 	{
@@ -889,7 +849,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Returns API class for "Sauce Labs" service interaction.
 	 *
 	 * @return SauceRest
-	 * @access protected
 	 * @throws \RuntimeException When no "Sauce Labs" configuration found.
 	 */
 	protected function getSauceRest()

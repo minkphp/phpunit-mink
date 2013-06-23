@@ -23,7 +23,6 @@ class TestSuite extends TestSuiteBase
 	 * @param string $class_name Descendant of TestCase class.
 	 *
 	 * @return self
-	 * @access public
 	 */
 	public static function fromTestCaseClass($class_name)
 	{
@@ -69,7 +68,6 @@ class TestSuite extends TestSuiteBase
 	 * Template Method that is called after the tests of this test suite have finished running.
 	 *
 	 * @return void
-	 * @access protected
 	 */
 	protected function tearDown()
 	{

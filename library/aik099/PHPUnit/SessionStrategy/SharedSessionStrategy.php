@@ -24,7 +24,6 @@ class SharedSessionStrategy implements ISessionStrategy
 	 * Original session strategy.
 	 *
 	 * @var ISessionStrategy
-	 * @access private
 	 */
 	private $_original;
 
@@ -40,7 +39,6 @@ class SharedSessionStrategy implements ISessionStrategy
 	 * Window name, which was opened upon session creation.
 	 *
 	 * @var string
-	 * @access private
 	 */
 	private $_mainWindowName;
 
@@ -56,8 +54,6 @@ class SharedSessionStrategy implements ISessionStrategy
 	 * Remembers original session strategy upon shared strategy creation.
 	 *
 	 * @param ISessionStrategy $original_strategy Original session strategy.
-	 *
-	 * @access public
 	 */
 	public function __construct(ISessionStrategy $original_strategy)
 	{
@@ -75,7 +71,6 @@ class SharedSessionStrategy implements ISessionStrategy
 	 * @param array $parameters Browser configuration for a session.
 	 *
 	 * @return Session
-	 * @access public
 	 */
 	public function session(array $parameters)
 	{
@@ -111,7 +106,6 @@ class SharedSessionStrategy implements ISessionStrategy
 	 * @param \Exception $e Exception.
 	 *
 	 * @return void
-	 * @access public
 	 */
 	public function notSuccessfulTest(\Exception $e)
 	{
@@ -131,7 +125,6 @@ class SharedSessionStrategy implements ISessionStrategy
 	 * @param Session $session Session.
 	 *
 	 * @return void
-	 * @access public
 	 */
 	public function endOfTest(Session $session = null)
 	{
@@ -144,7 +137,6 @@ class SharedSessionStrategy implements ISessionStrategy
 	 * @param Session $session Session.
 	 *
 	 * @return void
-	 * @access public
 	 */
 	public function endOfTestCase(Session $session = null)
 	{

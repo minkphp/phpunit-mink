@@ -30,7 +30,6 @@ interface ISessionStrategy
 	 * @param array $parameters Browser configuration for a session.
 	 *
 	 * @return Session
-	 * @access public
 	 */
 	public function session(array $parameters);
 
@@ -40,7 +39,6 @@ interface ISessionStrategy
 	 * @param \Exception $e Exception.
 	 *
 	 * @return void
-	 * @access public
 	 */
 	public function notSuccessfulTest(\Exception $e);
 
@@ -50,7 +48,6 @@ interface ISessionStrategy
 	 * @param Session $session Session.
 	 *
 	 * @return void
-	 * @access public
 	 */
 	public function endOfTest(Session $session = null);
 
@@ -60,7 +57,6 @@ interface ISessionStrategy
 	 * @param Session $session Session.
 	 *
 	 * @return void
-	 * @access public
 	 */
 	public function endOfTestCase(Session $session = null);
 

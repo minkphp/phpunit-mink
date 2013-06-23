@@ -24,7 +24,6 @@ class BrowserSuite extends TestSuiteBase
 	 * @param array  $browser    Browser configuration.
 	 *
 	 * @return self
-	 * @access public
 	 */
 	public static function fromClassAndBrowser($class_name, array $browser)
 	{
@@ -51,7 +50,6 @@ class BrowserSuite extends TestSuiteBase
 	 * @param array $browser Browser configuration.
 	 *
 	 * @return self
-	 * @access public
 	 */
 	public function setupSpecificBrowser(array $browser)
 	{
@@ -67,7 +65,6 @@ class BrowserSuite extends TestSuiteBase
 	 * @param array                        $browser Browser configuration.
 	 *
 	 * @return void
-	 * @access private
 	 */
 	private function _browserOnAllTests(\PHPUnit_Framework_TestSuite $suite, array $browser)
 	{
@@ -87,7 +84,6 @@ class BrowserSuite extends TestSuiteBase
 	 * Template Method that is called after the tests of this test suite have finished running.
 	 *
 	 * @return void
-	 * @access protected
 	 */
 	protected function tearDown()
 	{

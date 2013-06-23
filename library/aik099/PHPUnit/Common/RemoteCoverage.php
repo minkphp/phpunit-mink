@@ -36,8 +36,6 @@ class RemoteCoverage
 	 *
 	 * @param string $coverage_script_url Coverage script irl.
 	 * @param string $test_id             Test ID.
-	 *
-	 * @access public
 	 */
 	public function __construct($coverage_script_url, $test_id)
 	{
@@ -50,7 +48,6 @@ class RemoteCoverage
 	 *
 	 * @return array
 	 * @throws \Exception When no data was retrieved.
-	 * @access public
 	 */
 	public function get()
 	{
@@ -80,7 +77,6 @@ class RemoteCoverage
 	 * @param array $coverage Remote coverage information.
 	 *
 	 * @return array
-	 * @access public
 	 * @author Mattis Stordalen Flister <mattis@xait.no>
 	 */
 	protected function matchLocalAndRemotePaths(array $coverage)
@@ -110,7 +106,6 @@ class RemoteCoverage
 	 * @param string $path Path to file.
 	 *
 	 * @return string
-	 * @access public
 	 * @author Mattis Stordalen Flister <mattis@xait.no>
 	 */
 	protected function findDirectorySeparator($path)

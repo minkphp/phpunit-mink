@@ -31,7 +31,6 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	 * @param array $parameters Browser configuration for a session.
 	 *
 	 * @return Session
-	 * @access public
 	 */
 	public function session(array $parameters)
 	{
@@ -64,7 +63,6 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	 * @param \Exception $e Exception.
 	 *
 	 * @return void
-	 * @access public
 	 */
 	public function notSuccessfulTest(\Exception $e)
 	{
@@ -77,7 +75,6 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	 * @param Session $session Session.
 	 *
 	 * @return void
-	 * @access public
 	 */
 	public function endOfTest(Session $session = null)
 	{
@@ -92,7 +89,6 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	 * @param Session $session Session.
 	 *
 	 * @return void
-	 * @access public
 	 */
 	public function endOfTestCase(Session $session = null)
 	{
