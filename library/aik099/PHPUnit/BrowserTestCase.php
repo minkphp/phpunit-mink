@@ -595,10 +595,10 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param string $host Hostname.
 	 *
 	 * @return self
-	 * @access protected
+	 * @access public
 	 * @throws \PHPUnit_Framework_Exception When host is not a string.
 	 */
-	protected function setHost($host)
+	public function setHost($host)
 	{
 		if ( $this->withSauce() ) {
 			$sauce = $this->getSauce();
@@ -618,9 +618,9 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Returns hostname from browser configuration.
 	 *
 	 * @return string
-	 * @access protected
+	 * @access public
 	 */
-	protected function getHost()
+	public function getHost()
 	{
 		return $this->_parameters['host'];
 	}
@@ -633,10 +633,10 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param integer $port Port.
 	 *
 	 * @return self
-	 * @access protected
+	 * @access public
 	 * @throws \PHPUnit_Framework_Exception When port isn't a number.
 	 */
-	protected function setPort($port)
+	public function setPort($port)
 	{
 		if ( $this->withSauce() ) {
 			$port = 80;
@@ -655,9 +655,9 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Returns port from browser configuration.
 	 *
 	 * @return integer
-	 * @access protected
+	 * @access public
 	 */
-	protected function getPort()
+	public function getPort()
 	{
 		return $this->_parameters['port'];
 	}
@@ -670,10 +670,10 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param string $browser_name Browser name.
 	 *
 	 * @return self
-	 * @access protected
+	 * @access public
 	 * @throws \PHPUnit_Framework_Exception When browser name isn't a string.
 	 */
-	protected function setBrowser($browser_name)
+	public function setBrowser($browser_name)
 	{
 		if ( $this->withSauce() && !is_string($browser_name) ) {
 			$browser_name = 'chrome';
@@ -692,9 +692,9 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Returns browser name from browser configuration.
 	 *
 	 * @return string
-	 * @access protected
+	 * @access public
 	 */
-	protected function getBrowser()
+	public function getBrowser()
 	{
 		return $this->_parameters['browserName'];
 	}
@@ -707,10 +707,10 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param string $base_url Default browser url.
 	 *
 	 * @return self
-	 * @access protected
+	 * @access public
 	 * @throws \PHPUnit_Framework_Exception When browser url isn't a string.
 	 */
-	protected function setBaseUrl($base_url)
+	public function setBaseUrl($base_url)
 	{
 		if ( !is_string($base_url) ) {
 			throw \PHPUnit_Util_InvalidArgumentHelper::factory(1, 'string');
@@ -725,15 +725,11 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Returns default browser url from browser configuration.
 	 *
 	 * @return string
-	 * @access protected
+	 * @access public
 	 */
-	protected function getBaseUrl()
+	public function getBaseUrl()
 	{
-		if ( isset($this->_parameters['baseUrl']) ) {
-			return $this->_parameters['baseUrl'];
-		}
-
-		return '';
+		return $this->_parameters['baseUrl'];
 	}
 
 	/**
@@ -744,10 +740,10 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param array $capabilities Desired capabilities.
 	 *
 	 * @return self
-	 * @access protected
+	 * @access public
 	 * @link http://code.google.com/p/selenium/wiki/JsonWireProtocol
 	 */
-	protected function setDesiredCapabilities(array $capabilities)
+	public function setDesiredCapabilities(array $capabilities)
 	{
 		if ( $this->withSauce() ) {
 			if ( !isset($capabilities['platform']) ) {
@@ -768,9 +764,9 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Returns desired capabilities from browser configuration.
 	 *
 	 * @return array|null
-	 * @access protected
+	 * @access public
 	 */
-	protected function getDesiredCapabilities()
+	public function getDesiredCapabilities()
 	{
 		return $this->_parameters['desiredCapabilities'];
 	}
@@ -783,9 +779,9 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param integer $timeout Server timeout in seconds.
 	 *
 	 * @return self
-	 * @access protected
+	 * @access public
 	 */
-	protected function setSeleniumServerRequestsTimeout($timeout)
+	public function setSeleniumServerRequestsTimeout($timeout)
 	{
 		$this->_parameters['seleniumServerRequestsTimeout'] = $timeout;
 
@@ -796,9 +792,9 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Returns server timeout.
 	 *
 	 * @return integer
-	 * @access protected
+	 * @access public
 	 */
-	protected function getSeleniumServerRequestsTimeout()
+	public function getSeleniumServerRequestsTimeout()
 	{
 		return $this->_parameters['seleniumServerRequestsTimeout'];
 	}
@@ -811,10 +807,10 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @param array $sauce Connection details.
 	 *
 	 * @return self
-	 * @access protected
+	 * @access public
 	 * @link https://saucelabs.com/php
 	 */
-	protected function setSauce(array $sauce)
+	public function setSauce(array $sauce)
 	{
 		$this->_parameters['sauce'] = $sauce;
 
@@ -825,10 +821,10 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * Returns "Sauce Labs" connection details.
 	 *
 	 * @return array
-	 * @access protected
+	 * @access public
 	 * @link https://saucelabs.com/php
 	 */
-	protected function getSauce()
+	public function getSauce()
 	{
 		return $this->_parameters['sauce'];
 	}
