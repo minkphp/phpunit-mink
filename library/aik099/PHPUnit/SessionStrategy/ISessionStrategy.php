@@ -24,7 +24,7 @@ interface ISessionStrategy
 	 *
 	 * 'host' - Selenium Server machine.
 	 * 'port' - Selenium Server port.
-	 * 'browser' => a browser name.
+	 * 'browserName' => a browser name.
 	 * 'baseUrl' => base URL to use during the test.
 	 *
 	 * @param array $parameters Browser configuration for a session.

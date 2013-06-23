@@ -234,7 +234,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 		$params = array_merge($this->_parameters, $params);
 		$this->setSauce($params['sauce']);
 		$this->setHost($params['host'])->setPort($params['port'])->setBrowser($params['browserName']);
-		$this->_parameters['browser'] = $params['browser'];
 		$this->setDesiredCapabilities($params['desiredCapabilities']);
 		$this->setSeleniumServerRequestsTimeout($params['seleniumServerRequestsTimeout']);
 		$this->setBaseUrl($params['baseUrl']);
