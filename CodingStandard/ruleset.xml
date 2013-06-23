@@ -47,10 +47,10 @@
 
     <rule ref="MySource.PHP.EvalObjectFactory"/>
 
-    <!--
-    	Checks for aligned parameters
-    	<rule ref="PEAR.Commenting.FunctionComment"/>
-    -->
+	<!--
+		Checks for aligned parameters
+		<rule ref="PEAR.Commenting.FunctionComment"/>
+	-->
 
     <rule ref="PEAR.Commenting.InlineComment"/>
     <!--
@@ -60,6 +60,7 @@
     <rule ref="PEAR.Functions.FunctionDeclaration"/>
     <rule ref="PEAR.Functions.ValidDefaultValue"/>
     <rule ref="PEAR.NamingConventions.ValidVariableName"/>
+    <rule ref="PEAR.NamingConventions.ValidFunctionName"/>
 
     <rule ref="Squiz.Classes.LowercaseClassKeywords"/>
     <rule ref="Squiz.Classes.SelfMemberReference"/>
@@ -79,8 +80,12 @@
     	<rule ref="Squiz.Commenting.FunctionComment"/>
     	<rule ref="Squiz.Commenting.VariableComment"/>
 
-    <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration"/>
-    <rule ref="Squiz.ControlStructures.ForLoopDeclaration"/>
+    <!--
+    	Doesn't like spaces inside braces
+    	<rule ref="Squiz.ControlStructures.ForEachLoopDeclaration"/>
+    	<rule ref="Squiz.ControlStructures.ForLoopDeclaration"/>
+    -->
+
     <rule ref="Squiz.ControlStructures.LowercaseDeclaration"/>
 
 	<rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
