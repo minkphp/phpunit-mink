@@ -119,7 +119,7 @@ class CommonBrowserConfigTest extends BrowserTestCase
 			'port' => 4444,
 			'browserName' => 'firefox',
 			'baseUrl' => 'http://www.google.com',
-			'sessionStrategy' => self::SESSION_STRATEGY_SHARED,
+			'sessionStrategy' => 'shared',
 		),
 	);
 
