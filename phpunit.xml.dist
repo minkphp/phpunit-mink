@@ -23,15 +23,9 @@
 			 lowUpperBound="35" highLowerBound="70"/>
 	</logging>-->
 
-	<php>
-		<server name="WEB_FIXTURES_URL" value="http://phpunit-mink.test.dev"/>
-		<server name="WEB_FIXTURES_BROWSER" value="firefox"/>
-		<server name="WEB_FIXTURES_HOST" value="localhost"/>
-		<server name="WEB_FIXTURES_PORT" value="4444"/>
-
-		<server name="WEB_FIXTURES_SAUCE_USERNAME" value=""/>
-		<server name="WEB_FIXTURES_SAUCE_API_KEY" value=""/>
-	</php>
+	<listeners>
+		<listener class="\Mockery\Adapter\Phpunit\TestListener"/>
+	</listeners>
 
 	<filter>
 		<whitelist>
