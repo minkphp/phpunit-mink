@@ -11,8 +11,13 @@
 namespace aik099\PHPUnit;
 
 
+use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
+
+
 /**
  * TestSuite class for Mink tests.
+ *
+ * @method \Mockery\Expectation shouldReceive
  */
 abstract class TestSuiteBase extends \PHPUnit_Framework_TestSuite
 {
@@ -27,14 +32,34 @@ abstract class TestSuiteBase extends \PHPUnit_Framework_TestSuite
 	/**
 	 * Adds test methods to the suite.
 	 *
-	 * @param \ReflectionClass $class Class reflection.
+	 * @param \ReflectionClass       $class                    Class reflection.
+	 * @param SessionStrategyManager $session_strategy_manager Session strategy manager.
 	 *
 	 * @return self
 	 */
-	public function addTestMethods(\ReflectionClass $class)
+	public function addTestMethods(\ReflectionClass $class, SessionStrategyManager $session_strategy_manager)
 	{
 		foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
 			$this->addTestMethod($class, $method);
+		}
+
+		$this->setSessionStrategyManager($session_strategy_manager);
+
+		return $this;
+	}
+
+	/**
+	 * Sets session strategy manager.
+	 *
+	 * @param SessionStrategyManager $session_strategy_manager Session strategy manager.
+	 *
+	 * @return self
+	 */
+	public function setSessionStrategyManager(SessionStrategyManager $session_strategy_manager)
+	{
+		/* @var $test \aik099\PHPUnit\BrowserTestCase */
+		foreach ( $this->tests() as $test ) {
+			$test->setSessionStrategyManager($session_strategy_manager);
 		}
 
 		return $this;

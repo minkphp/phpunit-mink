@@ -11,6 +11,7 @@
 namespace aik099\PHPUnit\SessionStrategy;
 
 
+use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use Behat\Mink\Session;
 
 /**
@@ -22,23 +23,18 @@ interface ISessionStrategy
 	/**
 	 * Returns Mink session with given browser configuration.
 	 *
-	 * 'host' - Selenium Server machine.
-	 * 'port' - Selenium Server port.
-	 * 'browserName' => a browser name.
-	 * 'baseUrl' => base URL to use during the test.
-	 *
-	 * @param array $parameters Browser configuration for a session.
+	 * @param BrowserConfiguration $browser Browser configuration for a session.
 	 *
 	 * @return Session
 	 */
-	public function session(array $parameters);
+	public function session(BrowserConfiguration $browser);
 
 	/**
 	 * Called, when test fails.
 	 *
 	 * @param \Exception $e Exception.
 	 *
-	 * @return void
+	 * @return self
 	 */
 	public function notSuccessfulTest(\Exception $e);
 
@@ -47,7 +43,7 @@ interface ISessionStrategy
 	 *
 	 * @param Session $session Session.
 	 *
-	 * @return void
+	 * @return self
 	 */
 	public function endOfTest(Session $session = null);
 
@@ -56,7 +52,7 @@ interface ISessionStrategy
 	 *
 	 * @param Session $session Session.
 	 *
-	 * @return void
+	 * @return self
 	 */
 	public function endOfTestCase(Session $session = null);
 

@@ -53,31 +53,13 @@ class BrowserSuite extends TestSuiteBase
 	 */
 	public function setupSpecificBrowser(array $browser)
 	{
-		$this->_browserOnAllTests($this, $browser);
+		/* @var $test BrowserTestCase */
+
+		foreach ( $this->tests() as $test ) {
+			$test->setupSpecificBrowser($browser);
+		}
 
 		return $this;
-	}
-
-	/**
-	 * Changes browser configuration recursively in given test suite.
-	 *
-	 * @param \PHPUnit_Framework_TestSuite $suite   Test suite.
-	 * @param array                        $browser Browser configuration.
-	 *
-	 * @return void
-	 */
-	private function _browserOnAllTests(\PHPUnit_Framework_TestSuite $suite, array $browser)
-	{
-		/* @var $test self */
-
-		foreach ($suite->tests() as $test) {
-			if ( $test instanceof self ) {
-				$this->_browserOnAllTests($test, $browser);
-			}
-			elseif ( $test instanceof BrowserTestCase ) {
-				$test->setupSpecificBrowser($browser);
-			}
-		}
 	}
 
 	/**
@@ -89,7 +71,7 @@ class BrowserSuite extends TestSuiteBase
 	{
 		/* @var $test BrowserTestCase */
 
-		foreach ($this->tests() as $test) {
+		foreach ( $this->tests() as $test ) {
 			$test->endOfTestCase();
 		}
 	}

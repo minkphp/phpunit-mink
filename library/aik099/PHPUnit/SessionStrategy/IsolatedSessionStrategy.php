@@ -11,11 +11,12 @@
 namespace aik099\PHPUnit\SessionStrategy;
 
 
-use Behat\Mink\Session,
-	Behat\Mink\Driver\Selenium2Driver;
+use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
+use Behat\Mink\Session;
 
 /**
  * Produces a new Session object shared for each test.
+ * @method \Mockery\Expectation shouldReceive
  */
 class IsolatedSessionStrategy implements ISessionStrategy
 {
@@ -23,35 +24,13 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	/**
 	 * Returns Mink session with given browser configuration.
 	 *
-	 * 'host' - Selenium Server machine.
-	 * 'port' - Selenium Server port.
-	 * 'browserName' => a browser name.
-	 * 'baseUrl' => base URL to use during the test.
-	 *
-	 * @param array $parameters Browser configuration for a session.
+	 * @param BrowserConfiguration $browser Browser configuration for a session.
 	 *
 	 * @return Session
 	 */
-	public function session(array $parameters)
+	public function session(BrowserConfiguration $browser)
 	{
-		$capabilities = array_merge(
-			$parameters['desiredCapabilities'],
-			array('browserName' => $parameters['browserName'])
-		);
-
-		// TODO: maybe doesn't work
-		ini_set('default_socket_timeout', $parameters['seleniumServerRequestsTimeout']);
-
-		// create driver:
-		$driver = new Selenium2Driver(
-			$parameters['browserName'],
-			$capabilities,
-			'http://' . $parameters['host'] . ':' . $parameters['port'] . '/wd/hub'
-		);
-
-		// init session:
-		$session = new Session($driver);
-
+		$session = $browser->createSession();
 		$session->start();
 
 		return $session;
@@ -62,11 +41,11 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	 *
 	 * @param \Exception $e Exception.
 	 *
-	 * @return void
+	 * @return self
 	 */
 	public function notSuccessfulTest(\Exception $e)
 	{
-
+		return $this;
 	}
 
 	/**
@@ -74,13 +53,15 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	 *
 	 * @param Session $session Session.
 	 *
-	 * @return void
+	 * @return self
 	 */
 	public function endOfTest(Session $session = null)
 	{
 		if ( $session !== null ) {
 			$session->stop();
 		}
+
+		return $this;
 	}
 
 	/**
@@ -88,11 +69,11 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	 *
 	 * @param Session $session Session.
 	 *
-	 * @return void
+	 * @return self
 	 */
 	public function endOfTestCase(Session $session = null)
 	{
-
+		return $this;
 	}
 
 }
