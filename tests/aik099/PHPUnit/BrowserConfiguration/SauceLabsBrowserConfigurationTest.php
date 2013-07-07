@@ -11,7 +11,6 @@
 namespace tests\aik099\PHPUnit;
 
 
-use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 
 class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest

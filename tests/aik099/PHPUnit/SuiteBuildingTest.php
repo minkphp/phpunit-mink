@@ -12,7 +12,6 @@ namespace tests\aik099\PHPUnit;
 
 
 use aik099\PHPUnit\BrowserSuite;
-use aik099\PHPUnit\BrowserTestCase;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 
