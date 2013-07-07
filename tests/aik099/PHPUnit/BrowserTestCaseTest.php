@@ -11,6 +11,9 @@
 namespace tests\aik099\PHPUnit;
 
 
+use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
+use aik099\PHPUnit\SessionStrategy\ISessionStrategy;
+use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
 use Mockery as m;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
@@ -58,17 +61,23 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetBrowserCorrect()
 	{
-		$this->markTestSkipped('TODO');
+		$test_case = new WithoutBrowserConfig();
+		$browser = new BrowserConfiguration();
+
+		$this->assertSame($test_case, $test_case->setBrowser($browser));
+		$this->assertSame($browser, $test_case->getBrowser());
 	}
 
 	/**
 	 * Test description.
 	 *
 	 * @return void
+	 * @expectedException \RuntimeException
 	 */
 	public function testGetBrowserNotSpecified()
 	{
-		$this->markTestSkipped('TODO');
+		$test_case = new WithoutBrowserConfig();
+		$test_case->getBrowser();
 	}
 
 	/**
@@ -76,9 +85,49 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testSetupSpecificBrowser()
+	public function testSetupSpecificBrowserDefault()
 	{
-		$this->markTestSkipped('TODO');
+		$test_case = $this->getFixture();
+		$this->assertSame($test_case, $test_case->setupSpecificBrowser(array(
+			'browserName' => 'safari',
+		)));
+
+		$expected = '\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
+		$this->assertInstanceOf($expected, $test_case->getBrowser());
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testSetupSpecificBrowserWithSauce()
+	{
+		$test_case = $this->getFixture();
+		$this->assertSame($test_case, $test_case->setupSpecificBrowser(array(
+			'browserName' => 'safari', 'sauce' => array('username' => 'test-user', 'api_key' => 'ABC'),
+		)));
+
+		$expected = '\\aik099\\PHPUnit\\BrowserConfiguration\\SauceLabsBrowserConfiguration';
+		$this->assertInstanceOf($expected, $test_case->getBrowser());
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testSetupSpecificBrowserStrategy()
+	{
+		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
+		/* @var $session_strategy ISessionStrategy */
+
+		$test_case = $this->getFixture($session_strategy);
+		$this->assertSame($test_case, $test_case->setupSpecificBrowser(array(
+			'browserName' => 'safari', 'sessionStrategy' => SessionStrategyManager::ISOLATED_STRATEGY,
+		)));
+
+		$this->assertSame($session_strategy, $test_case->getSessionStrategy());
 	}
 
 	/**
@@ -121,11 +170,35 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * Test description.
 	 *
+	 * @param string  $strategy_class Strategy class.
+	 * @param boolean $shared         Is shared.
+	 *
 	 * @return void
+	 * @dataProvider isSharedDataProvider
 	 */
-	public function testIsShared()
+	public function testIsShared($strategy_class, $shared)
 	{
-		$this->markTestSkipped('TODO');
+		$test_case = new WithoutBrowserConfig();
+
+		/* @var $session_strategy ISessionStrategy */
+		$session_strategy = m::mock($strategy_class);
+
+		$test_case->setSessionStrategy($session_strategy);
+
+		$this->assertSame($shared, $test_case->isShared());
+	}
+
+	/**
+	 * Provides test data for IsShared method.
+	 *
+	 * @return array
+	 */
+	public function isSharedDataProvider()
+	{
+		return array(
+			array('\\aik099\\PHPUnit\\SessionStrategy\\IsolatedSessionStrategy', false),
+			array('\\aik099\\PHPUnit\\SessionStrategy\\SharedSessionStrategy', true),
+		);
 	}
 
 	/**
@@ -236,6 +309,30 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	public function testWithSauce()
 	{
 		$this->markTestSkipped('TODO');
+	}
+
+	/**
+	 * Returns test case fixture.
+	 *
+	 * @param ISessionStrategy|null $session_strategy Session strategy.
+	 *
+	 * @return WithoutBrowserConfig
+	 */
+	protected function getFixture(ISessionStrategy $session_strategy = null)
+	{
+		/* @var $manager_mock \aik099\PHPUnit\SessionStrategy\SessionStrategyManager */
+		$manager_mock = m::mock(self::MANAGER_CLASS);
+
+		if ( !isset($session_strategy) ) {
+			$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
+		}
+
+		$test_case = new WithoutBrowserConfig();
+		$manager_mock->shouldReceive('getSessionStrategy')->with($test_case)->andReturn($session_strategy);
+
+		$test_case->setSessionStrategyManager($manager_mock);
+
+		return $test_case;
 	}
 
 }

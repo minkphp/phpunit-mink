@@ -12,7 +12,7 @@ namespace aik099\PHPUnit;
 
 
 /**
- * TestSuite class for a set of tests from a single TestCase Class executed with a particular browser.
+ * Test Suite class for a set of tests from a single Test Case Class executed with a particular browser.
  */
 class BrowserSuite extends TestSuiteBase
 {

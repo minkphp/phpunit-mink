@@ -21,7 +21,7 @@ use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Session;
 
 /**
- * TestCase class that uses Mink to provide the functionality required for web testing.
+ * Test Case class for writing browser-based tests.
  *
  * @method \Mockery\Expectation shouldReceive
  */
@@ -158,7 +158,7 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 			$browser = new BrowserConfiguration($this->getBrowserAliases());
 		}
 
-		$this->setBrowser($browser->configure($browser_config));
+		$this->setBrowser($browser->setup($browser_config));
 
 		// configure session strategy
 		$browser_strategy = $this->sessionStrategyManager->getSessionStrategy($this);

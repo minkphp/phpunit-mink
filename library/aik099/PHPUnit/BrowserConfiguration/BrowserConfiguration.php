@@ -11,10 +11,16 @@
 namespace aik099\PHPUnit\BrowserConfiguration;
 
 
+use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
 use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Session;
 
+/**
+ * Browser configuration for browser.
+ *
+ * @method \Mockery\Expectation shouldReceive
+ */
 class BrowserConfiguration
 {
 
@@ -59,7 +65,7 @@ class BrowserConfiguration
 	 *
 	 * @return self
 	 */
-	public function configure(array $parameters)
+	public function setup(array $parameters)
 	{
 		$parameters = array_merge($this->parameters, $this->resolveAlias($parameters));
 
@@ -287,11 +293,29 @@ class BrowserConfiguration
 	}
 
 	/**
+	 * Returns session strategy hash based on given test case and current browser configuration.
+	 *
+	 * @param BrowserTestCase $test_case Test case.
+	 *
+	 * @return integer
+	 */
+	public function getSessionStrategyHash(BrowserTestCase $test_case)
+	{
+		$ret = $this->getBrowserHash();
+
+		if ( $this->getSessionStrategy() == SessionStrategyManager::SHARED_STRATEGY ) {
+			$ret .= '::' . get_class($test_case);
+		}
+
+		return $ret;
+	}
+
+	/**
 	 * Returns hash from current configuration.
 	 *
 	 * @return integer
 	 */
-	public function getHash()
+	protected function getBrowserHash()
 	{
 		ksort($this->parameters);
 

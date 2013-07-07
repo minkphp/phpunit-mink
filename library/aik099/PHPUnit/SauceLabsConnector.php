@@ -14,6 +14,11 @@ namespace aik099\PHPUnit;
 use WebDriver\SauceLabs\Capability as SauceLabsCapability;
 use WebDriver\SauceLabs\SauceRest;
 
+/**
+ * Class for connecting to "Sauce Labs" services.
+ *
+ * @method \Mockery\Expectation shouldReceive
+ */
 class SauceLabsConnector
 {
 

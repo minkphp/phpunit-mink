@@ -16,6 +16,7 @@ use Behat\Mink\Session;
 
 /**
  * Produces a new Session object shared for each test.
+ *
  * @method \Mockery\Expectation shouldReceive
  */
 class IsolatedSessionStrategy implements ISessionStrategy
@@ -51,7 +52,7 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	/**
 	 * Called, when test ends.
 	 *
-	 * @param Session $session Session.
+	 * @param Session|null $session Session.
 	 *
 	 * @return self
 	 */
@@ -67,7 +68,7 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	/**
 	 * Called, when test case ends.
 	 *
-	 * @param Session $session Session.
+	 * @param Session|null $session Session.
 	 *
 	 * @return self
 	 */

@@ -41,7 +41,7 @@ interface ISessionStrategy
 	/**
 	 * Called, when test ends.
 	 *
-	 * @param Session $session Session.
+	 * @param Session|null $session Session.
 	 *
 	 * @return self
 	 */
@@ -50,7 +50,7 @@ interface ISessionStrategy
 	/**
 	 * Called, when test case ends.
 	 *
-	 * @param Session $session Session.
+	 * @param Session|null $session Session.
 	 *
 	 * @return self
 	 */

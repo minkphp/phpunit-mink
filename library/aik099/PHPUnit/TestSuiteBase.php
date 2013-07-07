@@ -15,7 +15,7 @@ use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
 
 
 /**
- * TestSuite class for Mink tests.
+ * Base Test Suite class for browser tests.
  *
  * @method \Mockery\Expectation shouldReceive
  */

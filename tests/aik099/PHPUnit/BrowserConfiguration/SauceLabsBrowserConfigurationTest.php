@@ -11,6 +11,7 @@
 namespace tests\aik099\PHPUnit;
 
 
+use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 
 class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
@@ -27,6 +28,24 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 
 		$this->host = ':@ondemand.saucelabs.com';
 		$this->port = 80;
+
+		$this->setup['host'] = 'UN:AK@ondemand.saucelabs.com';
+		$this->setup['port'] = 80;
+		$this->setup['sauce'] = array('username' => 'UN', 'api_key' => 'AK');
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testSetup()
+	{
+		$browser = $this->createBrowserConfiguration();
+
+		parent::testSetup($browser);
+
+		$this->assertSame($this->setup['sauce'], $browser->getSauce());
 	}
 
 	/**

@@ -14,7 +14,7 @@ namespace aik099\PHPUnit\SessionStrategy;
 use aik099\PHPUnit\BrowserTestCase;
 
 /**
- * Class SessionStrategyManager
+ * Manages session strategies used across browser tests.
  *
  * @method \Mockery\Expectation shouldReceive
  */
@@ -87,13 +87,13 @@ class SessionStrategyManager
 	{
 		// This logic creates separate strategy for:
 		//  - each browser configuration in BrowserTestCase::$browsers (for isolated strategy)
-		//  - each browser configuration in BrowserTestCase::$browsers for each test case (for shared strategy)
-		//  - each test, when BrowserTestCase::$browsers not set (for isolated strategy)
+		//  - each browser configuration in BrowserTestCase::$browsers for each test case class (for shared strategy)
 
-		$session_strategy_hash = $this->getSessionStrategyHash($test_case);
+		$browser = $test_case->getBrowser();
+		$session_strategy_hash = $browser->getSessionStrategyHash($test_case);
 
 		if ( $session_strategy_hash != $this->lastUsedSessionStrategyHash ) {
-			switch ( $test_case->getBrowser()->getSessionStrategy() ) {
+			switch ( $browser->getSessionStrategy() ) {
 				case self::ISOLATED_STRATEGY:
 					$this->sessionStrategiesInUse[$session_strategy_hash] = $this->createSessionStrategy(false);
 					break;
@@ -142,25 +142,6 @@ class SessionStrategyManager
 		}
 
 		return $this->defaultSessionStrategy;
-	}
-
-	/**
-	 * Returns session strategy hash based on browser configuration.
-	 *
-	 * @param BrowserTestCase $test_case Test case.
-	 *
-	 * @return integer
-	 */
-	protected function getSessionStrategyHash(BrowserTestCase $test_case)
-	{
-		$browser = $test_case->getBrowser();
-		$ret = $browser->getHash();
-
-		if ( $browser->getSessionStrategy() == self::SHARED_STRATEGY ) {
-			$ret .= '::' . get_class($test_case);
-		}
-
-		return $ret;
 	}
 
 }

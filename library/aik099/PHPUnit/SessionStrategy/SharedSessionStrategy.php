@@ -12,6 +12,7 @@ namespace aik099\PHPUnit\SessionStrategy;
 
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
+use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Session;
 
 /**
@@ -98,10 +99,11 @@ class SharedSessionStrategy implements ISessionStrategy
 	protected function rememberMainWindow()
 	{
 		$driver = $this->_session->getDriver();
-		/* @var $driver \Behat\Mink\Driver\Selenium2Driver */
 
-		$wd_session = $driver->getWebDriverSession();
-		$this->_mainWindow = $wd_session->window_handle();
+		if ( $driver instanceof Selenium2Driver ) {
+			$wd_session = $driver->getWebDriverSession();
+			$this->_mainWindow = $wd_session->window_handle();
+		}
 
 		return $this;
 	}
@@ -142,7 +144,7 @@ class SharedSessionStrategy implements ISessionStrategy
 	/**
 	 * Called, when test ends.
 	 *
-	 * @param Session $session Session.
+	 * @param Session|null $session Session.
 	 *
 	 * @return self
 	 */
@@ -154,7 +156,7 @@ class SharedSessionStrategy implements ISessionStrategy
 	/**
 	 * Called, when test case ends.
 	 *
-	 * @param Session $session Session.
+	 * @param Session|null $session Session.
 	 *
 	 * @return self
 	 */

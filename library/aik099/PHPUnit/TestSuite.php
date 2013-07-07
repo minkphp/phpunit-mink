@@ -15,7 +15,7 @@ use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
 
 
 /**
- * TestSuite class for Mink tests.
+ * Test Suite class for browser tests.
  */
 class TestSuite extends TestSuiteBase
 {

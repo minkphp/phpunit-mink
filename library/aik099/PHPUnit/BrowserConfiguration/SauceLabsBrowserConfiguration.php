@@ -13,6 +13,9 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 
 use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
 
+/**
+ * Browser configuration tailored to use with "Sauce Labs" service.
+ */
 class SauceLabsBrowserConfiguration extends BrowserConfiguration
 {
 
@@ -35,12 +38,12 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	 *
 	 * @return self
 	 */
-	public function configure(array $parameters)
+	public function setup(array $parameters)
 	{
 		$parameters = array_merge($this->parameters, $this->resolveAlias($parameters));
 		$this->setSauce($parameters['sauce']);
 
-		return parent::configure($parameters);
+		return parent::setup($parameters);
 	}
 
 	/**
