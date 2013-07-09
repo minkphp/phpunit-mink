@@ -293,6 +293,16 @@ class BrowserConfiguration
 	}
 
 	/**
+	 * Tells if browser configuration requires a session, that is shared across tests in a test case.
+	 *
+	 * @return boolean
+	 */
+	public function isShared()
+	{
+		return $this->getSessionStrategy() == SessionStrategyManager::SHARED_STRATEGY;
+	}
+
+	/**
 	 * Returns session strategy hash based on given test case and current browser configuration.
 	 *
 	 * @param BrowserTestCase $test_case Test case.
@@ -303,11 +313,32 @@ class BrowserConfiguration
 	{
 		$ret = $this->getBrowserHash();
 
-		if ( $this->getSessionStrategy() == SessionStrategyManager::SHARED_STRATEGY ) {
+		if ( $this->isShared() ) {
 			$ret .= '::' . get_class($test_case);
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * Returns test run status based on session strategy requested by browser.
+	 *
+	 * @param BrowserTestCase               $test_case   Browser test case.
+	 * @param \PHPUnit_Framework_TestResult $test_result Test result.
+	 *
+	 * @return boolean
+	 * @see    IsolatedSessionStrategy
+	 * @see    SharedSessionStrategy
+	 */
+	public function getTestStatus(BrowserTestCase $test_case, \PHPUnit_Framework_TestResult $test_result)
+	{
+		if ( $this->isShared() ) {
+			// all tests in a test case use same session -> failed even if 1 test fails
+			return $test_result->wasSuccessful();
+		}
+
+		// each test in a test case are using it's own session -> failed if test fails
+		return !$test_case->hasFailed();
 	}
 
 	/**

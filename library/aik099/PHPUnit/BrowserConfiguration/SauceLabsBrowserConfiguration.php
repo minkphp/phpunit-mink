@@ -171,7 +171,7 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	 */
 	public function testAfterRunHook(BrowserTestCase $test_case, \PHPUnit_Framework_TestResult $test_result)
 	{
-		$passed = $this->getPassed($test_case, $test_result);
+		$passed = $this->getTestStatus($test_case, $test_result);
 		$this->getRestClient()->updateJob($this->getJobId($test_case), array('passed' => $passed));
 
 		return $this;
@@ -207,32 +207,11 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	 */
 	protected function getJobName(BrowserTestCase $test_case)
 	{
-		if ( $test_case->isShared() ) {
+		if ( $this->isShared() ) {
 			return get_class($test_case);
 		}
 
 		return $test_case->toString();
-	}
-
-	/**
-	 * Returns Sauce test pass status.
-	 *
-	 * @param BrowserTestCase               $test_case   Browser test case.
-	 * @param \PHPUnit_Framework_TestResult $test_result Test result.
-	 *
-	 * @return boolean
-	 * @see    IsolatedSessionStrategy
-	 * @see    SharedSessionStrategy
-	 */
-	protected function getPassed(BrowserTestCase $test_case, \PHPUnit_Framework_TestResult $test_result)
-	{
-		if ( $test_case->isShared() ) {
-			// all tests in a test case use same session -> failed even if 1 test fails
-			return $test_result->wasSuccessful();
-		}
-
-		// each test in a test case are using it's own session -> failed if test fails
-		return !$test_case->hasFailed();
 	}
 
 	/**

@@ -170,40 +170,6 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * Test description.
 	 *
-	 * @param string  $strategy_class Strategy class.
-	 * @param boolean $shared         Is shared.
-	 *
-	 * @return void
-	 * @dataProvider isSharedDataProvider
-	 */
-	public function testIsShared($strategy_class, $shared)
-	{
-		$test_case = new WithoutBrowserConfig();
-
-		/* @var $session_strategy ISessionStrategy */
-		$session_strategy = m::mock($strategy_class);
-
-		$test_case->setSessionStrategy($session_strategy);
-
-		$this->assertSame($shared, $test_case->isShared());
-	}
-
-	/**
-	 * Provides test data for IsShared method.
-	 *
-	 * @return array
-	 */
-	public function isSharedDataProvider()
-	{
-		return array(
-			array('\\aik099\\PHPUnit\\SessionStrategy\\IsolatedSessionStrategy', false),
-			array('\\aik099\\PHPUnit\\SessionStrategy\\SharedSessionStrategy', true),
-		);
-	}
-
-	/**
-	 * Test description.
-	 *
 	 * @return void
 	 */
 	public function testGetSession()

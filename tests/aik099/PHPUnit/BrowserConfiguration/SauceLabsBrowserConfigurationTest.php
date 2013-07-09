@@ -11,6 +11,7 @@
 namespace tests\aik099\PHPUnit;
 
 
+use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
 use WebDriver\SauceLabs\Capability as SauceLabsCapability;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
@@ -161,7 +162,7 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	 *
 	 * @return void
 	 * @dataProvider jobNameDataProvider
-	 * @covers SauceLabsBrowserConfiguration::testSetUpHook
+	 * @covers \aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration::testSetUpHook
 	 */
 	public function testJobName($shared, $expected)
 	{
@@ -172,7 +173,13 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 			$expected = get_class($test_case);
 		}
 
-		$test_case->shouldReceive('isShared')->once()->andReturn($shared);
+		if ( $shared ) {
+			$this->browser->setSessionStrategy(SessionStrategyManager::SHARED_STRATEGY);
+		}
+		else {
+			$this->browser->setSessionStrategy(SessionStrategyManager::ISOLATED_STRATEGY);
+		}
+
 		$test_case->shouldReceive('toString')->times($shared ? 0 : 1)->andReturn($expected);
 
 		$this->browser->testSetUpHook($test_case);
@@ -199,13 +206,13 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	 * Test description.
 	 *
 	 * @return void
-	 * @covers SauceLabsBrowserConfiguration::testSetUpHook
+	 * @covers \aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration::testSetUpHook
 	 */
 	public function testBuildNumberPresent()
 	{
 		/* @var $test_case BrowserTestCase */
 		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
-		$test_case->shouldReceive('isShared')->once()->andReturn(true);
+		$this->browser->setSessionStrategy(SessionStrategyManager::SHARED_STRATEGY);
 
 		$expected = 'X';
 		putenv('BUILD_NUMBER=' . $expected);
@@ -221,13 +228,13 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	 * Test description.
 	 *
 	 * @return void
-	 * @covers SauceLabsBrowserConfiguration::testSetUpHook
+	 * @covers \aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration::testSetUpHook
 	 */
 	public function testBuildNumberAbsent()
 	{
 		/* @var $test_case BrowserTestCase */
 		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
-		$test_case->shouldReceive('isShared')->once()->andReturn(true);
+		$this->browser->setSessionStrategy(SessionStrategyManager::SHARED_STRATEGY);
 
 		$this->browser->testSetUpHook($test_case);
 
@@ -242,7 +249,9 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	 */
 	public function testAfterRunHook()
 	{
-		$this->markTestSkipped('Other more complex tests cover this');
+
+
+		$this->markTestSkipped('TODO');
 	}
 
 	/**

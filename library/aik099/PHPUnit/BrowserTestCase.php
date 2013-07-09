@@ -195,16 +195,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tells if session is shared across tests in a test case.
-	 *
-	 * @return boolean
-	 */
-	public function isShared()
-	{
-		return $this->getSessionStrategy() instanceof SharedSessionStrategy;
-	}
-
-	/**
 	 * Called, when last test in a test case has ended.
 	 *
 	 * @return self
