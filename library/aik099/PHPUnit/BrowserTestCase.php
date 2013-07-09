@@ -107,9 +107,7 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		if ( $this->withSauce() ) {
-			$this->getSauceLabsConnector()->patchBrowserConfiguration();
-		}
+		$this->getBrowser()->testSetUpHook($this);
 	}
 
 	/**
@@ -270,9 +268,7 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 			$result->getCodeCoverage()->append($this->getRemoteCodeCoverage()->get(), $this);
 		}
 
-		if ( $this->withSauce() ) {
-			$this->getSauceLabsConnector()->setJobStatus($this->getSaucePassed($result));
-		}
+		$this->getBrowser()->testAfterRunHook($this, $result);
 
 		// do not call this before to give the time to the Listeners to run
 		$this->_handleEnd('test');
@@ -396,49 +392,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	public function getBrowserAliases()
 	{
 		return array();
-	}
-
-	/**
-	 * Returns Sauce test pass status.
-	 *
-	 * @param \PHPUnit_Framework_TestResult $result Test result.
-	 *
-	 * @return boolean
-	 */
-	public function getSaucePassed(\PHPUnit_Framework_TestResult $result)
-	{
-		if ( $this->isShared() ) {
-			// all tests in a test case use same session -> failed even if 1 test fails
-			return $result->wasSuccessful();
-		}
-
-		// each test in a test case are using it's own session -> failed if test fails
-		return !$this->hasFailed();
-	}
-
-	/**
-	 * Get "Sauce Labs" connector.
-	 *
-	 * @return SauceLabsConnector
-	 * @throws \RuntimeException When no "Sauce Labs" configuration found.
-	 */
-	public function getSauceLabsConnector()
-	{
-		if ( !$this->withSauce() ) {
-			throw new \RuntimeException('"Sauce Labs" configuration absent in browser configuration');
-		}
-
-		return new SauceLabsConnector($this);
-	}
-
-	/**
-	 * Checks, that "Sauce Labs" browser configuration is used.
-	 *
-	 * @return boolean
-	 */
-	public function withSauce()
-	{
-		return $this->getBrowser() instanceof SauceLabsBrowserConfiguration;
 	}
 
 }

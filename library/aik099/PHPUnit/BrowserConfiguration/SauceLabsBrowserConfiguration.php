@@ -11,7 +11,11 @@
 namespace aik099\PHPUnit\BrowserConfiguration;
 
 
+use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
+use Behat\Mink\Driver\Selenium2Driver;
+use WebDriver\SauceLabs\Capability as SauceLabsCapability;
+use WebDriver\SauceLabs\SauceRest;
 
 /**
  * Browser configuration tailored to use with "Sauce Labs" service.
@@ -24,7 +28,7 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	 *
 	 * @param array $aliases Browser configuration aliases.
 	 */
-	public function __construct(array $aliases)
+	public function __construct(array $aliases = array())
 	{
 		parent::__construct($aliases);
 
@@ -131,6 +135,116 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 		}
 
 		return $capabilities;
+	}
+
+	/**
+	 * Hook, called from "BrowserTestCase::setUp" method.
+	 *
+	 * @param BrowserTestCase $test_case Browser test case.
+	 *
+	 * @return self
+	 */
+	public function testSetUpHook(BrowserTestCase $test_case)
+	{
+		$desired_capabilities = $this->getDesiredCapabilities();
+
+		$desired_capabilities[SauceLabsCapability::NAME] = $this->getJobName($test_case);
+
+		$jenkins_build_number = getenv('BUILD_NUMBER');
+
+		if ( $jenkins_build_number ) {
+			$desired_capabilities[SauceLabsCapability::BUILD] = $jenkins_build_number;
+		}
+
+		$this->setDesiredCapabilities($desired_capabilities);
+
+		return $this;
+	}
+
+	/**
+	 * Hook, called from "BrowserTestCase::run" method.
+	 *
+	 * @param BrowserTestCase               $test_case   Browser test case.
+	 * @param \PHPUnit_Framework_TestResult $test_result Test result.
+	 *
+	 * @return self
+	 */
+	public function testAfterRunHook(BrowserTestCase $test_case, \PHPUnit_Framework_TestResult $test_result)
+	{
+		$passed = $this->getPassed($test_case, $test_result);
+		$this->getRestClient()->updateJob($this->getJobId($test_case), array('passed' => $passed));
+
+		return $this;
+	}
+
+	/**
+	 * Get Selenium2 current session id.
+	 *
+	 * @param BrowserTestCase $test_case Browser test case.
+	 *
+	 * @return string
+	 * @throws \RuntimeException When test case session was created using an unsupported driver.
+	 */
+	protected function getJobId(BrowserTestCase $test_case)
+	{
+		$driver = $test_case->getSession()->getDriver();
+
+		if ( $driver instanceof Selenium2Driver ) {
+			$wd_session = $driver->getWebDriverSession();
+
+			return $wd_session ? basename($wd_session->getUrl()) : '';
+		}
+
+		throw new \RuntimeException('Unsupported session driver');
+	}
+
+	/**
+	 * Returns Job name for "Sauce Labs" service.
+	 *
+	 * @param BrowserTestCase $test_case Browser test case.
+	 *
+	 * @return string
+	 */
+	protected function getJobName(BrowserTestCase $test_case)
+	{
+		if ( $test_case->isShared() ) {
+			return get_class($test_case);
+		}
+
+		return $test_case->toString();
+	}
+
+	/**
+	 * Returns Sauce test pass status.
+	 *
+	 * @param BrowserTestCase               $test_case   Browser test case.
+	 * @param \PHPUnit_Framework_TestResult $test_result Test result.
+	 *
+	 * @return boolean
+	 * @see    IsolatedSessionStrategy
+	 * @see    SharedSessionStrategy
+	 */
+	protected function getPassed(BrowserTestCase $test_case, \PHPUnit_Framework_TestResult $test_result)
+	{
+		if ( $test_case->isShared() ) {
+			// all tests in a test case use same session -> failed even if 1 test fails
+			return $test_result->wasSuccessful();
+		}
+
+		// each test in a test case are using it's own session -> failed if test fails
+		return !$test_case->hasFailed();
+	}
+
+	/**
+	 * Returns API class for "Sauce Labs" service interaction.
+	 *
+	 * @return SauceRest
+	 */
+	protected function getRestClient()
+	{
+		$sauce = $this->getSauce();
+
+		return new SauceRest($sauce['username'], $sauce['api_key']);
 	}
 
 }

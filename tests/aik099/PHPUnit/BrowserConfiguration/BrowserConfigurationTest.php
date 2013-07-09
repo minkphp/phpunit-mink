@@ -41,6 +41,13 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	protected $setup = array();
 
 	/**
+	 * Browser configuration.
+	 *
+	 * @var BrowserConfiguration
+	 */
+	protected $browser;
+
+	/**
 	 * Configures all tests.
 	 *
 	 * @return void
@@ -61,6 +68,8 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 			'baseUrl' => 'http://other-host',
 			'sessionStrategy' => SessionStrategyManager::SHARED_STRATEGY,
 		);
+
+		$this->browser = $this->createBrowserConfiguration();
 	}
 
 	/**
@@ -68,7 +77,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testResolveBrowserAliasUsingSingleAlias()
+	public function testResolveAliasUsingSingleAlias()
 	{
 		$browser = $this->createBrowserConfiguration(array(
 			'a1' => array('host' => $this->host, 'port' => $this->port),
@@ -85,7 +94,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testResolveBrowserAliasUsingRecursiveAlias()
+	public function testResolveAliasUsingRecursiveAlias()
 	{
 		$browser = $this->createBrowserConfiguration(array(
 			'a1' => array('alias' => 'a2', 'host' => $this->host, 'port' => $this->port),
@@ -105,7 +114,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testResolveBrowserAliasUsingAliasMerging()
+	public function testResolveAliasUsingAliasMerging()
 	{
 		$browser = $this->createBrowserConfiguration(array(
 			'a1' => array('host' => $this->host, 'port' => $this->port),
@@ -122,12 +131,27 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 * Test description.
 	 *
 	 * @return void
+	 */
+	public function testResolveAliasWithOverwrite()
+	{
+		$browser = $this->createBrowserConfiguration(array(
+			'a1' => array('host' => 'alias-host', 'port' => $this->port),
+		));
+
+		$browser->setup(array('alias' => 'a1', 'host' => $this->host));
+
+		$this->assertEquals($this->host, $browser->getHost());
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
 	 * @expectedException \InvalidArgumentException
 	 */
-	public function testResolveBrowserAliasUsingIncorrectAlias()
+	public function testResolveAliasUsingIncorrectAlias()
 	{
-		$browser = $this->createBrowserConfiguration();
-		$browser->setup(array('alias' => 'not_found'));
+		$this->browser->setup(array('alias' => 'not_found'));
 	}
 
 	/**
@@ -135,35 +159,28 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testResolveBrowserAliasWithoutAliasGiven()
+	public function testResolveAliasWithoutAliasGiven()
 	{
-		$browser = $this->createBrowserConfiguration();
-		$browser->setup(array('browserName' => 'safari'));
+		$this->browser->setup(array('browserName' => 'safari'));
 
-		$this->assertEquals('safari', $browser->getBrowserName());
+		$this->assertEquals('safari', $this->browser->getBrowserName());
 	}
 
 	/**
 	 * Test description.
 	 *
-	 * @param BrowserConfiguration|null $browser Browser configuration.
-	 *
 	 * @return void
 	 */
-	public function testSetup(BrowserConfiguration $browser = null)
+	public function testSetup()
 	{
-		if ( !isset($browser) ) {
-			$browser = $this->createBrowserConfiguration();
-		}
-
-		$this->assertSame($browser, $browser->setup($this->setup));
-		$this->assertSame($this->setup['host'], $browser->getHost());
-		$this->assertSame($this->setup['port'], $browser->getPort());
-		$this->assertSame($this->setup['browserName'], $browser->getBrowserName());
-		$this->assertSame($this->setup['desiredCapabilities'], $browser->getDesiredCapabilities());
-		$this->assertSame($this->setup['seleniumServerRequestsTimeout'], $browser->getSeleniumServerRequestsTimeout());
-		$this->assertSame($this->setup['baseUrl'], $browser->getBaseUrl());
-		$this->assertSame($this->setup['sessionStrategy'], $browser->getSessionStrategy());
+		$this->assertSame($this->browser, $this->browser->setup($this->setup));
+		$this->assertSame($this->setup['host'], $this->browser->getHost());
+		$this->assertSame($this->setup['port'], $this->browser->getPort());
+		$this->assertSame($this->setup['browserName'], $this->browser->getBrowserName());
+		$this->assertSame($this->setup['desiredCapabilities'], $this->browser->getDesiredCapabilities());
+		$this->assertSame($this->setup['seleniumServerRequestsTimeout'], $this->browser->getSeleniumServerRequestsTimeout());
+		$this->assertSame($this->setup['baseUrl'], $this->browser->getBaseUrl());
+		$this->assertSame($this->setup['sessionStrategy'], $this->browser->getSessionStrategy());
 	}
 
 	/**
@@ -174,8 +191,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetHostIncorrect()
 	{
-		$browser = $this->createBrowserConfiguration();
-		$browser->setHost(5555);
+		$this->browser->setHost(5555);
 	}
 
 	/**
@@ -185,11 +201,9 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetHostCorrect()
 	{
-		$browser = $this->createBrowserConfiguration();
-
 		$expected = 'EXAMPLE_HOST';
-		$this->assertSame($browser, $browser->setHost($expected));
-		$this->assertSame($expected, $browser->getHost());
+		$this->assertSame($this->browser, $this->browser->setHost($expected));
+		$this->assertSame($expected, $this->browser->getHost());
 	}
 
 	/**
@@ -200,8 +214,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetPortIncorrect()
 	{
-		$browser = $this->createBrowserConfiguration();
-		$browser->setPort('5555');
+		$this->browser->setPort('5555');
 	}
 
 	/**
@@ -211,11 +224,9 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetPortCorrect()
 	{
-		$browser = $this->createBrowserConfiguration();
-
 		$expected = 5555;
-		$this->assertSame($browser, $browser->setPort($expected));
-		$this->assertSame($expected, $browser->getPort());
+		$this->assertSame($this->browser, $this->browser->setPort($expected));
+		$this->assertSame($expected, $this->browser->getPort());
 	}
 
 	/**
@@ -226,8 +237,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetBrowserNameIncorrect()
 	{
-		$browser = $this->createBrowserConfiguration();
-		$browser->setBrowserName(5555);
+		$this->browser->setBrowserName(5555);
 	}
 
 	/**
@@ -237,11 +247,9 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetBrowserNameCorrect()
 	{
-		$browser = $this->createBrowserConfiguration();
-
 		$expected = 'firefox';
-		$this->assertSame($browser, $browser->setBrowserName($expected));
-		$this->assertSame($expected, $browser->getBrowserName());
+		$this->assertSame($this->browser, $this->browser->setBrowserName($expected));
+		$this->assertSame($expected, $this->browser->getBrowserName());
 	}
 
 	/**
@@ -252,8 +260,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetBaseUrlIncorrect()
 	{
-		$browser = $this->createBrowserConfiguration();
-		$browser->setBaseUrl(5555);
+		$this->browser->setBaseUrl(5555);
 	}
 
 	/**
@@ -263,11 +270,9 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetBaseUrlCorrect()
 	{
-		$browser = $this->createBrowserConfiguration();
-
 		$expected = 'http://some-url';
-		$this->assertSame($browser, $browser->setBaseUrl($expected));
-		$this->assertSame($expected, $browser->getBaseUrl());
+		$this->assertSame($this->browser, $this->browser->setBaseUrl($expected));
+		$this->assertSame($expected, $this->browser->getBaseUrl());
 	}
 
 	/**
@@ -277,11 +282,9 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetDesiredCapabilitiesCorrect()
 	{
-		$browser = $this->createBrowserConfiguration();
-
 		$expected = array('k1' => 'v1', 'k2' => 'v2');
-		$this->assertSame($browser, $browser->setDesiredCapabilities($expected));
-		$this->assertSame($expected, $browser->getDesiredCapabilities());
+		$this->assertSame($this->browser, $this->browser->setDesiredCapabilities($expected));
+		$this->assertSame($expected, $this->browser->getDesiredCapabilities());
 	}
 
 	/**
@@ -291,11 +294,9 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetSeleniumServerRequestsTimeoutCorrect()
 	{
-		$browser = $this->createBrowserConfiguration();
-
 		$expected = 1000;
-		$this->assertSame($browser, $browser->setSeleniumServerRequestsTimeout($expected));
-		$this->assertSame($expected, $browser->getSeleniumServerRequestsTimeout());
+		$this->assertSame($this->browser, $this->browser->setSeleniumServerRequestsTimeout($expected));
+		$this->assertSame($expected, $this->browser->getSeleniumServerRequestsTimeout());
 	}
 
 	/**
@@ -306,8 +307,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetSeleniumServerRequestsTimeoutIncorrect()
 	{
-		$browser = $this->createBrowserConfiguration();
-		$browser->setSeleniumServerRequestsTimeout('5555');
+		$this->browser->setSeleniumServerRequestsTimeout('5555');
 	}
 
 	/**
@@ -317,11 +317,9 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetSessionStrategyCorrect()
 	{
-		$browser = $this->createBrowserConfiguration();
-
 		$expected = SessionStrategyManager::SHARED_STRATEGY;
-		$this->assertSame($browser, $browser->setSessionStrategy($expected));
-		$this->assertSame($expected, $browser->getSessionStrategy());
+		$this->assertSame($this->browser, $this->browser->setSessionStrategy($expected));
+		$this->assertSame($expected, $this->browser->getSessionStrategy());
 	}
 
 	/**
@@ -332,8 +330,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetSessionStrategyIncorrect()
 	{
-		$browser = $this->createBrowserConfiguration();
-		$browser->setSessionStrategy('wrong');
+		$this->browser->setSessionStrategy('wrong');
 	}
 
 	/**
@@ -391,6 +388,48 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 		$browser2->setSessionStrategy(SessionStrategyManager::SHARED_STRATEGY);
 
 		$this->assertNotSame($browser1->getSessionStrategyHash($test_case1), $browser2->getSessionStrategyHash($test_case2));
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testCreateSession()
+	{
+		$session = $this->browser->createSession();
+
+		$this->assertInstanceOf('\\Behat\\Mink\\Session', $session);
+		$this->assertInstanceOf('\\Behat\\Mink\\Driver\\Selenium2Driver', $session->getDriver());
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testSetUpHook()
+	{
+		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
+		/* @var $test_case BrowserTestCase */
+
+		$this->assertSame($this->browser, $this->browser->testSetUpHook($test_case));
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testAfterRunHook()
+	{
+		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
+		/* @var $test_case BrowserTestCase */
+
+		$test_result = m::mock('\\PHPUnit_Framework_TestResult');
+		/* @var $test_result \PHPUnit_Framework_TestResult */
+
+		$this->assertSame($this->browser, $this->browser->testAfterRunHook($test_case, $test_result));
 	}
 
 	/**

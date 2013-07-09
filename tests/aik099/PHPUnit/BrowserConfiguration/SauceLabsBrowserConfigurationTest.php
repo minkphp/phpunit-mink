@@ -11,7 +11,10 @@
 namespace tests\aik099\PHPUnit;
 
 
+use WebDriver\SauceLabs\Capability as SauceLabsCapability;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
+use aik099\PHPUnit\BrowserTestCase;
+use Mockery as m;
 
 class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 {
@@ -40,11 +43,9 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	 */
 	public function testSetup()
 	{
-		$browser = $this->createBrowserConfiguration();
+		parent::testSetup();
 
-		parent::testSetup($browser);
-
-		$this->assertSame($this->setup['sauce'], $browser->getSauce());
+		$this->assertSame($this->setup['sauce'], $this->browser->getSauce());
 	}
 
 	/**
@@ -143,6 +144,105 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 				array('version' => 'ver1', 'platform' => 'Windows XP'),
 			),
 		);
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testSetUpHook()
+	{
+		$this->markTestSkipped('Other more complex tests cover this');
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 * @dataProvider jobNameDataProvider
+	 * @covers SauceLabsBrowserConfiguration::testSetUpHook
+	 */
+	public function testJobName($shared, $expected)
+	{
+		/* @var $test_case BrowserTestCase */
+		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
+
+		if ( !isset($expected) ) {
+			$expected = get_class($test_case);
+		}
+
+		$test_case->shouldReceive('isShared')->once()->andReturn($shared);
+		$test_case->shouldReceive('toString')->times($shared ? 0 : 1)->andReturn($expected);
+
+		$this->browser->testSetUpHook($test_case);
+
+		$capabilities = $this->browser->getDesiredCapabilities();
+		$this->assertArrayHasKey(SauceLabsCapability::NAME, $capabilities);
+		$this->assertSame($expected, $capabilities[SauceLabsCapability::NAME]);
+	}
+
+	/**
+	 * JobName data provider.
+	 *
+	 * @return array
+	 */
+	public function jobNameDataProvider()
+	{
+		return array(
+			array(false, 'TEST_NAME'),
+			array(true, null),
+		);
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 * @covers SauceLabsBrowserConfiguration::testSetUpHook
+	 */
+	public function testBuildNumberPresent()
+	{
+		/* @var $test_case BrowserTestCase */
+		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
+		$test_case->shouldReceive('isShared')->once()->andReturn(true);
+
+		$expected = 'X';
+		putenv('BUILD_NUMBER=' . $expected);
+		$this->browser->testSetUpHook($test_case);
+		putenv('BUILD_NUMBER');
+
+		$capabilities = $this->browser->getDesiredCapabilities();
+		$this->assertArrayHasKey(SauceLabsCapability::BUILD, $capabilities);
+		$this->assertSame($expected, $capabilities[SauceLabsCapability::BUILD]);
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 * @covers SauceLabsBrowserConfiguration::testSetUpHook
+	 */
+	public function testBuildNumberAbsent()
+	{
+		/* @var $test_case BrowserTestCase */
+		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
+		$test_case->shouldReceive('isShared')->once()->andReturn(true);
+
+		$this->browser->testSetUpHook($test_case);
+
+		$capabilities = $this->browser->getDesiredCapabilities();
+		$this->assertArrayNotHasKey(SauceLabsCapability::BUILD, $capabilities);
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testAfterRunHook()
+	{
+		$this->markTestSkipped('Other more complex tests cover this');
 	}
 
 	/**

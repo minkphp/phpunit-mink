@@ -17,6 +17,7 @@
 		<exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
 		<exclude name="Generic.WhiteSpace.ScopeIndent"/>
 		<exclude name="Generic.Files.EndFileNewline"/>
+		<exclude name="Generic.CodeAnalysis.UnusedFunctionParameter"/>
 
 		<!-- exclude because of multifile sniff, that eats a lot of memory, better to create a separate ruleset -->
 		<exclude name="Generic.Classes.DuplicateClassName"/>

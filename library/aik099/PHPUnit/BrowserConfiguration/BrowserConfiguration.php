@@ -329,10 +329,8 @@ class BrowserConfiguration
 	 */
 	public function createSession()
 	{
-		$capabilities = array_merge(
-			$this->getDesiredCapabilities(),
-			array('browserName' => $this->getBrowserName())
-		);
+		$capabilities = $this->getDesiredCapabilities();
+		$capabilities['browserName'] = $this->getBrowserName();
 
 		// TODO: maybe doesn't work
 		ini_set('default_socket_timeout', $this->getSeleniumServerRequestsTimeout());
@@ -378,14 +376,18 @@ class BrowserConfiguration
 	 *
 	 * Priority goes to the 2nd array.
 	 *
-	 * @param array $array1 First array.
-	 * @param array $array2 Second array.
+	 * @param mixed $array1 First array.
+	 * @param mixed $array2 Second array.
 	 *
 	 * @return array
 	 */
-	protected function arrayMergeRecursive(array $array1, array $array2)
+	protected function arrayMergeRecursive($array1, $array2)
 	{
-		foreach ($array2 as $array2_key => $array2_value) {
+		if ( !is_array($array1) || !is_array($array2) ) {
+			return $array2;
+		}
+
+		foreach ( $array2 as $array2_key => $array2_value ) {
 			if ( isset($array1[$array2_key]) ) {
 				$array1[$array2_key] = $this->arrayMergeRecursive($array1[$array2_key], $array2_value);
 			}
@@ -395,6 +397,31 @@ class BrowserConfiguration
 		}
 
 		return $array1;
+	}
+
+	/**
+	 * Hook, called from "BrowserTestCase::setUp" method.
+	 *
+	 * @param BrowserTestCase $test_case Browser test case.
+	 *
+	 * @return self
+	 */
+	public function testSetUpHook(BrowserTestCase $test_case)
+	{
+		return $this;
+	}
+
+	/**
+	 * Hook, called from "BrowserTestCase::run" method.
+	 *
+	 * @param BrowserTestCase               $test_case   Browser test case.
+	 * @param \PHPUnit_Framework_TestResult $test_result Test result.
+	 *
+	 * @return self
+	 */
+	public function testAfterRunHook(BrowserTestCase $test_case, \PHPUnit_Framework_TestResult $test_result)
+	{
+		return $this;
 	}
 
 }
