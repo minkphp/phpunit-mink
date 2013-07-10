@@ -52,26 +52,17 @@ class SessionStrategyManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetSessionStrategySharing()
 	{
-		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
-		/* @var $test_case BrowserTestCase */
-
-		$browser = m::mock('\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration');
-		$browser->shouldReceive('getSessionStrategyHash')->with($test_case)->andReturn('H1', 'H1', 'H2', 'H1');
-		$browser->shouldReceive('getSessionStrategy')->andReturn(SessionStrategyManager::ISOLATED_STRATEGY);
-
-		$test_case->shouldReceive('getBrowser')->withNoArgs()->andReturn($browser);
-
 		// sequential identical browser configurations share strategy
-		$strategy1 = $this->manager->getSessionStrategy($test_case);
-		$strategy2 = $this->manager->getSessionStrategy($test_case);
+		$strategy1 = $this->manager->getSessionStrategy(SessionStrategyManager::ISOLATED_STRATEGY, 'H1');
+		$strategy2 = $this->manager->getSessionStrategy(SessionStrategyManager::ISOLATED_STRATEGY, 'H1');
 		$this->assertSame($strategy1, $strategy2);
 
 		// different browser configuration use different strategy
-		$strategy3 = $this->manager->getSessionStrategy($test_case);
+		$strategy3 = $this->manager->getSessionStrategy(SessionStrategyManager::ISOLATED_STRATEGY, 'H2');
 		$this->assertNotSame($strategy2, $strategy3);
 
 		// different browser configuration break the sequence
-		$strategy4 = $this->manager->getSessionStrategy($test_case);
+		$strategy4 = $this->manager->getSessionStrategy(SessionStrategyManager::ISOLATED_STRATEGY, 'H1');
 		$this->assertNotSame($strategy1, $strategy4);
 	}
 

@@ -65,7 +65,7 @@ class TestSuite extends TestSuiteBase
 		$suite = BrowserSuite::fromClassAndBrowser($class->name, $browser);
 
 		$suite->addTestMethods($class, $session_strategy_manager);
-		$suite->setupSpecificBrowser($browser);
+		$suite->setBrowserFromConfiguration($browser);
 
 		return $suite;
 	}

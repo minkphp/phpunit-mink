@@ -121,7 +121,12 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	{
 		$this->_browser = $browser;
 
-		return $this;
+		// configure session strategy
+		$session_strategy = $browser->getSessionStrategy();
+		$session_strategy_hash = $browser->getSessionStrategyHash($this);
+		$browser_strategy = $this->sessionStrategyManager->getSessionStrategy($session_strategy, $session_strategy_hash);
+
+		return $this->setSessionStrategy($browser_strategy);
 	}
 
 	/**
@@ -146,7 +151,7 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return self
 	 */
-	public function setupSpecificBrowser(array $browser_config)
+	public function setBrowserFromConfiguration(array $browser_config)
 	{
 		// configure browser
 		if ( isset($browser_config['sauce']) ) {
@@ -156,12 +161,9 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 			$browser = new BrowserConfiguration($this->getBrowserAliases());
 		}
 
-		$this->setBrowser($browser->setup($browser_config));
+		$browser->setup($browser_config);
 
-		// configure session strategy
-		$browser_strategy = $this->sessionStrategyManager->getSessionStrategy($this);
-
-		return $this->setSessionStrategy($browser_strategy);
+		return $this->setBrowser($browser);
 	}
 
 	/**

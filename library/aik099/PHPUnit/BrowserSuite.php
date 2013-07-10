@@ -51,12 +51,11 @@ class BrowserSuite extends TestSuiteBase
 	 *
 	 * @return self
 	 */
-	public function setupSpecificBrowser(array $browser)
+	public function setBrowserFromConfiguration(array $browser)
 	{
 		/* @var $test BrowserTestCase */
-
 		foreach ( $this->tests() as $test ) {
-			$test->setupSpecificBrowser($browser);
+			$test->setBrowserFromConfiguration($browser);
 		}
 
 		return $this;

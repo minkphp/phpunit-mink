@@ -160,11 +160,14 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	/**
 	 * Test description.
 	 *
+	 * @param string $session_strategy Session strategy.
+	 * @param string $expected         Expected job name.
+	 *
 	 * @return void
 	 * @dataProvider jobNameDataProvider
-	 * @covers \aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration::testSetUpHook
+	 * @covers       \aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration::testSetUpHook
 	 */
-	public function testJobName($shared, $expected)
+	public function testJobName($session_strategy, $expected)
 	{
 		/* @var $test_case BrowserTestCase */
 		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
@@ -173,14 +176,8 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 			$expected = get_class($test_case);
 		}
 
-		if ( $shared ) {
-			$this->browser->setSessionStrategy(SessionStrategyManager::SHARED_STRATEGY);
-		}
-		else {
-			$this->browser->setSessionStrategy(SessionStrategyManager::ISOLATED_STRATEGY);
-		}
-
-		$test_case->shouldReceive('toString')->times($shared ? 0 : 1)->andReturn($expected);
+		$this->browser->setSessionStrategy($session_strategy);
+		$test_case->shouldReceive('toString')->andReturn($expected);
 
 		$this->browser->testSetUpHook($test_case);
 
@@ -197,8 +194,8 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	public function jobNameDataProvider()
 	{
 		return array(
-			array(false, 'TEST_NAME'),
-			array(true, null),
+			array(SessionStrategyManager::ISOLATED_STRATEGY, 'TEST_NAME'),
+			array(SessionStrategyManager::SHARED_STRATEGY, null),
 		);
 	}
 
