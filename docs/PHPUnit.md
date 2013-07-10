@@ -53,12 +53,17 @@ class PerBrowserConfigTest extends BrowserTestCase
 
 	protected function setUp()
 	{
-		$this->setSauce(array('username' => 'sause_username', 'api_key' => 'sause_api_key'));
-		$this->setHost('selenium_host')->setPort('selenium_port')->setBrowser('browser name');
+		$browser = new BrowserConfiguration($this->getBrowserAliases());
+//		$browser = new SauceLabsBrowserConfiguration($this->getBrowserAliases());
+//		$browser->setSauce(array('username' => 'sause_username', 'api_key' => 'sause_api_key'));
 
-		$this->setDesiredCapabilities(array('version' => '6.5'));
-		$this->setSeleniumServerRequestsTimeout(30);
-		$this->setBaseUrl('http://www.test-host.com');
+		$browser->setHost('selenium_host')->setPort('selenium_port')->setBrowserName('browser name');
+
+		$browser->setDesiredCapabilities(array('version' => '6.5'));
+		$browser->setTimeout(30);
+		$browser->setBaseUrl('http://www.test-host.com');
+
+		$this->setBrowser($browser);
 
 		parent::setUp();
 	}
@@ -215,9 +220,9 @@ Each browser configuration consists of the following settings:
 
 * `host` - host, where Selenium Server is located (default `localhost`)
 * `port` - port, on which Selenium Server is listening for incoming connections (default `4444`)
+* `timeout` - connection timeout of Selenium Server
 * `browserName` - name of browser to use (e.g. `firefox`, `chrome`, etc.)
-* `desiredCapabilities` - parameters, that specify browser configuraion in more detail (e.g. browser version, platform, etc.)
-* `seleniumServerRequestsTimeout` - connection timeout of Selenium Server
+* `desiredCapabilities` - parameters, that specify browser configuration in more detail (e.g. browser version, platform, etc.)
 * `baseUrl` - base url, used during tests
 * `sauce` - Sauce Labs connection configuration (e.g. `array('username' => 'username_here', 'api_key' => 'api_key_here')`)
 

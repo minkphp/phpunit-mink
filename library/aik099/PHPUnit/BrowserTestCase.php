@@ -16,7 +16,6 @@ use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use aik099\PHPUnit\Common\RemoteCoverage;
 use aik099\PHPUnit\SessionStrategy\ISessionStrategy;
 use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
-use aik099\PHPUnit\SessionStrategy\SharedSessionStrategy;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Session;
 

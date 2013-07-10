@@ -62,9 +62,9 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 		$this->setup = array(
 			'host' => $this->host,
 			'port' => $this->port,
+			'timeout' => 500,
 			'browserName' => 'safari',
 			'desiredCapabilities' => array('platform' => 'Windows 7', 'version' => 10),
-			'seleniumServerRequestsTimeout' => 500,
 			'baseUrl' => 'http://other-host',
 			'sessionStrategy' => SessionStrategyManager::SHARED_STRATEGY,
 		);
@@ -176,9 +176,9 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame($this->browser, $this->browser->setup($this->setup));
 		$this->assertSame($this->setup['host'], $this->browser->getHost());
 		$this->assertSame($this->setup['port'], $this->browser->getPort());
+		$this->assertSame($this->setup['timeout'], $this->browser->getTimeout());
 		$this->assertSame($this->setup['browserName'], $this->browser->getBrowserName());
 		$this->assertSame($this->setup['desiredCapabilities'], $this->browser->getDesiredCapabilities());
-		$this->assertSame($this->setup['seleniumServerRequestsTimeout'], $this->browser->getSeleniumServerRequestsTimeout());
 		$this->assertSame($this->setup['baseUrl'], $this->browser->getBaseUrl());
 		$this->assertSame($this->setup['sessionStrategy'], $this->browser->getSessionStrategy());
 	}
@@ -292,11 +292,11 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testSetSeleniumServerRequestsTimeoutCorrect()
+	public function testSetTimeoutCorrect()
 	{
 		$expected = 1000;
-		$this->assertSame($this->browser, $this->browser->setSeleniumServerRequestsTimeout($expected));
-		$this->assertSame($expected, $this->browser->getSeleniumServerRequestsTimeout());
+		$this->assertSame($this->browser, $this->browser->setTimeout($expected));
+		$this->assertSame($expected, $this->browser->getTimeout());
 	}
 
 	/**
@@ -305,9 +305,9 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 * @return void
 	 * @expectedException \InvalidArgumentException
 	 */
-	public function testSetSeleniumServerRequestsTimeoutIncorrect()
+	public function testSetTimeoutIncorrect()
 	{
-		$this->browser->setSeleniumServerRequestsTimeout('5555');
+		$this->browser->setTimeout('5555');
 	}
 
 	/**
@@ -388,6 +388,36 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 		$browser2->setSessionStrategy(SessionStrategyManager::SHARED_STRATEGY);
 
 		$this->assertNotSame($browser1->getSessionStrategyHash($test_case1), $browser2->getSessionStrategyHash($test_case2));
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testGetTestStatusIsolated()
+	{
+		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
+		$test_case->shouldReceive('hasFailed')->once()->andReturn(false);
+		$test_result = m::mock('\\PHPUnit_Framework_TestResult');
+
+		$this->browser->setSessionStrategy(SessionStrategyManager::ISOLATED_STRATEGY);
+		$this->assertTrue($this->browser->getTestStatus($test_case, $test_result));
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testGetTestStatusShared()
+	{
+		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
+		$test_result = m::mock('\\PHPUnit_Framework_TestResult');
+		$test_result->shouldReceive('wasSuccessful')->once()->andReturn(true);
+
+		$this->browser->setSessionStrategy(SessionStrategyManager::SHARED_STRATEGY);
+		$this->assertTrue($this->browser->getTestStatus($test_case, $test_result));
 	}
 
 	/**

@@ -46,12 +46,17 @@ class BrowserConfiguration
 	public function __construct(array $aliases = array())
 	{
 		$this->parameters = array(
+			// server related
 			'host' => 'localhost',
 			'port' => 4444,
+			'timeout' => 60,
+
+			// browser related
 			'browserName' => 'firefox',
 			'desiredCapabilities' => array(),
-			'seleniumServerRequestsTimeout' => 60,
 			'baseUrl' => '',
+
+			// test related
 			'sessionStrategy' => SessionStrategyManager::ISOLATED_STRATEGY,
 		);
 
@@ -69,10 +74,8 @@ class BrowserConfiguration
 	{
 		$parameters = array_merge($this->parameters, $this->resolveAlias($parameters));
 
-		$this->setHost($parameters['host'])->setPort($parameters['port']);
-		$this->setBrowserName($parameters['browserName']);
-		$this->setDesiredCapabilities($parameters['desiredCapabilities']);
-		$this->setSeleniumServerRequestsTimeout($parameters['seleniumServerRequestsTimeout']);
+		$this->setHost($parameters['host'])->setPort($parameters['port'])->setTimeout($parameters['timeout']);
+		$this->setBrowserName($parameters['browserName'])->setDesiredCapabilities($parameters['desiredCapabilities']);
 		$this->setBaseUrl($parameters['baseUrl']);
 		$this->setSessionStrategy($parameters['sessionStrategy']);
 
@@ -240,13 +243,13 @@ class BrowserConfiguration
 	 * @return self
 	 * @throws \InvalidArgumentException When timeout isn't integer.
 	 */
-	public function setSeleniumServerRequestsTimeout($timeout)
+	public function setTimeout($timeout)
 	{
 		if ( !is_int($timeout) ) {
 			throw new \InvalidArgumentException('Timeout must be an integer');
 		}
 
-		$this->parameters['seleniumServerRequestsTimeout'] = $timeout;
+		$this->parameters['timeout'] = $timeout;
 
 		return $this;
 	}
@@ -256,9 +259,9 @@ class BrowserConfiguration
 	 *
 	 * @return integer
 	 */
-	public function getSeleniumServerRequestsTimeout()
+	public function getTimeout()
 	{
-		return $this->parameters['seleniumServerRequestsTimeout'];
+		return $this->parameters['timeout'];
 	}
 
 	/**
@@ -364,7 +367,7 @@ class BrowserConfiguration
 		$capabilities['browserName'] = $this->getBrowserName();
 
 		// TODO: maybe doesn't work
-		ini_set('default_socket_timeout', $this->getSeleniumServerRequestsTimeout());
+		ini_set('default_socket_timeout', $this->getTimeout());
 
 		// create driver:
 		$driver = new Selenium2Driver(
