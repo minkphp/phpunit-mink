@@ -15,7 +15,6 @@ use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\SessionStrategy\ISessionStrategy;
 use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
-use Behat\Mink\Session;
 use Mockery as m;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
@@ -142,12 +141,12 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetSessionStrategy()
 	{
-		/* @var $mock \aik099\PHPUnit\SessionStrategy\ISessionStrategy */
-		$mock = m::mock(self::SESSION_STRATEGY_INTERFACE);
+		/* @var $session_strategy \aik099\PHPUnit\SessionStrategy\ISessionStrategy */
+		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 
 		$test_case = new WithoutBrowserConfig();
-		$this->assertSame($test_case, $test_case->setSessionStrategy($mock));
-		$this->assertSame($mock, $test_case->getSessionStrategy());
+		$this->assertSame($test_case, $test_case->setSessionStrategy($session_strategy));
+		$this->assertSame($session_strategy, $test_case->getSessionStrategy());
 	}
 
 	/**
@@ -158,16 +157,16 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetSessionStrategySharing()
 	{
-		/* @var $mock \aik099\PHPUnit\SessionStrategy\SessionStrategyManager */
-		$mock = m::mock(self::MANAGER_CLASS);
+		/* @var $manager \aik099\PHPUnit\SessionStrategy\SessionStrategyManager */
+		$manager = m::mock(self::MANAGER_CLASS);
 
-		$mock->shouldReceive('getDefaultSessionStrategy')->twice()->andReturn('STRATEGY');
+		$manager->shouldReceive('getDefaultSessionStrategy')->twice()->andReturn('STRATEGY');
 
 		$test_case1 = new WithoutBrowserConfig();
-		$test_case1->setSessionStrategyManager($mock);
+		$test_case1->setSessionStrategyManager($manager);
 
 		$test_case2 = new WithBrowserConfig();
-		$test_case2->setSessionStrategyManager($mock);
+		$test_case2->setSessionStrategyManager($manager);
 
 		$this->assertSame($test_case1->getSessionStrategy(), $test_case2->getSessionStrategy());
 	}
@@ -179,23 +178,33 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetSession()
 	{
-		/* @var $expected_session Session */
-		$expected_session = m::mock('\\Behat\\Mink\\Session');
-
 		$browser = $this->getBrowser();
+
+		$expected_session1 = m::mock('\\Behat\\Mink\\Session');
+		$expected_session1->shouldReceive('isStarted')->withNoArgs()->once()->andReturn(false);
+
+		$expected_session2 = m::mock('\\Behat\\Mink\\Session');
+		$expected_session2->shouldReceive('isStarted')->withNoArgs()->once()->andReturn(true);
 
 		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
-		$session_strategy->shouldReceive('session')->with($browser)->andReturn($expected_session);
+		$session_strategy->shouldReceive('session')->with($browser)->andReturn($expected_session1, $expected_session2);
 
 		$test_case = $this->getFixture($session_strategy);
 		$test_case->setBrowser($browser);
+		$test_case->setTestResultObject($this->getTestResult($test_case, 0));
 
+		// create session when missing
 		$session1 = $test_case->getSession();
-		$session2 = $test_case->getSession();
+		$this->assertSame($expected_session1, $session1);
 
-		$this->assertSame($expected_session, $session1);
-		$this->assertSame($session1, $session2);
+		// create session when present, but stopped
+		$session2 = $test_case->getSession();
+		$this->assertSame($expected_session2, $session2);
+
+		// reuse created session, when started
+		$session3 = $test_case->getSession();
+		$this->assertSame($session2, $session3);
 	}
 
 	/**
@@ -241,9 +250,51 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
+	public function testGetCollectCodeCoverageInformationSuccess()
+	{
+		$test_case = $this->getFixture();
+		$test_result = $this->getTestResult($test_case, 0, true);
+		$test_case->setTestResultObject($test_result);
+
+		$this->assertTrue($test_case->getCollectCodeCoverageInformation());
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 * @expectedException \RuntimeException
+	 */
+	public function testGetCollectCodeCoverageInformationFailure()
+	{
+		$this->getFixture()->getCollectCodeCoverageInformation();
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
 	public function testRun()
 	{
-		$this->markTestSkipped('TODO');
+		/* @var $test_case BrowserTestCase */
+		list($test_case,) = $this->prepareForRun();
+		$result = $this->getTestResult($test_case, 1);
+
+		$this->assertSame($result, $test_case->run($result));
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testRunCreateResult()
+	{
+		/* @var $test_case BrowserTestCase */
+		list($test_case,) = $this->prepareForRun();
+
+		$this->assertInstanceOf('\\PHPUnit_Framework_TestResult', $test_case->run());
 	}
 
 	/**
@@ -253,17 +304,36 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testRunWithCoverage()
 	{
-//		// create coverage
-//		$mock_coverage = m::mock('\\PHP_CodeCoverage');
-//
-//		// create result
-//		$mock_result = m::mock('\PHPUnit_Framework_TestResult');
-//		$mock_result->setCodeCoverage($mock_coverage);
-//
-//		$test_case = new WithoutBrowserConfig();
-//		$result = $test_case->run($mock_result);
+		/* @var $test_case BrowserTestCase */
+		/* @var $session_strategy ISessionStrategy */
+		list($test_case, $session_strategy) = $this->prepareForRun(array('getRemoteCodeCoverageInformation'));
+		$test_case->setName('getTestId');
 
-		$this->markTestSkipped('TODO');
+		$expected_coverage = array('test1' => 'test2');
+		$test_case->shouldReceive('getRemoteCodeCoverageInformation')->andReturn($expected_coverage);
+
+		$code_coverage = m::mock('\\PHP_CodeCoverage');
+		$code_coverage->shouldReceive('append')->with($expected_coverage, $test_case)->once()->andReturnNull();
+
+		$result = $this->getTestResult($test_case, 1, true);
+		$result->shouldReceive('getCodeCoverage')->once()->andReturn($code_coverage);
+
+		$test_id = $test_case->getTestId();
+		$this->assertEmpty($test_id);
+
+		$browser = $test_case->getBrowser();
+		$browser->shouldReceive('getBaseUrl')->once()->andReturn('A');
+
+		$session = m::mock('\\Behat\\Mink\\Session');
+		$session->shouldReceive('visit')->with('A')->once()->andReturnNull();
+		$session->shouldReceive('setCookie')->with('PHPUNIT_SELENIUM_TEST_ID', null)->once()->andReturnNull();
+		$session->shouldReceive('setCookie')->with('PHPUNIT_SELENIUM_TEST_ID', m::not(''))->once()->andReturnNull();
+
+		$session_strategy->shouldReceive('session')->once()->andReturn($session);
+
+		$test_case->run($result);
+
+		$this->assertNotEmpty($test_case->getTestId());
 	}
 
 	/**
@@ -271,23 +341,38 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testRunWithSauce()
+	public function testEndOfTestCase()
 	{
-		$this->markTestSkipped('TODO');
+		/* @var $session_strategy \aik099\PHPUnit\SessionStrategy\ISessionStrategy */
+		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
+		$session_strategy->shouldReceive('endOfTestCase')->with(null)->once()->andReturnNull();
+
+		$test_case = new WithoutBrowserConfig();
+		$test_case->setSessionStrategy($session_strategy);
+
+		$this->assertSame($test_case, $test_case->endOfTestCase());
 	}
 
 	/**
 	 * Test description.
 	 *
 	 * @return void
+	 * @expectedException \Exception
+	 * @expectedExceptionMessage MSG_TEST
 	 */
-	public function testGetRemoteCodeCoverage()
+	public function testNotSuccessfulTest()
 	{
-		$test_case = $this->getFixture();
+		/* @var $session_strategy ISessionStrategy */
+		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
+		$session_strategy->shouldReceive('notSuccessfulTest')->once()->andReturnNull();
 
-//		$remote_coverage = $test_case->getRemoteCodeCoverage();
+		$test_case = $this->getFixture($session_strategy);
+		$test_case->setSessionStrategy($session_strategy);
 
-		$this->markTestSkipped('TODO');
+		$reflection_method = new \ReflectionMethod($test_case, 'onNotSuccessfulTest');
+		$reflection_method->setAccessible(true);
+
+		$reflection_method->invokeArgs($test_case, array(new \Exception('MSG_TEST')));
 	}
 
 	/**
@@ -298,6 +383,51 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	public function testGetTestId()
 	{
 		$this->markTestSkipped('TODO');
+	}
+
+	/**
+	 * Prepares test case to be used by "run" method.
+	 *
+	 * @param array $mock_methods Method names to mock.
+	 *
+	 * @return array
+	 */
+	protected function prepareForRun(array $mock_methods = array())
+	{
+		/* @var $session_strategy ISessionStrategy */
+		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
+		$session_strategy->shouldReceive('endOfTest')->once()->andReturnNull();
+
+		$test_case = $this->getFixture($session_strategy, $mock_methods);
+		$test_case->setName('testSuccess');
+
+		$browser = $this->getBrowser();
+		$browser->shouldReceive('testSetUpHook')->once()->andReturnNull();
+		$browser->shouldReceive('testAfterRunHook')->with($test_case, m::any())->once()->andReturnNull();
+		$test_case->setBrowser($browser);
+
+		return array($test_case, $session_strategy);
+	}
+
+	/**
+	 * Returns test result.
+	 *
+	 * @param BrowserTestCase $test_case        Browser test case.
+	 * @param integer         $run_count        Test run count.
+	 * @param boolean         $collect_coverage Should collect coverage information.
+	 *
+	 * @return \PHPUnit_Framework_TestResult|\Mockery\Expectation
+	 */
+	protected function getTestResult(BrowserTestCase $test_case, $run_count, $collect_coverage = false)
+	{
+		$result = m::mock('\\PHPUnit_Framework_TestResult');
+		$result->shouldReceive('getCollectCodeCoverageInformation')->withNoArgs()->andReturn($collect_coverage);
+
+		$result->shouldReceive('run')->with($test_case)->times($run_count)->andReturnUsing(function () use ($test_case) {
+			$test_case->runBare();
+		});
+
+		return $result;
 	}
 
 	/**

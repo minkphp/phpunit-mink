@@ -17,7 +17,7 @@ if ( !is_dir($vendor_path) ) {
 	exit(1);
 }
 
-require_once($vendor_path . '/autoload.php');
+require_once ($vendor_path . '/autoload.php');
 
 $auto_loader = new \Composer\Autoload\ClassLoader();
 $auto_loader->add("aik099\\", FULL_PATH . '/library/');

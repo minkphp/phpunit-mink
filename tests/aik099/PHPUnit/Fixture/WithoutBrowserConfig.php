@@ -17,23 +17,23 @@ class WithoutBrowserConfig extends BrowserTestCase
 {
 
 	/**
-	 * Test One.
+	 * Test, that always succeeds.
 	 *
 	 * @return void
 	 */
-	public function testOne()
+	public function testSuccess()
 	{
 
 	}
 
 	/**
-	 * Test One.
+	 * Test, that always fails.
 	 *
 	 * @return void
 	 */
-	public function testTwo()
+	public function testFailure()
 	{
-
+		$this->fail('Test, that always fails');
 	}
 
 }

@@ -25,7 +25,7 @@ class RemoteCoverageTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testIncorrectScriptUrl()
 	{
-		$remote_coverage = new RemoteCoverage('', 'test_id');
+		new RemoteCoverage('', 'test_id');
 	}
 
 	/**

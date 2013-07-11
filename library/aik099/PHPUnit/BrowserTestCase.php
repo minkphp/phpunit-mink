@@ -77,13 +77,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	private $_testId;
 
 	/**
-	 * Whatever or not code coverage information should be gathered.
-	 *
-	 * @var boolean
-	 */
-	private $_collectCodeCoverageInformation;
-
-	/**
 	 * Sets session strategy manager.
 	 *
 	 * @param SessionStrategyManager $session_strategy_manager Session strategy manager.
@@ -196,23 +189,13 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Called, when last test in a test case has ended.
-	 *
-	 * @return self
-	 */
-	public function endOfTestCase()
-	{
-		return $this->_handleEnd('test_case');
-	}
-
-	/**
 	 * Creates Mink session using current session strategy and returns it.
 	 *
 	 * @return Session
 	 */
 	public function getSession()
 	{
-		if ( $this->_session ) {
+		if ( $this->_session && $this->_session->isStarted() ) {
 			return $this->_session;
 		}
 
@@ -221,7 +204,7 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 		try {
 			$this->_session = $this->getSessionStrategy()->session($browser);
 
-			if ( $this->_collectCodeCoverageInformation ) {
+			if ( $this->getCollectCodeCoverageInformation() ) {
 				$this->_session->visit($browser->getBaseUrl());
 			}
 		}
@@ -245,26 +228,39 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 */
 	public function run(\PHPUnit_Framework_TestResult $result = null)
 	{
-		$this->_testId = get_class($this) . '__' . $this->getName();
-
 		if ( $result === null ) {
 			$result = $this->createResult();
 		}
 
-		$this->_collectCodeCoverageInformation = $result->getCollectCodeCoverageInformation();
-
 		parent::run($result);
 
-		if ( $this->_collectCodeCoverageInformation ) {
-			$result->getCodeCoverage()->append($this->getRemoteCodeCoverage()->get(), $this);
+		if ( $result->getCollectCodeCoverageInformation() ) {
+			$result->getCodeCoverage()->append($this->getRemoteCodeCoverageInformation(), $this);
 		}
 
 		$this->getBrowser()->testAfterRunHook($this, $result);
 
 		// do not call this before to give the time to the Listeners to run
-		$this->_handleEnd('test');
+		$this->getSessionStrategy()->endOfTest($this->_session);
 
 		return $result;
+	}
+
+	/**
+	 * Whatever or not code coverage information should be gathered.
+	 *
+	 * @return boolean
+	 * @throws \RuntimeException When used before test is started.
+	 */
+	public function getCollectCodeCoverageInformation()
+	{
+		$result = $this->getTestResultObject();
+
+		if ( !is_object($result) ) {
+			throw new \RuntimeException('Test must be started before attempting to collect coverage information');
+		}
+
+		return $result->getCollectCodeCoverageInformation();
 	}
 
 	/**
@@ -275,7 +271,9 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 */
 	protected function runTest()
 	{
-		if ( $this->_collectCodeCoverageInformation ) {
+		if ( $this->getCollectCodeCoverageInformation() ) {
+			$this->_testId = get_class($this) . '__' . $this->getName();
+
 			$session = $this->getSession();
 			$session->setCookie('PHPUNIT_SELENIUM_TEST_ID', null);
 			$session->setCookie('PHPUNIT_SELENIUM_TEST_ID', $this->_testId);
@@ -285,40 +283,27 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Returns remote code coverage information.
+	 * Called, when last test in a test case has ended.
 	 *
-	 * @return RemoteCoverage
+	 * @return self
 	 */
-	public function getRemoteCodeCoverage()
+	public function endOfTestCase()
 	{
-		return new RemoteCoverage($this->coverageScriptUrl, $this->_testId);
+		$this->getSessionStrategy()->endOfTestCase($this->_session);
+
+		return $this;
 	}
 
 	/**
-	 * Handles test or test case end.
+	 * Returns remote code coverage information.
 	 *
-	 * @param string $item Item code.
-	 *
-	 * @return self
-	 * @throws \InvalidArgumentException When incorrect item to handle is given.
+	 * @return array
 	 */
-	private function _handleEnd($item)
+	public function getRemoteCodeCoverageInformation()
 	{
-		if ( $item == 'test' ) {
-			$this->getSessionStrategy()->endOfTest($this->_session);
-		}
-		elseif ( $item == 'test_case' ) {
-			$this->getSessionStrategy()->endOfTestCase($this->_session);
-		}
-		else {
-			throw new \InvalidArgumentException(sprintf('Unknown item "%s" to stop', $item));
-		}
+		$remote_coverage = new RemoteCoverage($this->coverageScriptUrl, $this->_testId);
 
-		if ( ($this->_session !== null) && !$this->_session->isStarted() ) {
-			$this->_session = null;
-		}
-
-		return $this;
+		return $remote_coverage->get();
 	}
 
 	/**

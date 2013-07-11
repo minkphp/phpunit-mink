@@ -246,8 +246,6 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	 */
 	public function testAfterRunHook()
 	{
-
-
 		$this->markTestSkipped('TODO');
 	}
 

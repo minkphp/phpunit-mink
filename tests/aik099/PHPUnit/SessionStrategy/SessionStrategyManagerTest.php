@@ -11,7 +11,6 @@
 namespace tests\aik099\PHPUnit\SessionStrategy;
 
 
-use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
 use Mockery as m;
 
