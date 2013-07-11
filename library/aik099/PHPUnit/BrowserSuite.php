@@ -61,18 +61,4 @@ class BrowserSuite extends TestSuiteBase
 		return $this;
 	}
 
-	/**
-	 * Template Method that is called after the tests of this test suite have finished running.
-	 *
-	 * @return void
-	 */
-	protected function tearDown()
-	{
-		/* @var $test BrowserTestCase */
-
-		foreach ( $this->tests() as $test ) {
-			$test->endOfTestCase();
-		}
-	}
-
 }

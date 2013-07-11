@@ -65,4 +65,29 @@ abstract class TestSuiteBase extends \PHPUnit_Framework_TestSuite
 		return $this;
 	}
 
+	/**
+	 * Report back suite ending to each it's test.
+	 *
+	 * @return void
+	 */
+	protected function tearDown()
+	{
+		/* @var $test BrowserTestCase */
+
+		foreach ( $this->tests() as $test ) {
+			$test->endOfTestCase();
+		}
+	}
+
+	/**
+	 * Indicates end of the test suite.
+	 *
+	 * @return void
+	 * @codeCoverageIgnore
+	 */
+	public function endOfTestCase()
+	{
+		// method created just to simplify tearDown method
+	}
+
 }

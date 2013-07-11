@@ -52,16 +52,6 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testSauceBrowserPatching()
-	{
-		$this->markTestSkipped('TODO');
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
 	public function testSetBrowserCorrect()
 	{
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
@@ -373,16 +363,6 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 		$reflection_method->setAccessible(true);
 
 		$reflection_method->invokeArgs($test_case, array(new \Exception('MSG_TEST')));
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testGetTestId()
-	{
-		$this->markTestSkipped('TODO');
 	}
 
 	/**

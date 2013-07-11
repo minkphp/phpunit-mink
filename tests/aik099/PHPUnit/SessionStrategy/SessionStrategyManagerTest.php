@@ -70,10 +70,34 @@ class SessionStrategyManagerTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
+	public function testGetSessionStrategyIsolated()
+	{
+		$actual = $this->manager->getSessionStrategy(SessionStrategyManager::ISOLATED_STRATEGY, 'IS1');
+
+		$this->assertInstanceOf('\\aik099\\PHPUnit\\SessionStrategy\\IsolatedSessionStrategy', $actual);
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
 	public function testCreateSessionStrategyIsolated()
 	{
 		$expected = '\\aik099\\PHPUnit\\SessionStrategy\\IsolatedSessionStrategy';
 		$this->assertInstanceOf($expected, $this->manager->createSessionStrategy(false));
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testGetSessionStrategyShared()
+	{
+		$actual = $this->manager->getSessionStrategy(SessionStrategyManager::SHARED_STRATEGY, 'SH1');
+
+		$this->assertInstanceOf('\\aik099\\PHPUnit\\SessionStrategy\\SharedSessionStrategy', $actual);
 	}
 
 	/**

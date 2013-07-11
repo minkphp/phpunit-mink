@@ -12,11 +12,21 @@ namespace tests\aik099\PHPUnit;
 
 
 use aik099\PHPUnit\BrowserSuite;
+use aik099\PHPUnit\TestSuite;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
+use Mockery as m;
 
 class SuiteBuildingTest extends \PHPUnit_Framework_TestCase
 {
+
+	const SUITE_CLASS = '\\aik099\\PHPUnit\\TestSuite';
+
+	const BROWSER_SUITE_CLASS = '\\aik099\\PHPUnit\\BrowserSuite';
+
+	const TEST_CASE_WITH_CONFIG = '\\tests\\aik099\\PHPUnit\\Fixture\\WithBrowserConfig';
+
+	const TEST_CASE_WITHOUT_CONFIG = '\\tests\\aik099\\PHPUnit\\Fixture\\WithoutBrowserConfig';
 
 	/**
 	 * Tests, that suite is built correctly in case, when static $browsers array is filled-in in test case class.
@@ -25,18 +35,17 @@ class SuiteBuildingTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testWithBrowserConfiguration()
 	{
-		$test_case_class = '\\tests\\aik099\\PHPUnit\\Fixture\\WithBrowserConfig';
-		$suite = WithBrowserConfig::suite($test_case_class);
+		$suite = WithBrowserConfig::suite(self::TEST_CASE_WITH_CONFIG);
 
-		$this->assertInstanceOf('\\aik099\\PHPUnit\\TestSuite', $suite);
+		$this->assertInstanceOf(self::SUITE_CLASS, $suite);
 
 		$tests = $suite->tests();
 		/* @var $tests BrowserSuite[] */
 
-		$this->checkArray($tests, 2, '\\aik099\\PHPUnit\\BrowserSuite');
+		$this->checkArray($tests, 2, self::BROWSER_SUITE_CLASS);
 
 		foreach ( $tests as $test ) {
-			$this->checkArray($test->tests(), 2, $test_case_class);
+			$this->checkArray($test->tests(), 2, self::TEST_CASE_WITH_CONFIG);
 		}
 	}
 
@@ -47,12 +56,55 @@ class SuiteBuildingTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testWithoutBrowserConfiguration()
 	{
-		$test_case_class = '\\tests\\aik099\\PHPUnit\\Fixture\\WithoutBrowserConfig';
-		$suite = WithoutBrowserConfig::suite($test_case_class);
+		$suite = WithoutBrowserConfig::suite(self::TEST_CASE_WITHOUT_CONFIG);
 
-		$this->assertInstanceOf('\\aik099\\PHPUnit\\TestSuite', $suite);
+		$this->assertInstanceOf(self::SUITE_CLASS, $suite);
 
-		$this->checkArray($suite->tests(), 2, $test_case_class);
+		$this->checkArray($suite->tests(), 2, self::TEST_CASE_WITHOUT_CONFIG);
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testSuiteTearDown()
+	{
+		$sub_browser_suite = $this->createTestSuite(self::BROWSER_SUITE_CLASS);
+		$sub_test_suite = $this->createTestSuite(self::SUITE_CLASS);
+
+		$suite = new TestSuite();
+		$suite->setName(self::TEST_CASE_WITH_CONFIG);
+		$suite->addTest($sub_browser_suite);
+		$suite->addTest($sub_test_suite);
+
+		$result = m::mock('\\PHPUnit_Framework_TestResult');
+		$result->shouldReceive('startTestSuite')->andReturnNull();
+		$result->shouldReceive('shouldStop')->andReturn(false);
+		$result->shouldReceive('endTestSuite')->andReturnNull();
+
+		$this->assertSame($result, $suite->run($result));
+	}
+
+	/**
+	 * Creates test suite.
+	 *
+	 * @param string $class_name Class name.
+	 *
+	 * @return TestSuite
+	 */
+	protected function createTestSuite($class_name)
+	{
+		$suite = m::mock($class_name);
+
+		$suite->shouldReceive('getGroups')->once()->andReturn(array());
+		$suite->shouldReceive('setBackupGlobals')->andReturnNull();
+		$suite->shouldReceive('setBackupStaticAttributes')->andReturnNull();
+
+		$suite->shouldReceive('run')->once()->andReturnNull();
+		$suite->shouldReceive('endOfTestCase')->once()->andReturnNull();
+
+		return $suite;
 	}
 
 	/**
