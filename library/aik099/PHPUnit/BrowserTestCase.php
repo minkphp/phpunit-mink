@@ -216,18 +216,18 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 			return $this->_session;
 		}
 
+		$browser = $this->getBrowser();
+
 		try {
-			$this->_session = $this->getSessionStrategy()->session($this->getBrowser());
+			$this->_session = $this->getSessionStrategy()->session($browser);
 
 			if ( $this->_collectCodeCoverageInformation ) {
-				$this->_session->visit($this->getBrowser()->getBaseUrl());
+				$this->_session->visit($browser->getBaseUrl());
 			}
 		}
 		catch ( DriverException $e ) {
-			$this->markTestSkipped(sprintf(
-				'The Selenium Server is not active on host %s at port %s.',
-				$this->getBrowser()->getHost(), $this->getBrowser()->getPort()
-			));
+			$message = 'The Selenium Server is not active on host %s at port %s';
+			$this->markTestSkipped(sprintf($message, $browser->getHost(), $browser->getPort()));
 		}
 
 		return $this->_session;
@@ -275,29 +275,13 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 */
 	protected function runTest()
 	{
-		$session = $this->getSession();
-		$result = $thrown_exception = null;
-
 		if ( $this->_collectCodeCoverageInformation ) {
+			$session = $this->getSession();
 			$session->setCookie('PHPUNIT_SELENIUM_TEST_ID', null);
 			$session->setCookie('PHPUNIT_SELENIUM_TEST_ID', $this->_testId);
 		}
 
-		try {
-			$result = parent::runTest();
-
-			/*if ( !empty($this->verificationErrors) ) {
-				$this->fail(implode("\n", $this->verificationErrors));
-			}*/
-		} catch ( \Exception $e ) {
-			$thrown_exception = $e;
-		}
-
-		if ( $thrown_exception !== null ) {
-			throw $thrown_exception;
-		}
-
-		return $result;
+		return parent::runTest();
 	}
 
 	/**

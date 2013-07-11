@@ -1,0 +1,1 @@
+a:1:{s:75:"/home/giorgio/code/phpunit-mink/tests/aik099/PHPUnit/Fixture/DummyClass.php";a:2:{s:3:"md5";s:32:"290172d322b7de8b5898e54deadbb33e";s:8:"coverage";a:6:{i:3;i:1;i:6;i:1;i:7;i:-2;i:11;i:-1;i:12;i:-2;i:14;i:1;}}}

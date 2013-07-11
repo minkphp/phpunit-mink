@@ -15,12 +15,15 @@ use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\SessionStrategy\ISessionStrategy;
 use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
+use Behat\Mink\Session;
 use Mockery as m;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 
 class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 {
+
+	const BROWSER_CLASS = '\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
 
 	const MANAGER_CLASS = '\\aik099\\PHPUnit\\SessionStrategy\\SessionStrategyManager';
 
@@ -97,8 +100,7 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 			'browserName' => 'safari',
 		)));
 
-		$expected = '\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
-		$this->assertInstanceOf($expected, $test_case->getBrowser());
+		$this->assertInstanceOf(self::BROWSER_CLASS, $test_case->getBrowser());
 	}
 
 	/**
@@ -177,7 +179,61 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetSession()
 	{
-		$this->markTestSkipped('TODO');
+		/* @var $expected_session Session */
+		$expected_session = m::mock('\\Behat\\Mink\\Session');
+
+		$browser = $this->getBrowser();
+
+		/* @var $session_strategy ISessionStrategy */
+		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
+		$session_strategy->shouldReceive('session')->with($browser)->andReturn($expected_session);
+
+		$test_case = $this->getFixture($session_strategy);
+		$test_case->setBrowser($browser);
+
+		$session1 = $test_case->getSession();
+		$session2 = $test_case->getSession();
+
+		$this->assertSame($expected_session, $session1);
+		$this->assertSame($session1, $session2);
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 * @expectedException \Exception
+	 * @expectedExceptionMessage MSG_SKIP
+	 */
+	public function testGetSessionDriverError()
+	{
+		$browser = $this->getBrowser();
+
+		/* @var $session_strategy ISessionStrategy */
+		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
+		$session_strategy->shouldReceive('session')->andThrow('\Behat\Mink\Exception\DriverException');
+
+		$test_case = $this->getFixture($session_strategy, array('markTestSkipped'));
+		$test_case->setBrowser($browser);
+
+		$test_case->shouldReceive('markTestSkipped')->once()->andThrow('\Exception', 'MSG_SKIP');
+		$test_case->getSession();
+	}
+
+	/**
+	 * Returns browser mock.
+	 *
+	 * @return BrowserConfiguration
+	 */
+	protected function getBrowser()
+	{
+		$browser = m::mock(self::BROWSER_CLASS);
+		$browser->shouldReceive('getSessionStrategy')->once()->andReturnNull();
+		$browser->shouldReceive('getSessionStrategyHash')->once()->andReturnNull();
+		$browser->shouldReceive('getHost')->andReturnNull();
+		$browser->shouldReceive('getPort')->andReturnNull();
+
+		return $browser;
 	}
 
 	/**
@@ -227,6 +283,10 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetRemoteCodeCoverage()
 	{
+		$test_case = $this->getFixture();
+
+//		$remote_coverage = $test_case->getRemoteCodeCoverage();
+
 		$this->markTestSkipped('TODO');
 	}
 
@@ -241,65 +301,31 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testGetSaucePassed()
-	{
-		$this->markTestSkipped('TODO');
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testGetSauceLabsConnectorCorrect()
-	{
-		$this->markTestSkipped('TODO');
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testGetSauceLabsConnectorIncorrect()
-	{
-		$this->markTestSkipped('TODO');
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testWithSauce()
-	{
-		$this->markTestSkipped('TODO');
-	}
-
-	/**
 	 * Returns test case fixture.
 	 *
 	 * @param ISessionStrategy|null $session_strategy Session strategy.
+	 * @param array                 $mock_methods     Method names to mock.
 	 *
 	 * @return WithoutBrowserConfig
 	 */
-	protected function getFixture(ISessionStrategy $session_strategy = null)
+	protected function getFixture(ISessionStrategy $session_strategy = null, array $mock_methods = array())
 	{
-		/* @var $manager_mock \aik099\PHPUnit\SessionStrategy\SessionStrategyManager */
-		$manager_mock = m::mock(self::MANAGER_CLASS);
-
 		if ( !isset($session_strategy) ) {
 			$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 		}
 
-		$test_case = new WithoutBrowserConfig();
-		$manager_mock->shouldReceive('getSessionStrategy')->andReturn($session_strategy);
+		/* @var $manager \aik099\PHPUnit\SessionStrategy\SessionStrategyManager */
+		$manager = m::mock(self::MANAGER_CLASS);
+		$manager->shouldReceive('getSessionStrategy')->andReturn($session_strategy);
 
-		$test_case->setSessionStrategyManager($manager_mock);
+		if ( $mock_methods ) {
+			$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase[' . implode(',', $mock_methods) . ']');
+		}
+		else {
+			$test_case = new WithoutBrowserConfig();
+		}
+
+		$test_case->setSessionStrategyManager($manager);
 
 		return $test_case;
 	}

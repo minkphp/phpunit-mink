@@ -13,6 +13,8 @@ namespace aik099\PHPUnit\Common;
 
 /**
  * Class collects remove code coverage information and maps patch from remote to local server.
+ *
+ * @method \Mockery\Expectation shouldReceive
  */
 class RemoteCoverage
 {
@@ -36,11 +38,27 @@ class RemoteCoverage
 	 *
 	 * @param string $coverage_script_url Coverage script irl.
 	 * @param string $test_id             Test ID.
+	 *
+	 * @throws \InvalidArgumentException When empty coverage script url given.
 	 */
 	public function __construct($coverage_script_url, $test_id)
 	{
+		if ( empty($coverage_script_url) ) {
+			throw new \InvalidArgumentException('Coverage script url is empty');
+		}
+
 		$this->_coverageScriptUrl = $coverage_script_url;
 		$this->_testId = $test_id;
+	}
+
+	/**
+	 * Returns raw remote coverage information.
+	 *
+	 * @return string
+	 */
+	public function getFetchUrl()
+	{
+		return sprintf('%s?PHPUNIT_SELENIUM_TEST_ID=%s', $this->_coverageScriptUrl, $this->_testId);
 	}
 
 	/**
@@ -51,21 +69,17 @@ class RemoteCoverage
 	 */
 	public function get()
 	{
-		if ( !empty($this->_coverageScriptUrl) ) {
-			$url = sprintf('%s?PHPUNIT_SELENIUM_TEST_ID=%s', $this->_coverageScriptUrl, $this->_testId);
+		$url = $this->getFetchUrl();
+		$buffer = file_get_contents($url);
 
-			$buffer = file_get_contents($url);
+		if ( $buffer !== false ) {
+			$coverage_data = unserialize($buffer);
 
-			if ( $buffer !== false ) {
-				$coverage_data = unserialize($buffer);
-
-				if ( is_array($coverage_data) ) {
-					return $this->matchLocalAndRemotePaths($coverage_data);
-				}
-				else {
-					throw new \Exception('Empty or invalid code coverage data received from url "' . $url . '"');
-				}
+			if ( is_array($coverage_data) ) {
+				return $this->matchLocalAndRemotePaths($coverage_data);
 			}
+
+			throw new \RuntimeException(sprintf('Empty or invalid code coverage data received from url "%s"', $url));
 		}
 
 		return array();

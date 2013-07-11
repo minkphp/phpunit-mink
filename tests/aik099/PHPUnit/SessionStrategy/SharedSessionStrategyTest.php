@@ -20,6 +20,8 @@ use Mockery as m;
 class SharedSessionStrategyTest extends \PHPUnit_Framework_TestCase
 {
 
+	const BROWSER_CLASS = '\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
+
 	const SESSION_CLASS = '\\Behat\\Mink\\Session';
 
 	/**
@@ -28,6 +30,13 @@ class SharedSessionStrategyTest extends \PHPUnit_Framework_TestCase
 	 * @var SharedSessionStrategy
 	 */
 	protected $strategy;
+
+	/**
+	 * Isolated strategy.
+	 *
+	 * @var IsolatedSessionStrategy
+	 */
+	protected $isolatedStrategy;
 
 	/**
 	 * First created session.
@@ -52,29 +61,11 @@ class SharedSessionStrategyTest extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		$this->session1 = $this->createSessionMock();
-		$this->session2 = $this->createSessionMock();
+		$this->session1 = $this->createSession();
+		$this->session2 = $this->createSession();
 
-		$isolated_strategy = m::mock('\\aik099\\PHPUnit\\SessionStrategy\\IsolatedSessionStrategy');
-		/* @var $isolated_strategy IsolatedSessionStrategy */
-
-		$isolated_strategy->shouldReceive('session')->andReturn($this->session1, $this->session2);
-
-		$this->strategy = new SharedSessionStrategy($isolated_strategy);
-	}
-
-	/**
-	 * Creates session mock.
-	 *
-	 * @return Session
-	 */
-	protected function createSessionMock()
-	{
-		$session = m::mock(self::SESSION_CLASS);
-		$session->shouldReceive('getDriver')->andReturnNull();
-		$session->shouldReceive('switchToWindow')->with(null)->andReturnNull();
-
-		return $session;
+		$this->isolatedStrategy = m::mock('\\aik099\\PHPUnit\\SessionStrategy\\IsolatedSessionStrategy');
+		$this->strategy = new SharedSessionStrategy($this->isolatedStrategy);
 	}
 
 	/**
@@ -84,8 +75,10 @@ class SharedSessionStrategyTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSessionSharing()
 	{
-		$browser = m::mock('\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration');
+		$browser = m::mock(self::BROWSER_CLASS);
 		/* @var $browser BrowserConfiguration */
+
+		$this->isolatedStrategy->shouldReceive('session')->once()->with($browser)->andReturn($this->session1);
 
 		$this->assertSame($this->session1, $this->strategy->session($browser));
 		$this->assertSame($this->session1, $this->strategy->session($browser));
@@ -99,11 +92,15 @@ class SharedSessionStrategyTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSessionResetOnFailure()
 	{
-		$browser = m::mock('\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration');
+		$browser = m::mock(self::BROWSER_CLASS);
 		/* @var $browser BrowserConfiguration */
 
+		$this->isolatedStrategy
+		->shouldReceive('session')->twice()->with($browser)->andReturn($this->session1, $this->session2);
+
+		$this->session1->shouldReceive('stop')->once()->andReturnNull();
+
 		$session = $this->strategy->session($browser);
-		$session->shouldReceive('stop')->once()->andReturnNull();
 		$this->assertSame($this->session1, $session);
 
 		$this->strategy->notSuccessfulTest(new \Exception());
@@ -139,10 +136,9 @@ class SharedSessionStrategyTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testEndOfTestCaseWithSession()
 	{
-		$session = m::mock(self::SESSION_CLASS);
-		/* @var $session \Behat\Mink\Session */
-
+		$session = $this->createSession();
 		$session->shouldReceive('stop')->withNoArgs()->once()->andReturnNull();
+
 		$this->assertSame($this->strategy, $this->strategy->endOfTestCase($session));
 	}
 
@@ -154,6 +150,20 @@ class SharedSessionStrategyTest extends \PHPUnit_Framework_TestCase
 	public function testEndOfTestCaseWithoutSession()
 	{
 		$this->assertSame($this->strategy, $this->strategy->endOfTestCase());
+	}
+
+	/**
+	 * Creates session mock.
+	 *
+	 * @return Session
+	 */
+	protected function createSession()
+	{
+		$session = m::mock(self::SESSION_CLASS);
+		$session->shouldReceive('getDriver')->andReturnNull();
+		$session->shouldReceive('switchToWindow')->with(null)->andReturnNull();
+
+		return $session;
 	}
 
 }
