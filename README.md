@@ -1,7 +1,9 @@
 # phpunit-mink
 Extension for PHPUnit, that allows to write tests, that are using Mink with ease.
 
-### Usage
+[![Build Status](https://travis-ci.org/aik099/phpunit-mink.png?branch=master)](https://travis-ci.org/aik099/phpunit-mink)
+
+## Usage
 
 1. create subclass from `\aik099\PHPUnit\BrowserTestCase` class
 2. define used browser configurations in static `$browsers` property in that class
