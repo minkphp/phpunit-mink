@@ -278,9 +278,12 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * Test description.
 	 *
+	 * @param array $desired_capabilities Desired capabilities.
+	 * @param array $expected             Expected capabilities.
+	 *
 	 * @return void
 	 */
-	public function testSetDesiredCapabilitiesCorrect()
+	public function testSetDesiredCapabilitiesCorrect(array $desired_capabilities, array $expected)
 	{
 		$expected = array('k1' => 'v1', 'k2' => 'v2');
 		$this->assertSame($this->browser, $this->browser->setDesiredCapabilities($expected));
