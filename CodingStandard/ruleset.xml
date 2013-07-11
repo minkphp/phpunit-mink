@@ -61,8 +61,6 @@
 
 	<rule ref="Squiz.Classes.LowercaseClassKeywords"/>
 	<rule ref="Squiz.Classes.SelfMemberReference"/>
-
-		<!--Temporarily comment-out, because with have both "kUploadFormatter" and "UserEventHandler" class type-->
 		<rule ref="Squiz.Classes.ValidClassName"/>
 
 		<!--
