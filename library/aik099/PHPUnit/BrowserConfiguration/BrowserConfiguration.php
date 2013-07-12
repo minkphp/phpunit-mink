@@ -36,7 +36,7 @@ class BrowserConfiguration
 	 *
 	 * @var array
 	 */
-	private $_aliases;
+	protected $aliases;
 
 	/**
 	 * Creates browser configuration.
@@ -60,7 +60,7 @@ class BrowserConfiguration
 			'sessionStrategy' => SessionStrategyManager::ISOLATED_STRATEGY,
 		);
 
-		$this->_aliases = $aliases;
+		$this->aliases = $aliases;
 	}
 
 	/**
@@ -72,7 +72,7 @@ class BrowserConfiguration
 	 */
 	public function setup(array $parameters)
 	{
-		$parameters = array_merge($this->parameters, $this->resolveAlias($parameters));
+		$parameters = array_merge($this->parameters, self::resolveAliases($parameters, $this->aliases));
 
 		$this->setHost($parameters['host'])->setPort($parameters['port'])->setTimeout($parameters['timeout']);
 		$this->setBrowserName($parameters['browserName'])->setDesiredCapabilities($parameters['desiredCapabilities']);
@@ -383,11 +383,12 @@ class BrowserConfiguration
 	 * Resolves browser alias into corresponding browser configuration.
 	 *
 	 * @param array $parameters Browser configuration.
+	 * @param array $aliases    Browser configuration aliases.
 	 *
 	 * @return array
 	 * @throws \InvalidArgumentException When unable to resolve used browser alias.
 	 */
-	protected function resolveAlias(array $parameters)
+	public static function resolveAliases(array $parameters, array $aliases)
 	{
 		if ( !isset($parameters['alias']) ) {
 			return $parameters;
@@ -396,10 +397,10 @@ class BrowserConfiguration
 		$browser_alias = $parameters['alias'];
 		unset($parameters['alias']);
 
-		if ( isset($this->_aliases[$browser_alias]) ) {
-			$candidate_params = $this->arrayMergeRecursive($this->_aliases[$browser_alias], $parameters);
+		if ( isset($aliases[$browser_alias]) ) {
+			$candidate_params = self::arrayMergeRecursive($aliases[$browser_alias], $parameters);
 
-			return $this->resolveAlias($candidate_params);
+			return self::resolveAliases($candidate_params, $aliases);
 		}
 
 		throw new \InvalidArgumentException(sprintf('Unable to resolve "%s" browser alias', $browser_alias));
@@ -415,7 +416,7 @@ class BrowserConfiguration
 	 *
 	 * @return array
 	 */
-	protected function arrayMergeRecursive($array1, $array2)
+	protected static function arrayMergeRecursive($array1, $array2)
 	{
 		if ( !is_array($array1) || !is_array($array2) ) {
 			return $array2;
@@ -423,7 +424,7 @@ class BrowserConfiguration
 
 		foreach ( $array2 as $array2_key => $array2_value ) {
 			if ( isset($array1[$array2_key]) ) {
-				$array1[$array2_key] = $this->arrayMergeRecursive($array1[$array2_key], $array2_value);
+				$array1[$array2_key] = self::arrayMergeRecursive($array1[$array2_key], $array2_value);
 			}
 			else {
 				$array1[$array2_key] = $array2_value;

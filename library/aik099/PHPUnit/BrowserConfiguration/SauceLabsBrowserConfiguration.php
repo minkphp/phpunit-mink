@@ -44,7 +44,7 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	 */
 	public function setup(array $parameters)
 	{
-		$parameters = array_merge($this->parameters, $this->resolveAlias($parameters));
+		$parameters = array_merge($this->parameters, self::resolveAliases($parameters, $this->aliases));
 		$this->setSauce($parameters['sauce']);
 
 		return parent::setup($parameters);

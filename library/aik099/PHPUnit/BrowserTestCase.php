@@ -145,6 +145,8 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 */
 	public function setBrowserFromConfiguration(array $browser_config)
 	{
+		$browser_config = BrowserConfiguration::resolveAliases($browser_config, $this->getBrowserAliases());
+
 		// configure browser
 		if ( isset($browser_config['sauce']) ) {
 			$browser = new SauceLabsBrowserConfiguration($this->getBrowserAliases());

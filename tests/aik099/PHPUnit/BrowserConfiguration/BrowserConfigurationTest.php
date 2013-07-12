@@ -77,7 +77,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testResolveAliasUsingSingleAlias()
+	public function testResolveAliasesUsingSingleAlias()
 	{
 		$browser = $this->createBrowserConfiguration(array(
 			'a1' => array('host' => $this->host, 'port' => $this->port),
@@ -94,7 +94,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testResolveAliasUsingRecursiveAlias()
+	public function testResolveAliasesUsingRecursiveAlias()
 	{
 		$browser = $this->createBrowserConfiguration(array(
 			'a1' => array('alias' => 'a2', 'host' => $this->host, 'port' => $this->port),
@@ -114,7 +114,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testResolveAliasUsingAliasMerging()
+	public function testResolveAliasesUsingAliasMerging()
 	{
 		$browser = $this->createBrowserConfiguration(array(
 			'a1' => array('host' => $this->host, 'port' => $this->port),
@@ -132,7 +132,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testResolveAliasWithOverwrite()
+	public function testResolveAliasesWithOverwrite()
 	{
 		$browser = $this->createBrowserConfiguration(array(
 			'a1' => array('host' => 'alias-host', 'port' => $this->port),
@@ -149,7 +149,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 * @return void
 	 * @expectedException \InvalidArgumentException
 	 */
-	public function testResolveAliasUsingIncorrectAlias()
+	public function testResolveAliasesUsingIncorrectAlias()
 	{
 		$this->browser->setup(array('alias' => 'not_found'));
 	}
@@ -159,7 +159,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testResolveAliasWithoutAliasGiven()
+	public function testResolveAliasesWithoutAliasGiven()
 	{
 		$this->browser->setup(array('browserName' => 'safari'));
 

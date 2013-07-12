@@ -1,7 +1,7 @@
 {
 	"name": "aik099/phpunit-mink",
-	"description": "Library using Mink in PHPUnit functional tests",
-	"keywords": ["PHPUnit", "Selenium"],
+	"description": "Library for using Mink in PHPUnit tests. Supports test case-wide session sharing.",
+	"keywords": ["PHPUnit", "Selenium", "Mink", "Tests"],
 
 	"require": {
 		"php": ">=5.3.2",
@@ -23,8 +23,7 @@
 
 	"autoload": {
 		"psr-0": {
-			"aik099\\": "./library/",
-			"tests\\aik099\\": "./"
+			"aik099\\": "./library/"
 		}
 	},
 
