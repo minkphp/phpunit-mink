@@ -107,7 +107,7 @@ class CommonBrowserConfigTest extends BrowserTestCase
 
 	public function testUsingBrowsersArray()
 	{
-		echo sprintf("I'm executed using '%s' browser", $this->getBrowserName());
+		echo sprintf("I'm executed using '%s' browser", $this->getBrowser()->getBrowserName());
 	}
 
 }
