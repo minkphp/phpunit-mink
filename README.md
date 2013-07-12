@@ -2,6 +2,9 @@
 [![Build Status](https://travis-ci.org/aik099/phpunit-mink.png?branch=master)](https://travis-ci.org/aik099/phpunit-mink)
 [![Coverage Status](https://coveralls.io/repos/aik099/phpunit-mink/badge.png?branch=master)](https://coveralls.io/r/aik099/phpunit-mink?branch=master)
 
+[![Latest Stable Version](https://poser.pugx.org/aik099/phpunit-mink/v/stable.png)](https://packagist.org/packages/aik099/phpunit-mink)
+[![Total Downloads](https://poser.pugx.org/aik099/phpunit-mink/downloads.png)](https://packagist.org/packages/aik099/phpunit-mink)
+
 This library is an extension for [PHPUnit](sebastianbergmann/phpunit), that allows to write tests with help of [Mink](Behat/Mink).
 
 ## Overview
