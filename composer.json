@@ -2,6 +2,15 @@
 	"name": "aik099/phpunit-mink",
 	"description": "Library for using Mink in PHPUnit tests. Supports test case-wide session sharing.",
 	"keywords": ["PHPUnit", "Selenium", "Mink", "Tests"],
+	"homepage": "http://github.com/aik099/phpunit-mink",
+	"license": "BSD-3-Clause",
+
+	"authors": [
+		{
+			"name":  "Alexander Obuhovich",
+			"email": "aik.bold@gmail.com"
+		}
+	],
 
 	"require": {
 		"php": ">=5.3.2",
@@ -14,23 +23,16 @@
 		"mockery/mockery": "dev-protected-method-mocking"
 	},
 
-	"repositories": [
-		{
-			"type": "vcs",
-			"url": "https://github.com/aik099/mockery"
-		}
-	],
-
 	"autoload": {
 		"psr-0": {
 			"aik099\\": "./library/"
 		}
 	},
 
-	"authors": [
+	"repositories": [
 		{
-			"name":  "Alexander Obuhovich",
-			"email": "aik.bold@gmail.com"
+			"type": "vcs",
+			"url": "https://github.com/aik099/mockery"
 		}
 	]
 }
