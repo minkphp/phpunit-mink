@@ -20,19 +20,12 @@
 	},
 
 	"require-dev": {
-		"mockery/mockery": "dev-protected-method-mocking"
+		"mockery/mockery": "dev-master"
 	},
 
 	"autoload": {
 		"psr-0": {
 			"aik099\\": "./library/"
 		}
-	},
-
-	"repositories": [
-		{
-			"type": "vcs",
-			"url": "https://github.com/aik099/mockery"
-		}
-	]
+	}
 }
