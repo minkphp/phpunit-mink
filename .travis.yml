@@ -6,8 +6,7 @@ php:
     - 5.5
 
 before_script:
-    - curl http://getcomposer.org/installer | php
-    - php composer.phar require satooshi/php-coveralls:dev-master --dev --prefer-source
+    - composer require satooshi/php-coveralls:dev-master --dev --prefer-source
 
 script:
     - mkdir -p build/logs
