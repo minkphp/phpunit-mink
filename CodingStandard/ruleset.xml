@@ -20,6 +20,7 @@
 		<exclude name="Generic.CodeAnalysis.UnusedFunctionParameter"/>
 		<exclude name="Generic.Commenting.Fixme"/>
 		<exclude name="Generic.Commenting.Todo"/>
+		<exclude name="Generic.Files.LowercasedFilename"/>
 
 		<!-- exclude because of multifile sniff, that eats a lot of memory, better to create a separate ruleset -->
 		<exclude name="Generic.Classes.DuplicateClassName"/>
@@ -32,15 +33,17 @@
 		</properties>
 	</rule>
 
-	<rule ref="Drupal.Array.Array"/>
-	<rule ref="Drupal.Classes.ClassCreateInstance"/>
-
-	<rule ref="Drupal.ControlStructures.ControlSignature"/>
-	<rule ref="Drupal.ControlStructures.ElseIf"/>
-	<rule ref="Drupal.Formatting.ItemAssignment"/>
-	<rule ref="Drupal.Formatting.SpaceOperator"/>
-	<rule ref="Drupal.Formatting.SpaceUnaryOperator"/>
-	<rule ref="Drupal.Strings.ConcatenationSpacing"/>
+	<!--
+		Copied locally to the standard:
+		<rule ref="Drupal.Array.Array"/>
+		<rule ref="Drupal.Classes.ClassCreateInstance"/>
+		<rule ref="Drupal.ControlStructures.ControlSignature"/>
+		<rule ref="Drupal.ControlStructures.ElseIf"/>
+		<rule ref="Drupal.Formatting.ItemAssignment"/>
+		<rule ref="Drupal.Formatting.SpaceOperator"/>
+		<rule ref="Drupal.Formatting.SpaceUnaryOperator"/>
+		<rule ref="Drupal.Strings.ConcatenationSpacing"/>
+	-->
 
 	<rule ref="MySource.PHP.EvalObjectFactory"/>
 
