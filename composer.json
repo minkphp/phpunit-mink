@@ -27,5 +27,11 @@
 		"psr-0": {
 			"aik099\\": "./library/"
 		}
+	},
+
+	"extra": {
+		"branch-alias": {
+			"dev-master": "1.0.x-dev"
+		}
 	}
 }
