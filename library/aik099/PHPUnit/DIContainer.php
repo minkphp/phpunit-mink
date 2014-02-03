@@ -28,13 +28,6 @@ class DIContainer extends \Pimple implements ITestApplicationAware
 {
 
 	/**
-	 * Application.
-	 *
-	 * @var TestApplication
-	 */
-	protected $application;
-
-	/**
 	 * Sets application.
 	 *
 	 * @param TestApplication $application The application.
@@ -43,7 +36,7 @@ class DIContainer extends \Pimple implements ITestApplicationAware
 	 */
 	public function setApplication(TestApplication $application)
 	{
-		$this->application = $application;
+		$this['application'] = $application;
 	}
 
 	/**
@@ -65,9 +58,9 @@ class DIContainer extends \Pimple implements ITestApplicationAware
 			return new SessionFactory();
 		};
 
-		$this['session_strategy_factory'] = function (DIContainer $c) {
+		$this['session_strategy_factory'] = function ($c) {
 			$session_strategy_factory = new SessionStrategyFactory();
-			$session_strategy_factory->setApplication($c->getApplication());
+			$session_strategy_factory->setApplication($c['application']);
 
 			return $session_strategy_factory;
 		};
@@ -90,30 +83,30 @@ class DIContainer extends \Pimple implements ITestApplicationAware
 			return $session_strategy;
 		});
 
-		$this['test_suite_builder'] = function (DIContainer $c) {
+		$this['test_suite_builder'] = function ($c) {
 			$test_suite_builder = new TestSuiteBuilder($c['session_strategy_manager'], $c['browser_configuration_factory']);
-			$test_suite_builder->setApplication($c->getApplication());
+			$test_suite_builder->setApplication($c['application']);
 
 			return $test_suite_builder;
 		};
 
-		$this['regular_test_suite'] = $this->factory(function (DIContainer $c) {
+		$this['regular_test_suite'] = $this->factory(function ($c) {
 			$test_suite = new RegularTestSuite();
 			$test_suite->setEventDispatcher($c['event_dispatcher']);
 
 			return $test_suite;
 		});
 
-		$this['browser_test_suite'] = $this->factory(function (DIContainer $c) {
+		$this['browser_test_suite'] = $this->factory(function ($c) {
 			$test_suite = new BrowserTestSuite();
 			$test_suite->setEventDispatcher($c['event_dispatcher']);
 
 			return $test_suite;
 		});
 
-		$this['browser_configuration_factory'] = function (DIContainer $c) {
+		$this['browser_configuration_factory'] = function ($c) {
 			$browser_configuration_factory = new BrowserConfigurationFactory();
-			$browser_configuration_factory->setApplication($c->getApplication());
+			$browser_configuration_factory->setApplication($c['application']);
 
 			return $browser_configuration_factory;
 		};
@@ -131,16 +124,6 @@ class DIContainer extends \Pimple implements ITestApplicationAware
 
 			return $browser;
 		});
-	}
-
-	/**
-	 * Returns application.
-	 *
-	 * @return TestApplication
-	 */
-	protected function getApplication()
-	{
-		return $this->application;
 	}
 
 }
