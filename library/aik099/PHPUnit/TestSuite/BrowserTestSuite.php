@@ -8,40 +8,36 @@
  * @link      https://github.com/aik099/phpunit-mink
  */
 
-namespace aik099\PHPUnit;
+namespace aik099\PHPUnit\TestSuite;
+
+
+use aik099\PHPUnit\BrowserTestCase;
 
 
 /**
  * Test Suite class for a set of tests from a single Test Case Class executed with a particular browser.
  */
-class BrowserSuite extends TestSuiteBase
+class BrowserTestSuite extends AbstractTestSuite
 {
 
 	/**
-	 * Create test suite based on given class name on browser configuration.
+	 * Generates suite name by the browser configuration.
 	 *
-	 * @param string $class_name Class name.
-	 * @param array  $browser    Browser configuration.
+	 * @param array $browser Browser configuration.
 	 *
-	 * @return self
+	 * @return string
 	 */
-	public static function fromClassAndBrowser($class_name, array $browser)
+	public function nameFromBrowser(array $browser)
 	{
-		$suite = new static();
-
-		$name = 'undefined';
 		$try_settings = array('alias', 'browserName', 'name');
 
-		foreach ($try_settings as $try_setting) {
+		foreach ( $try_settings as $try_setting ) {
 			if ( isset($browser[$try_setting]) ) {
-				$name = $browser[$try_setting];
-				break;
+				return $browser[$try_setting];
 			}
 		}
 
-		$suite->setName($class_name . ': ' . $name);
-
-		return $suite;
+		return 'undefined';
 	}
 
 	/**

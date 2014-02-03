@@ -13,11 +13,21 @@ namespace tests\aik099\PHPUnit;
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
+use aik099\PHPUnit\Session\SessionStrategyManager;
 use Mockery as m;
+use Mockery\MockInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
+use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 
 class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 {
+
+	const TEST_CASE_CLASS = '\\aik099\\PHPUnit\\BrowserTestCase';
+
+	const HOST = 'example_host';
+
+	const PORT = 1234;
 
 	/**
 	 * Hostname.
@@ -48,6 +58,13 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	protected $browser;
 
 	/**
+	 * Event dispatcher.
+	 *
+	 * @var EventDispatcherInterface|MockInterface
+	 */
+	protected $eventDispatcher;
+
+	/**
 	 * Configures all tests.
 	 *
 	 * @return void
@@ -56,12 +73,9 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		$this->host = 'example_host';
-		$this->port = 1234;
-
 		$this->setup = array(
-			'host' => $this->host,
-			'port' => $this->port,
+			'host' => self::HOST,
+			'port' => self::PORT,
 			'timeout' => 500,
 			'browserName' => 'safari',
 			'desiredCapabilities' => array('platform' => 'Windows 7', 'version' => 10),
@@ -69,78 +83,84 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 			'sessionStrategy' => SessionStrategyManager::SHARED_STRATEGY,
 		);
 
+		$this->eventDispatcher = m::mock('Symfony\\Component\\EventDispatcher\\EventDispatcherInterface');
 		$this->browser = $this->createBrowserConfiguration();
 	}
 
 	/**
 	 * Test description.
 	 *
+	 * @param array $aliases         Test case aliases.
+	 * @param array $browser_config  Browser config.
+	 * @param array $expected_config Expected browser config.
+	 *
 	 * @return void
+	 * @dataProvider aliasResolutionDataProvider
 	 */
-	public function testResolveAliasesUsingSingleAlias()
+	public function testAliasResolution(array $aliases, array $browser_config, array $expected_config)
 	{
-		$browser = $this->createBrowserConfiguration(array(
-			'a1' => array('host' => $this->host, 'port' => $this->port),
-		));
+		$this->browser->setAliases($aliases);
+		$this->browser->setup($browser_config);
 
-		$browser->setup(array('alias' => 'a1'));
-
-		$this->assertEquals($this->host, $browser->getHost());
-		$this->assertEquals($this->port, $browser->getPort());
+		$this->assertEquals($expected_config['host'], $this->browser->getHost());
+		$this->assertEquals($expected_config['port'], $this->browser->getPort());
+		$this->assertEquals($expected_config['browserName'], $this->browser->getBrowserName());
+		$this->assertEquals($expected_config['baseUrl'], $this->browser->getBaseUrl());
 	}
 
 	/**
-	 * Test description.
+	 * Alias resolution checking data provider.
 	 *
-	 * @return void
+	 * @return array
 	 */
-	public function testResolveAliasesUsingRecursiveAlias()
+	public function aliasResolutionDataProvider()
 	{
-		$browser = $this->createBrowserConfiguration(array(
-			'a1' => array('alias' => 'a2', 'host' => $this->host, 'port' => $this->port),
-			'a2' => array('browserName' => 'safari', 'baseUrl' => 'http://example_host'),
-		));
-
-		$browser->setup(array('alias' => 'a1'));
-
-		$this->assertEquals($this->host, $browser->getHost());
-		$this->assertEquals($this->port, $browser->getPort());
-		$this->assertEquals('safari', $browser->getBrowserName());
-		$this->assertEquals('http://example_host', $browser->getBaseUrl());
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testResolveAliasesUsingAliasMerging()
-	{
-		$browser = $this->createBrowserConfiguration(array(
-			'a1' => array('host' => $this->host, 'port' => $this->port),
-		));
-
-		$browser->setup(array('alias' => 'a1', 'browserName' => 'firefox'));
-
-		$this->assertEquals($this->host, $browser->getHost());
-		$this->assertEquals($this->port, $browser->getPort());
-		$this->assertEquals('firefox', $browser->getBrowserName());
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testResolveAliasesWithOverwrite()
-	{
-		$browser = $this->createBrowserConfiguration(array(
-			'a1' => array('host' => 'alias-host', 'port' => $this->port),
-		));
-
-		$browser->setup(array('alias' => 'a1', 'host' => $this->host));
-
-		$this->assertEquals($this->host, $browser->getHost());
+		return array(
+			'single alias' => array(
+				array(
+					'a1' => array('host' => static::HOST, 'port' => static::PORT),
+				),
+				array('alias' => 'a1'),
+				array(
+					'host' => static::HOST, 'port' => static::PORT, 'browserName' => 'firefox', 'baseUrl' => '',
+				),
+			),
+			'recursive alias' => array(
+				array(
+					'a1' => array('alias' => 'a2', 'host' => static::HOST, 'port' => static::PORT),
+					'a2' => array('browserName' => 'safari', 'baseUrl' => 'http://example_host'),
+				),
+				array('alias' => 'a1'),
+				array(
+					'host' => static::HOST, 'port' => static::PORT, 'browserName' => 'safari', 'baseUrl' => 'http://example_host',
+				),
+			),
+			'alias merging' => array(
+				array(
+					'a1' => array('host' => static::HOST, 'port' => static::PORT),
+				),
+				array('alias' => 'a1', 'browserName' => 'firefox'),
+				array(
+					'host' => static::HOST, 'port' => static::PORT, 'browserName' => 'firefox', 'baseUrl' => '',
+				),
+			),
+			'with overwrite' => array(
+				array(
+					'a1' => array('host' => 'alias-host', 'port' => static::PORT),
+				),
+				array('alias' => 'a1', 'host' => static::HOST),
+				array(
+					'host' => static::HOST, 'port' => static::PORT, 'browserName' => 'firefox', 'baseUrl' => '',
+				),
+			),
+			'without alias given' => array(
+				array(),
+				array('host' => static::HOST, 'port' => static::PORT, 'browserName' => 'safari'),
+				array(
+					'host' => static::HOST, 'port' => static::PORT, 'browserName' => 'safari', 'baseUrl' => '',
+				),
+			),
+		);
 	}
 
 	/**
@@ -159,11 +179,26 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testResolveAliasesWithoutAliasGiven()
+	public function testAttachToTestCase()
 	{
-		$this->browser->setup(array('browserName' => 'safari'));
+		$browser = $this->createBrowserConfiguration(array(), true);
 
-		$this->assertEquals('safari', $this->browser->getBrowserName());
+		/* @var $test_case BrowserTestCase */
+		$test_case = m::mock(self::TEST_CASE_CLASS);
+		$browser->attachToTestCase($test_case);
+
+		$this->assertSame($test_case, $browser->getTestCase());
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 * @expectedException \RuntimeException
+	 */
+	public function testGetTestCaseException()
+	{
+		$this->browser->getTestCase();
 	}
 
 	/**
@@ -282,12 +317,24 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 * @param array|null $expected             Expected capabilities.
 	 *
 	 * @return void
+	 * @see    SauceLabsBrowserConfigurationTest::testSetDesiredCapabilitiesCorrect()
 	 */
 	public function testSetDesiredCapabilitiesCorrect(array $desired_capabilities = null, array $expected = null)
 	{
 		$expected = array('k1' => 'v1', 'k2' => 'v2');
 		$this->assertSame($this->browser, $this->browser->setDesiredCapabilities($expected));
 		$this->assertSame($expected, $this->browser->getDesiredCapabilities());
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function testSetTimeoutIncorrect()
+	{
+		$this->browser->setTimeout('5555');
 	}
 
 	/**
@@ -308,32 +355,23 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 * @return void
 	 * @expectedException \InvalidArgumentException
 	 */
-	public function testSetTimeoutIncorrect()
-	{
-		$this->browser->setTimeout('5555');
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testSetSessionStrategyCorrect()
-	{
-		$expected = SessionStrategyManager::SHARED_STRATEGY;
-		$this->assertSame($this->browser, $this->browser->setSessionStrategy($expected));
-		$this->assertSame($expected, $this->browser->getSessionStrategy());
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 * @expectedException \InvalidArgumentException
-	 */
 	public function testSetSessionStrategyIncorrect()
 	{
 		$this->browser->setSessionStrategy('wrong');
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @param string $expected Expected strategy.
+	 *
+	 * @return void
+	 * @dataProvider sessionSharingDataProvider
+	 */
+	public function testSetSessionStrategyCorrect($expected)
+	{
+		$this->assertSame($this->browser, $this->browser->setSessionStrategy($expected));
+		$this->assertSame($expected, $this->browser->getSessionStrategy());
 	}
 
 	/**
@@ -346,16 +384,16 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetSessionStrategyHashBrowserSharing($session_strategy)
 	{
-		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
+		$test_case = m::mock(self::TEST_CASE_CLASS);
 		/* @var $test_case BrowserTestCase */
 
-		$browser1 = $this->createBrowserConfiguration();
-		$browser1->setSessionStrategy($session_strategy);
+		$browser1 = $this->createBrowserConfiguration(array(), true);
+		$browser1->setSessionStrategy($session_strategy)->attachToTestCase($test_case);
 
-		$browser2 = $this->createBrowserConfiguration();
-		$browser2->setSessionStrategy($session_strategy);
+		$browser2 = $this->createBrowserConfiguration(array(), true);
+		$browser2->setSessionStrategy($session_strategy)->attachToTestCase($test_case);
 
-		$this->assertSame($browser1->getSessionStrategyHash($test_case), $browser2->getSessionStrategyHash($test_case));
+		$this->assertSame($browser1->getSessionStrategyHash(), $browser2->getSessionStrategyHash());
 	}
 
 	/**
@@ -378,17 +416,13 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetSessionStrategyHashNotSharing()
 	{
-		$test_case1 = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
-		/* @var $test_case1 BrowserTestCase */
+		$test_case1 = new WithBrowserConfig();
+		$browser1 = $this->createBrowserConfiguration(array(), true);
+		$browser1->setSessionStrategy(SessionStrategyManager::SHARED_STRATEGY)->attachToTestCase($test_case1);
 
-		$browser1 = $this->createBrowserConfiguration();
-		$browser1->setSessionStrategy(SessionStrategyManager::SHARED_STRATEGY);
-
-		$test_case2 = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
-		/* @var $test_case2 BrowserTestCase */
-
-		$browser2 = $this->createBrowserConfiguration();
-		$browser2->setSessionStrategy(SessionStrategyManager::SHARED_STRATEGY);
+		$test_case2 = new WithoutBrowserConfig();
+		$browser2 = $this->createBrowserConfiguration(array(), true);
+		$browser2->setSessionStrategy(SessionStrategyManager::SHARED_STRATEGY)->attachToTestCase($test_case2);
 
 		$this->assertNotSame($browser1->getSessionStrategyHash($test_case1), $browser2->getSessionStrategyHash($test_case2));
 	}
@@ -400,7 +434,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetTestStatusIsolated()
 	{
-		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
+		$test_case = m::mock(self::TEST_CASE_CLASS);
 		$test_case->shouldReceive('hasFailed')->once()->andReturn(false);
 		$test_result = m::mock('\\PHPUnit_Framework_TestResult');
 
@@ -415,7 +449,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetTestStatusShared()
 	{
-		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
+		$test_case = m::mock(self::TEST_CASE_CLASS);
 		$test_result = m::mock('\\PHPUnit_Framework_TestResult');
 		$test_result->shouldReceive('wasSuccessful')->once()->andReturn(true);
 
@@ -424,57 +458,22 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testCreateSession()
-	{
-		$session = $this->browser->createSession();
-
-		$this->assertInstanceOf('\\Behat\\Mink\\Session', $session);
-		$this->assertInstanceOf('\\Behat\\Mink\\Driver\\Selenium2Driver', $session->getDriver());
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testSetUpHook()
-	{
-		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
-		/* @var $test_case BrowserTestCase */
-
-		$this->assertSame($this->browser, $this->browser->testSetUpHook($test_case));
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testAfterRunHook()
-	{
-		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
-		/* @var $test_case BrowserTestCase */
-
-		$test_result = m::mock('\\PHPUnit_Framework_TestResult');
-		/* @var $test_result \PHPUnit_Framework_TestResult */
-
-		$this->assertSame($this->browser, $this->browser->testAfterRunHook($test_case, $test_result));
-	}
-
-	/**
 	 * Creates instance of browser configuration.
 	 *
-	 * @param array $aliases Aliases.
+	 * @param array   $aliases        Aliases.
+	 * @param boolean $add_subscriber Expect addition of subscriber to event dispatcher.
 	 *
 	 * @return BrowserConfiguration
 	 */
-	protected function createBrowserConfiguration(array $aliases = array())
+	protected function createBrowserConfiguration(array $aliases = array(), $add_subscriber = false)
 	{
-		return new BrowserConfiguration($aliases);
+		$browser = new BrowserConfiguration();
+		$browser->setAliases($aliases);
+
+		$browser->setEventDispatcher($this->eventDispatcher);
+		$this->eventDispatcher->shouldReceive('addSubscriber')->with($browser)->times($add_subscriber ? 1 : 0);
+
+		return $browser;
 	}
 
 }

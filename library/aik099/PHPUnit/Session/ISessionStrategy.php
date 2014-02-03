@@ -8,18 +8,20 @@
  * @link      https://github.com/aik099/phpunit-mink
  */
 
-namespace aik099\PHPUnit\SessionStrategy;
+namespace aik099\PHPUnit\Session;
 
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
+use aik099\PHPUnit\IEventDispatcherAware;
 use Behat\Mink\Session;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Specifies how to create Session objects for running tests.
  *
  * @method \Mockery\Expectation shouldReceive
  */
-interface ISessionStrategy
+interface ISessionStrategy extends EventSubscriberInterface, IEventDispatcherAware
 {
 
 	/**
@@ -30,32 +32,5 @@ interface ISessionStrategy
 	 * @return Session
 	 */
 	public function session(BrowserConfiguration $browser);
-
-	/**
-	 * Called, when test fails.
-	 *
-	 * @param \Exception $e Exception.
-	 *
-	 * @return self
-	 */
-	public function notSuccessfulTest(\Exception $e);
-
-	/**
-	 * Called, when test ends.
-	 *
-	 * @param Session|null $session Session.
-	 *
-	 * @return self
-	 */
-	public function endOfTest(Session $session = null);
-
-	/**
-	 * Called, when test case ends.
-	 *
-	 * @param Session|null $session Session.
-	 *
-	 * @return self
-	 */
-	public function endOfTestCase(Session $session = null);
 
 }

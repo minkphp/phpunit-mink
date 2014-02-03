@@ -12,9 +12,9 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 
 
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
-use Behat\Mink\Driver\Selenium2Driver;
-use WebDriver\SauceLabs\Capability as SauceLabsCapability;
+use aik099\PHPUnit\Event\TestEndedEvent;
+use aik099\PHPUnit\Event\TestEvent;
+use Behat\Mink\Session;
 use WebDriver\SauceLabs\SauceRest;
 
 /**
@@ -24,15 +24,47 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 {
 
 	/**
+	 * The build number.
+	 */
+	const BUILD_NUMBER_CAPABILITY = 'build';
+
+	/**
+	 * The test name.
+	 */
+	const NAME_CAPABILITY = 'name';
+
+	/**
+	 * Browser configuration factory.
+	 *
+	 * @var IBrowserConfigurationFactory
+	 */
+	private $_browserConfigurationFactory;
+
+	/**
 	 * Creates browser configuration.
 	 *
-	 * @param array $aliases Browser configuration aliases.
+	 * @param IBrowserConfigurationFactory $browser_configuration_factory Browser configuration factory.
 	 */
-	public function __construct(array $aliases = array())
+	public function __construct(IBrowserConfigurationFactory $browser_configuration_factory)
 	{
-		parent::__construct($aliases);
+		parent::__construct();
 
+		$this->_browserConfigurationFactory = $browser_configuration_factory;
 		$this->parameters['sauce'] = array('username' => '', 'api_key' => '');
+	}
+
+	/**
+	 * Returns an array of event names this subscriber wants to listen to.
+	 *
+	 * @return array The event names to listen to
+	 */
+	public static function getSubscribedEvents()
+	{
+		$events = parent::getSubscribedEvents();
+		$events[BrowserTestCase::TEST_SETUP_EVENT] = array('onTestSetup', 100);
+		$events[BrowserTestCase::TEST_ENDED_EVENT] = array('onTestEnded', 100);
+
+		return $events;
 	}
 
 	/**
@@ -44,8 +76,8 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	 */
 	public function setup(array $parameters)
 	{
-		$parameters = array_merge($this->parameters, self::resolveAliases($parameters, $this->aliases));
-		$this->setSauce($parameters['sauce']);
+		$prepared_parameters = $this->prepareParameters($parameters);
+		$this->setSauce($prepared_parameters['sauce']);
 
 		return parent::setup($parameters);
 	}
@@ -140,62 +172,22 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	/**
 	 * Hook, called from "BrowserTestCase::setUp" method.
 	 *
-	 * @param BrowserTestCase $test_case Browser test case.
+	 * @param TestEvent $event Test event.
 	 *
-	 * @return self
+	 * @return void
 	 */
-	public function testSetUpHook(BrowserTestCase $test_case)
+	public function onTestSetup(TestEvent $event)
 	{
 		$desired_capabilities = $this->getDesiredCapabilities();
-
-		$desired_capabilities[SauceLabsCapability::NAME] = $this->getJobName($test_case);
+		$desired_capabilities[self::NAME_CAPABILITY] = $this->getJobName($event->getTestCase());
 
 		$jenkins_build_number = getenv('BUILD_NUMBER');
 
 		if ( $jenkins_build_number ) {
-			$desired_capabilities[SauceLabsCapability::BUILD] = $jenkins_build_number;
+			$desired_capabilities[self::BUILD_NUMBER_CAPABILITY] = $jenkins_build_number;
 		}
 
 		$this->setDesiredCapabilities($desired_capabilities);
-
-		return $this;
-	}
-
-	/**
-	 * Hook, called from "BrowserTestCase::run" method.
-	 *
-	 * @param BrowserTestCase               $test_case   Browser test case.
-	 * @param \PHPUnit_Framework_TestResult $test_result Test result.
-	 *
-	 * @return self
-	 */
-	public function testAfterRunHook(BrowserTestCase $test_case, \PHPUnit_Framework_TestResult $test_result)
-	{
-		$passed = $this->getTestStatus($test_case, $test_result);
-		$this->getRestClient()->updateJob($this->getJobId($test_case), array('passed' => $passed));
-
-		return $this;
-	}
-
-	/**
-	 * Get Selenium2 current session id.
-	 *
-	 * @param BrowserTestCase $test_case Browser test case.
-	 *
-	 * @return string
-	 * @throws \RuntimeException When test case session was created using an unsupported driver.
-	 */
-	protected function getJobId(BrowserTestCase $test_case)
-	{
-		$driver = $test_case->getSession()->getDriver();
-
-		if ( $driver instanceof Selenium2Driver ) {
-			$wd_session = $driver->getWebDriverSession();
-
-			return $wd_session ? basename($wd_session->getUrl()) : '';
-		}
-
-		throw new \RuntimeException('Unsupported session driver');
 	}
 
 	/**
@@ -215,15 +207,51 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	}
 
 	/**
+	 * Hook, called from "BrowserTestCase::run" method.
+	 *
+	 * @param TestEndedEvent $event Test ended event.
+	 *
+	 * @return void
+	 */
+	public function onTestEnded(TestEndedEvent $event)
+	{
+		$test_case = $event->getTestCase();
+
+		$this->getAPIClient()->updateJob(
+			$this->getSessionId($test_case->getSession()),
+			array('passed' => $this->getTestStatus($test_case, $event->getTestResult()))
+		);
+	}
+
+	/**
 	 * Returns API class for "Sauce Labs" service interaction.
 	 *
 	 * @return SauceRest
 	 */
-	protected function getRestClient()
+	protected function getAPIClient()
 	{
-		$sauce = $this->getSauce();
+		return $this->_browserConfigurationFactory->createAPIClient($this);
+	}
 
-		return new SauceRest($sauce['username'], $sauce['api_key']);
+	/**
+	 * Get Selenium2 current session id.
+	 *
+	 * @param Session $session Session.
+	 *
+	 * @return string
+	 * @throws \RuntimeException When session was created using an unsupported driver.
+	 */
+	protected function getSessionId(Session $session)
+	{
+		$driver = $session->getDriver();
+
+		if ( method_exists($driver, 'getWebDriverSession') ) {
+			$wd_session = $driver->getWebDriverSession();
+
+			return $wd_session ? basename($wd_session->getUrl()) : '';
+		}
+
+		return '';
 	}
 
 }

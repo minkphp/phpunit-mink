@@ -12,20 +12,33 @@ namespace aik099\PHPUnit;
 
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
-use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
+use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\Common\RemoteCoverage;
-use aik099\PHPUnit\SessionStrategy\ISessionStrategy;
-use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
+use aik099\PHPUnit\Event\TestEndedEvent;
+use aik099\PHPUnit\Event\TestEvent;
+use aik099\PHPUnit\Event\TestFailedEvent;
+use aik099\PHPUnit\Session\ISessionStrategy;
+use aik099\PHPUnit\Session\SessionStrategyManager;
+use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Session;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Test Case class for writing browser-based tests.
  *
  * @method \Mockery\Expectation shouldReceive
  */
-abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
+abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IEventDispatcherAware
 {
+
+	const TEST_ENDED_EVENT = 'test.ended';
+
+	const TEST_CASE_ENDED_EVENT = 'test_case.ended';
+
+	const TEST_FAILED_EVENT = 'test.failed';
+
+	const TEST_SETUP_EVENT = 'test.setup';
 
 	/**
 	 * Browser list to be used in tests.
@@ -33,6 +46,20 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 * @var array
 	 */
 	public static $browsers = array();
+
+	/**
+	 * Event dispatcher.
+	 *
+	 * @var EventDispatcherInterface
+	 */
+	private $_eventDispatcher;
+
+	/**
+	 * Browser configuration factory.
+	 *
+	 * @var IBrowserConfigurationFactory
+	 */
+	private $_browserConfigurationFactory;
 
 	/**
 	 * Remote coverage collection url.
@@ -77,6 +104,30 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	private $_testId;
 
 	/**
+	 * Sets application.
+	 *
+	 * @param IBrowserConfigurationFactory $browser_configuration_factory Browser configuration factory.
+	 *
+	 * @return void
+	 */
+	public function setBrowserConfigurationFactory(IBrowserConfigurationFactory $browser_configuration_factory)
+	{
+		$this->_browserConfigurationFactory = $browser_configuration_factory;
+	}
+
+	/**
+	 * Sets event dispatcher.
+	 *
+	 * @param EventDispatcherInterface $event_dispatcher Event dispatcher.
+	 *
+	 * @return void
+	 */
+	public function setEventDispatcher(EventDispatcherInterface $event_dispatcher)
+	{
+		$this->_eventDispatcher = $event_dispatcher;
+	}
+
+	/**
 	 * Sets session strategy manager.
 	 *
 	 * @param SessionStrategyManager $session_strategy_manager Session strategy manager.
@@ -99,7 +150,13 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		$this->getBrowser()->testSetUpHook($this);
+		// TODO: verify, that still works
+		$this->_eventDispatcher->dispatch(
+			self::TEST_SETUP_EVENT,
+			new TestEvent($this)
+		);
+
+//		$this->getBrowser()->onTestSetup(new TestEvent($this, $this->_session));
 	}
 
 	/**
@@ -112,13 +169,10 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	public function setBrowser(BrowserConfiguration $browser)
 	{
 		$this->_browser = $browser;
+		$browser->attachToTestCase($this);
 
 		// configure session strategy
-		$session_strategy = $browser->getSessionStrategy();
-		$session_strategy_hash = $browser->getSessionStrategyHash($this);
-		$browser_strategy = $this->sessionStrategyManager->getSessionStrategy($session_strategy, $session_strategy_hash);
-
-		return $this->setSessionStrategy($browser_strategy);
+		return $this->setSessionStrategy($this->sessionStrategyManager->getSessionStrategy($browser));
 	}
 
 	/**
@@ -145,17 +199,7 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 */
 	public function setBrowserFromConfiguration(array $browser_config)
 	{
-		$browser_config = BrowserConfiguration::resolveAliases($browser_config, $this->getBrowserAliases());
-
-		// configure browser
-		if ( isset($browser_config['sauce']) ) {
-			$browser = new SauceLabsBrowserConfiguration($this->getBrowserAliases());
-		}
-		else {
-			$browser = new BrowserConfiguration($this->getBrowserAliases());
-		}
-
-		$browser->setup($browser_config);
+		$browser = $this->_browserConfigurationFactory->createBrowserConfiguration($browser_config, $this);
 
 		return $this->setBrowser($browser);
 	}
@@ -240,10 +284,14 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 			$result->getCodeCoverage()->append($this->getRemoteCodeCoverageInformation(), $this);
 		}
 
-		$this->getBrowser()->testAfterRunHook($this, $result);
-
+		// TODO: verify, that still works
 		// do not call this before to give the time to the Listeners to run
-		$this->getSessionStrategy()->endOfTest($this->_session);
+		$this->_eventDispatcher->dispatch(
+			self::TEST_ENDED_EVENT,
+			new TestEndedEvent($this, $result, $this->_session)
+		);
+//		$this->getBrowser()->onTestEnded(new TestEndedEvent($this, $result, $this->_session));
+//		$this->getSessionStrategy()->onTestEnd(new TestEndedEvent($this, $result, $this->_session));
 
 		return $result;
 	}
@@ -291,7 +339,12 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 */
 	public function endOfTestCase()
 	{
-		$this->getSessionStrategy()->endOfTestCase($this->_session);
+		// TODO: verify, that still works
+		$this->_eventDispatcher->dispatch(
+			self::TEST_CASE_ENDED_EVENT,
+			new TestEvent($this, $this->_session)
+		);
+//		$this->getSessionStrategy()->onTestCaseEnd(new TestEvent($this, $this->_session));
 
 		return $this;
 	}
@@ -313,11 +366,13 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 *
 	 * @param string $class_name Test case class name.
 	 *
-	 * @return TestSuite
+	 * @return RegularTestSuite
 	 */
 	public static function suite($class_name)
 	{
-		return TestSuite::fromTestCaseClass($class_name);
+		$application = TestApplication::getInstance();
+
+		return $application->getTestSuiteBuilder()->createSuiteFromTestCase($class_name);
 	}
 
 	/**
@@ -329,7 +384,12 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase
 	 */
 	protected function onNotSuccessfulTest(\Exception $e)
 	{
-		$this->getSessionStrategy()->notSuccessfulTest($e);
+		// TODO: verify, that still works
+		$this->_eventDispatcher->dispatch(
+			self::TEST_FAILED_EVENT,
+			new TestFailedEvent($e, $this, $this->_session)
+		);
+//		$this->getSessionStrategy()->onTestFailed(new TestFailedEvent($this, $e));
 
 		parent::onNotSuccessfulTest($e);
 	}

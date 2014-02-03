@@ -12,10 +12,13 @@ namespace tests\aik099\PHPUnit;
 
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
+use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\SessionStrategy\ISessionStrategy;
-use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
+use aik099\PHPUnit\Session\ISessionStrategy;
+use aik099\PHPUnit\Session\SessionStrategyManager;
 use Mockery as m;
+use Mockery\MockInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 
@@ -24,9 +27,36 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 
 	const BROWSER_CLASS = '\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
 
-	const MANAGER_CLASS = '\\aik099\\PHPUnit\\SessionStrategy\\SessionStrategyManager';
+	const MANAGER_CLASS = '\\aik099\\PHPUnit\\Session\\SessionStrategyManager';
 
-	const SESSION_STRATEGY_INTERFACE = '\\aik099\\PHPUnit\\SessionStrategy\\ISessionStrategy';
+	const SESSION_STRATEGY_INTERFACE = '\\aik099\\PHPUnit\\Session\\ISessionStrategy';
+
+	/**
+	 *  Browser configuration factory.
+	 *
+	 * @var IBrowserConfigurationFactory|MockInterface
+	 */
+	protected $browserConfigurationFactory;
+
+	/**
+	 * Event dispatcher.
+	 *
+	 * @var EventDispatcherInterface|MockInterface
+	 */
+	protected $eventDispatcher;
+
+	/**
+	 * Configures all tests.
+	 *
+	 * @return void
+	 */
+	protected function setUp()
+	{
+		parent::setUp();
+
+		$this->browserConfigurationFactory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
+		$this->eventDispatcher = m::mock('Symfony\\Component\\EventDispatcher\\EventDispatcherInterface');
+	}
 
 	/**
 	 * Test description.
@@ -35,7 +65,7 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetSessionStrategyManager()
 	{
-		/* @var $manager \aik099\PHPUnit\SessionStrategy\SessionStrategyManager */
+		/* @var $manager SessionStrategyManager */
 		$manager = m::mock(self::MANAGER_CLASS);
 
 		$test_case = new WithoutBrowserConfig();
@@ -57,8 +87,11 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 		/* @var $session_strategy ISessionStrategy */
 
-		$browser = new BrowserConfiguration();
 		$test_case = $this->getFixture($session_strategy);
+
+		$browser = new BrowserConfiguration();
+		$browser->setEventDispatcher($this->eventDispatcher);
+		$this->eventDispatcher->shouldReceive('addSubscriber')->with($browser)->once();
 
 		$this->assertSame($test_case, $test_case->setBrowser($browser));
 		$this->assertSame($browser, $test_case->getBrowser());
@@ -85,43 +118,18 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	public function testSetBrowserFromConfigurationDefault()
 	{
 		$test_case = $this->getFixture();
-		$this->assertSame($test_case, $test_case->setBrowserFromConfiguration(array(
-			'browserName' => 'safari',
-		)));
 
+		$browser = $this->getBrowser(0);
+		$browser_config = array('browserName' => 'safari');
+
+		$this->browserConfigurationFactory
+			->shouldReceive('createBrowserConfiguration')
+			->with($browser_config, $test_case)
+			->once()
+			->andReturn($browser);
+
+		$this->assertSame($test_case, $test_case->setBrowserFromConfiguration($browser_config));
 		$this->assertInstanceOf(self::BROWSER_CLASS, $test_case->getBrowser());
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testSetBrowserFromConfigurationWithSauce()
-	{
-		$test_case = $this->getFixture();
-		$this->assertSame($test_case, $test_case->setBrowserFromConfiguration(array(
-			'browserName' => 'safari', 'sauce' => array('username' => 'test-user', 'api_key' => 'ABC'),
-		)));
-
-		$expected = '\\aik099\\PHPUnit\\BrowserConfiguration\\SauceLabsBrowserConfiguration';
-		$this->assertInstanceOf($expected, $test_case->getBrowser());
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testSetBrowserFromConfigurationStrategy()
-	{
-		/* @var $test_case BrowserTestCase */
-		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase[setBrowser]');
-		$test_case->shouldReceive('setBrowser')->once()->andReturn($test_case);
-
-		$this->assertSame($test_case, $test_case->setBrowserFromConfiguration(array(
-			'browserName' => 'safari',
-		)));
 	}
 
 	/**
@@ -131,7 +139,7 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetSessionStrategy()
 	{
-		/* @var $session_strategy \aik099\PHPUnit\SessionStrategy\ISessionStrategy */
+		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 
 		$test_case = new WithoutBrowserConfig();
@@ -147,7 +155,7 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetSessionStrategySharing()
 	{
-		/* @var $manager \aik099\PHPUnit\SessionStrategy\SessionStrategyManager */
+		/* @var $manager SessionStrategyManager */
 		$manager = m::mock(self::MANAGER_CLASS);
 
 		$manager->shouldReceive('getDefaultSessionStrategy')->twice()->andReturn('STRATEGY');
@@ -168,7 +176,7 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetSession()
 	{
-		$browser = $this->getBrowser();
+		$browser = $this->getBrowser(0);
 
 		$expected_session1 = m::mock('\\Behat\\Mink\\Session');
 		$expected_session1->shouldReceive('isStarted')->withNoArgs()->once()->andReturn(false);
@@ -206,7 +214,7 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetSessionDriverError()
 	{
-		$browser = $this->getBrowser();
+		$browser = $this->getBrowser(1);
 
 		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
@@ -222,15 +230,16 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * Returns browser mock.
 	 *
+	 * @param integer $times How much times configuration should be read.
+	 *
 	 * @return BrowserConfiguration
 	 */
-	protected function getBrowser()
+	protected function getBrowser($times)
 	{
 		$browser = m::mock(self::BROWSER_CLASS);
-		$browser->shouldReceive('getSessionStrategy')->once()->andReturnNull();
-		$browser->shouldReceive('getSessionStrategyHash')->once()->andReturnNull();
-		$browser->shouldReceive('getHost')->andReturnNull();
-		$browser->shouldReceive('getPort')->andReturnNull();
+		$browser->shouldReceive('getHost')->times($times)->andReturnNull();
+		$browser->shouldReceive('getPort')->times($times)->andReturnNull();
+		$browser->shouldReceive('attachToTestCase')->once();
 
 		return $browser;
 	}
@@ -333,11 +342,13 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testEndOfTestCase()
 	{
-		/* @var $session_strategy \aik099\PHPUnit\SessionStrategy\ISessionStrategy */
+		$this->expectEvent(BrowserTestCase::TEST_CASE_ENDED_EVENT);
+
+		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
-		$session_strategy->shouldReceive('endOfTestCase')->with(null)->once()->andReturnNull();
 
 		$test_case = new WithoutBrowserConfig();
+		$test_case->setEventDispatcher($this->eventDispatcher);
 		$test_case->setSessionStrategy($session_strategy);
 
 		$this->assertSame($test_case, $test_case->endOfTestCase());
@@ -350,11 +361,12 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 * @expectedException \Exception
 	 * @expectedExceptionMessage MSG_TEST
 	 */
-	public function testNotSuccessfulTest()
+	public function testOnTestFailed()
 	{
+		$this->expectEvent(BrowserTestCase::TEST_FAILED_EVENT);
+
 		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
-		$session_strategy->shouldReceive('notSuccessfulTest')->once()->andReturnNull();
 
 		$test_case = $this->getFixture($session_strategy);
 		$test_case->setSessionStrategy($session_strategy);
@@ -374,16 +386,16 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function prepareForRun(array $mock_methods = array())
 	{
+		$this->expectEvent(BrowserTestCase::TEST_SETUP_EVENT);
+		$this->expectEvent(BrowserTestCase::TEST_ENDED_EVENT);
+
 		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
-		$session_strategy->shouldReceive('endOfTest')->once()->andReturnNull();
 
 		$test_case = $this->getFixture($session_strategy, $mock_methods);
 		$test_case->setName('testSuccess');
 
-		$browser = $this->getBrowser();
-		$browser->shouldReceive('testSetUpHook')->once()->andReturnNull();
-		$browser->shouldReceive('testAfterRunHook')->with($test_case, m::any())->once()->andReturnNull();
+		$browser = $this->getBrowser(0);
 		$test_case->setBrowser($browser);
 
 		return array($test_case, $session_strategy);
@@ -396,7 +408,7 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 * @param integer         $run_count        Test run count.
 	 * @param boolean         $collect_coverage Should collect coverage information.
 	 *
-	 * @return \PHPUnit_Framework_TestResult|\Mockery\Expectation
+	 * @return \PHPUnit_Framework_TestResult|MockInterface
 	 */
 	protected function getTestResult(BrowserTestCase $test_case, $run_count, $collect_coverage = false)
 	{
@@ -424,7 +436,7 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 			$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 		}
 
-		/* @var $manager \aik099\PHPUnit\SessionStrategy\SessionStrategyManager */
+		/* @var $manager SessionStrategyManager */
 		$manager = m::mock(self::MANAGER_CLASS);
 		$manager->shouldReceive('getSessionStrategy')->andReturn($session_strategy);
 
@@ -435,9 +447,26 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 			$test_case = new WithoutBrowserConfig();
 		}
 
+		$test_case->setEventDispatcher($this->eventDispatcher);
+		$test_case->setBrowserConfigurationFactory($this->browserConfigurationFactory);
 		$test_case->setSessionStrategyManager($manager);
 
 		return $test_case;
+	}
+
+	/**
+	 * Expects a specific event to be called.
+	 *
+	 * @param string $event_name Event name.
+	 *
+	 * @return void
+	 */
+	protected function expectEvent($event_name)
+	{
+		$this->eventDispatcher
+			->shouldReceive('dispatch')
+			->with($event_name, m::any())
+			->once();
 	}
 
 }

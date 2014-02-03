@@ -11,8 +11,8 @@
 namespace tests\aik099\PHPUnit;
 
 
-use aik099\PHPUnit\BrowserSuite;
-use aik099\PHPUnit\TestSuite;
+use aik099\PHPUnit\TestSuite\BrowserTestSuite;
+use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use Mockery as m;
@@ -20,9 +20,9 @@ use Mockery as m;
 class SuiteBuildingTest extends \PHPUnit_Framework_TestCase
 {
 
-	const SUITE_CLASS = '\\aik099\\PHPUnit\\TestSuite';
+	const SUITE_CLASS = '\\aik099\\PHPUnit\\TestSuite\\RegularTestSuite';
 
-	const BROWSER_SUITE_CLASS = '\\aik099\\PHPUnit\\BrowserSuite';
+	const BROWSER_SUITE_CLASS = '\\aik099\\PHPUnit\\TestSuite\\BrowserTestSuite';
 
 	const TEST_CASE_WITH_CONFIG = '\\tests\\aik099\\PHPUnit\\Fixture\\WithBrowserConfig';
 
@@ -40,7 +40,7 @@ class SuiteBuildingTest extends \PHPUnit_Framework_TestCase
 		$this->assertInstanceOf(self::SUITE_CLASS, $suite);
 
 		$tests = $suite->tests();
-		/* @var $tests BrowserSuite[] */
+		/* @var $tests BrowserTestSuite[] */
 
 		$this->checkArray($tests, 2, self::BROWSER_SUITE_CLASS);
 
@@ -73,7 +73,7 @@ class SuiteBuildingTest extends \PHPUnit_Framework_TestCase
 		$sub_browser_suite = $this->createTestSuite(self::BROWSER_SUITE_CLASS);
 		$sub_test_suite = $this->createTestSuite(self::SUITE_CLASS);
 
-		$suite = new TestSuite();
+		$suite = new RegularTestSuite();
 		$suite->setName(self::TEST_CASE_WITH_CONFIG);
 		$suite->addTest($sub_browser_suite);
 		$suite->addTest($sub_test_suite);
@@ -91,7 +91,7 @@ class SuiteBuildingTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @param string $class_name Class name.
 	 *
-	 * @return TestSuite
+	 * @return RegularTestSuite
 	 */
 	protected function createTestSuite($class_name)
 	{

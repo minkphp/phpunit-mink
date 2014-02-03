@@ -11,14 +11,31 @@
 namespace tests\aik099\PHPUnit;
 
 
-use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
-use WebDriver\SauceLabs\Capability as SauceLabsCapability;
+use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
+use aik099\PHPUnit\Event\TestEndedEvent;
+use aik099\PHPUnit\Event\TestEvent;
+use aik099\PHPUnit\Session\SessionStrategyManager;
+use Mockery\MockInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
 use Mockery as m;
 
 class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 {
+
+	const HOST = ':@ondemand.saucelabs.com';
+
+	const PORT = 80;
+
+	const AUTOMATIC_TEST_NAME = 'AUTOMATIC';
+
+	/**
+	 * Browser configuration factory.
+	 *
+	 * @var IBrowserConfigurationFactory|MockInterface
+	 */
+	private $_browserConfigurationFactory;
 
 	/**
 	 * Configures all tests.
@@ -27,10 +44,9 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	 */
 	protected function setUp()
 	{
-		parent::setUp();
+		$this->_browserConfigurationFactory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
 
-		$this->host = ':@ondemand.saucelabs.com';
-		$this->port = 80;
+		parent::setUp();
 
 		$this->setup['host'] = 'UN:AK@ondemand.saucelabs.com';
 		$this->setup['port'] = 80;
@@ -82,7 +98,7 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	 */
 	public function testSetHostCorrect()
 	{
-		$browser = $this->createBrowserConfiguration(array(), true);
+		$browser = $this->createBrowserConfiguration(array(), false, true);
 
 		$this->assertSame($browser, $browser->setHost('EXAMPLE_HOST'));
 		$this->assertSame('A:B@ondemand.saucelabs.com', $browser->getHost());
@@ -95,7 +111,7 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	 */
 	public function testSetPortCorrect()
 	{
-		$browser = $this->createBrowserConfiguration(array(), true);
+		$browser = $this->createBrowserConfiguration(array(), false, true);
 		$this->assertSame($browser, $browser->setPort(5555));
 		$this->assertSame(80, $browser->getPort());
 	}
@@ -107,7 +123,7 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	 */
 	public function testSetBrowserNameCorrect()
 	{
-		$browser = $this->createBrowserConfiguration(array(), true);
+		$browser = $this->createBrowserConfiguration(array(), false, true);
 		$this->assertSame($browser, $browser->setBrowserName(''));
 		$this->assertSame('chrome', $browser->getBrowserName());
 	}
@@ -123,7 +139,7 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	 */
 	public function testSetDesiredCapabilitiesCorrect(array $desired_capabilities = null, array $expected = null)
 	{
-		$browser = $this->createBrowserConfiguration(array(), true);
+		$browser = $this->createBrowserConfiguration(array(), false, true);
 		$this->assertSame($browser, $browser->setDesiredCapabilities($desired_capabilities));
 		$this->assertSame($expected, $browser->getDesiredCapabilities());
 	}
@@ -150,52 +166,72 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	/**
 	 * Test description.
 	 *
-	 * @return void
-	 */
-	public function testSetUpHook()
-	{
-		$this->markTestSkipped('Other more complex tests cover this');
-	}
-
-	/**
-	 * Test description.
-	 *
 	 * @param string $session_strategy Session strategy.
-	 * @param string $expected         Expected job name.
+	 * @param string $test_name        Expected job name.
+	 * @param string $build_number     Build number.
 	 *
 	 * @return void
-	 * @dataProvider jobNameDataProvider
-	 * @covers       \aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration::testSetUpHook
+	 * @dataProvider setupEventDataProvider
 	 */
-	public function testJobName($session_strategy, $expected)
+	public function testTestSetupEvent($session_strategy, $test_name, $build_number = null)
 	{
-		/* @var $test_case BrowserTestCase */
-		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
-
-		if ( !isset($expected) ) {
-			$expected = get_class($test_case);
-		}
+		putenv('BUILD_NUMBER' . ($build_number ? '=' . $build_number : ''));
 
 		$this->browser->setSessionStrategy($session_strategy);
-		$test_case->shouldReceive('toString')->andReturn($expected);
 
-		$this->browser->testSetUpHook($test_case);
+		$event_dispatcher = new EventDispatcher();
+		$event_dispatcher->addSubscriber($this->browser);
 
-		$capabilities = $this->browser->getDesiredCapabilities();
-		$this->assertArrayHasKey(SauceLabsCapability::NAME, $capabilities);
-		$this->assertSame($expected, $capabilities[SauceLabsCapability::NAME]);
+		$test_case = m::mock(self::TEST_CASE_CLASS);
+		$test_case->shouldReceive('toString')->times($this->_isAutomaticTestName($test_name) ? 0 : 1)->andReturn($test_name);
+
+		if ( $this->_isAutomaticTestName($test_name) ) {
+			$test_name = get_class($test_case);
+		}
+
+		$event_dispatcher->dispatch(
+			BrowserTestCase::TEST_SETUP_EVENT,
+			new TestEvent($test_case, m::mock('Behat\\Mink\\Session'))
+		);
+
+		$desired_capabilities = $this->browser->getDesiredCapabilities();
+
+		$this->assertArrayHasKey(SauceLabsBrowserConfiguration::NAME_CAPABILITY, $desired_capabilities);
+		$this->assertEquals($test_name, $desired_capabilities[SauceLabsBrowserConfiguration::NAME_CAPABILITY]);
+
+		if ( isset($build_number) ) {
+			$this->assertArrayHasKey(SauceLabsBrowserConfiguration::BUILD_NUMBER_CAPABILITY, $desired_capabilities);
+			$this->assertEquals($build_number, $desired_capabilities[SauceLabsBrowserConfiguration::BUILD_NUMBER_CAPABILITY]);
+		}
+		else {
+			$this->assertArrayNotHasKey(SauceLabsBrowserConfiguration::BUILD_NUMBER_CAPABILITY, $desired_capabilities);
+		}
 	}
 
 	/**
-	 * JobName data provider.
+	 * Checks that test name is automatic.
+	 *
+	 * @param string $test_name Expected job name.
+	 *
+	 * @return boolean
+	 */
+	private function _isAutomaticTestName($test_name)
+	{
+		return $test_name == self::AUTOMATIC_TEST_NAME;
+	}
+
+	/**
+	 * Data provider for TestSetup event handler.
 	 *
 	 * @return array
 	 */
-	public function jobNameDataProvider()
+	public function setupEventDataProvider()
 	{
 		return array(
-			array(SessionStrategyManager::ISOLATED_STRATEGY, 'TEST_NAME'),
-			array(SessionStrategyManager::SHARED_STRATEGY, null),
+			'isolated, name, build' => array(SessionStrategyManager::ISOLATED_STRATEGY, 'TEST_NAME', 'BUILD_NUMBER'),
+			'shared, no name, build' => array(SessionStrategyManager::SHARED_STRATEGY, self::AUTOMATIC_TEST_NAME, 'BUILD_NUMBER'),
+			'isolated, name, no build' => array(SessionStrategyManager::ISOLATED_STRATEGY, 'TEST_NAME'),
+			'shared, no name, no build' => array(SessionStrategyManager::SHARED_STRATEGY, self::AUTOMATIC_TEST_NAME),
 		);
 	}
 
@@ -203,63 +239,50 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	 * Test description.
 	 *
 	 * @return void
-	 * @covers \aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration::testSetUpHook
 	 */
-	public function testBuildNumberPresent()
+	public function testTestEndedEvent()
 	{
-		/* @var $test_case BrowserTestCase */
-		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
-		$this->browser->setSessionStrategy(SessionStrategyManager::SHARED_STRATEGY);
+		$sauce_rest = m::mock('WebDriver\\SauceLabs\\SauceRest');
+		$sauce_rest->shouldReceive('updateJob')->with('', array('passed' => true))->once();
 
-		$expected = 'X';
-		putenv('BUILD_NUMBER=' . $expected);
-		$this->browser->testSetUpHook($test_case);
-		putenv('BUILD_NUMBER');
+		$this->_browserConfigurationFactory->shouldReceive('createAPIClient')->with($this->browser)->andReturn($sauce_rest);
 
-		$capabilities = $this->browser->getDesiredCapabilities();
-		$this->assertArrayHasKey(SauceLabsCapability::BUILD, $capabilities);
-		$this->assertSame($expected, $capabilities[SauceLabsCapability::BUILD]);
-	}
+		$event_dispatcher = new EventDispatcher();
+		$event_dispatcher->addSubscriber($this->browser);
 
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 * @covers \aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration::testSetUpHook
-	 */
-	public function testBuildNumberAbsent()
-	{
-		/* @var $test_case BrowserTestCase */
-		$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase');
-		$this->browser->setSessionStrategy(SessionStrategyManager::SHARED_STRATEGY);
+		$session = m::mock('Behat\\Mink\\Session');
+		$session->shouldReceive('getDriver')->once()->andReturn(new \stdClass());
 
-		$this->browser->testSetUpHook($test_case);
+		$test_case = m::mock(self::TEST_CASE_CLASS);
+		$test_case->shouldReceive('getSession')->once()->andReturn($session);
+		$test_case->shouldReceive('hasFailed')->once()->andReturn(false); // for shared strategy
 
-		$capabilities = $this->browser->getDesiredCapabilities();
-		$this->assertArrayNotHasKey(SauceLabsCapability::BUILD, $capabilities);
-	}
+		$test_result = m::mock('PHPUnit_Framework_TestResult');
 
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testAfterRunHook()
-	{
-		$this->markTestSkipped('TODO');
+		$event = $event_dispatcher->dispatch(
+			BrowserTestCase::TEST_ENDED_EVENT,
+			new TestEndedEvent($test_case, $test_result, $session)
+		);
+
+		$this->assertInstanceOf('aik099\\PHPUnit\\Event\\TestEndedEvent', $event);
 	}
 
 	/**
 	 * Creates instance of browser configuration.
 	 *
-	 * @param array   $aliases    Aliases.
-	 * @param boolean $with_sauce Include test sauce configuration.
+	 * @param array   $aliases        Aliases.
+	 * @param boolean $add_subscriber Expect addition of subscriber to event dispatcher.
+	 * @param boolean $with_sauce     Include test sauce configuration.
 	 *
 	 * @return SauceLabsBrowserConfiguration
 	 */
-	protected function createBrowserConfiguration(array $aliases = array(), $with_sauce = false)
+	protected function createBrowserConfiguration(array $aliases = array(), $add_subscriber = false, $with_sauce = false)
 	{
-		$browser = new SauceLabsBrowserConfiguration($aliases);
+		$browser = new SauceLabsBrowserConfiguration($this->_browserConfigurationFactory);
+		$browser->setAliases($aliases);
+
+		$browser->setEventDispatcher($this->eventDispatcher);
+		$this->eventDispatcher->shouldReceive('addSubscriber')->with($browser)->times($add_subscriber ? 1 : 0);
 
 		if ( $with_sauce ) {
 			$browser->setSauce(array('username' => 'A', 'api_key' => 'B'));

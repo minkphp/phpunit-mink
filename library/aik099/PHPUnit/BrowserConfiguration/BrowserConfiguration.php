@@ -12,16 +12,17 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 
 
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\SessionStrategy\SessionStrategyManager;
-use Behat\Mink\Driver\Selenium2Driver;
-use Behat\Mink\Session;
+use aik099\PHPUnit\IEventDispatcherAware;
+use aik099\PHPUnit\Session\SessionStrategyManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Browser configuration for browser.
  *
  * @method \Mockery\Expectation shouldReceive
  */
-class BrowserConfiguration
+class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcherAware
 {
 
 	/**
@@ -39,11 +40,50 @@ class BrowserConfiguration
 	protected $aliases;
 
 	/**
-	 * Creates browser configuration.
+	 * Test case.
 	 *
-	 * @param array $aliases Browser configuration aliases.
+	 * @var BrowserTestCase
 	 */
-	public function __construct(array $aliases = array())
+	private $_testCase;
+
+	/**
+	 * Event dispatcher.
+	 *
+	 * @var EventDispatcherInterface
+	 */
+	private $_eventDispatcher;
+
+	/**
+	 * Resolves browser alias into corresponding browser configuration.
+	 *
+	 * @param array $parameters Browser configuration.
+	 * @param array $aliases    Browser configuration aliases.
+	 *
+	 * @return array
+	 * @throws \InvalidArgumentException When unable to resolve used browser alias.
+	 */
+	public static function resolveAliases(array $parameters, array $aliases)
+	{
+		if ( !isset($parameters['alias']) ) {
+			return $parameters;
+		}
+
+		$browser_alias = $parameters['alias'];
+		unset($parameters['alias']);
+
+		if ( isset($aliases[$browser_alias]) ) {
+			$candidate_params = self::arrayMergeRecursive($aliases[$browser_alias], $parameters);
+
+			return self::resolveAliases($candidate_params, $aliases);
+		}
+
+		throw new \InvalidArgumentException(sprintf('Unable to resolve "%s" browser alias', $browser_alias));
+	}
+
+	/**
+	 * Creates browser configuration.
+	 */
+	public function __construct()
 	{
 		$this->parameters = array(
 			// server related
@@ -59,7 +99,67 @@ class BrowserConfiguration
 			// test related
 			'sessionStrategy' => SessionStrategyManager::ISOLATED_STRATEGY,
 		);
+	}
 
+	/**
+	 * Returns an array of event names this subscriber wants to listen to.
+	 *
+	 * @return array The event names to listen to
+	 */
+	public static function getSubscribedEvents()
+	{
+		return array();
+	}
+
+	/**
+	 * Sets event dispatcher.
+	 *
+	 * @param EventDispatcherInterface $event_dispatcher Event dispatcher.
+	 *
+	 * @return void
+	 */
+	public function setEventDispatcher(EventDispatcherInterface $event_dispatcher)
+	{
+		$this->_eventDispatcher = $event_dispatcher;
+	}
+
+	/**
+	 * Attaches listeners.
+	 *
+	 * @param BrowserTestCase $test_case Test case.
+	 *
+	 * @return void
+	 */
+	public function attachToTestCase(BrowserTestCase $test_case)
+	{
+		$this->_testCase = $test_case;
+		$this->_eventDispatcher->addSubscriber($this);
+	}
+
+	/**
+	 * Returns associated test case.
+	 *
+	 * @return BrowserTestCase
+	 * @throws \RuntimeException When test case not attached.
+	 */
+	public function getTestCase()
+	{
+		if ( $this->_testCase === null ) {
+			throw new \RuntimeException('Test Case not attached, use "attachToTestCase" method');
+		}
+
+		return $this->_testCase;
+	}
+
+	/**
+	 * Sets aliases.
+	 *
+	 * @param array $aliases Browser configuration aliases.
+	 *
+	 * @return void
+	 */
+	public function setAliases(array $aliases = array())
+	{
 		$this->aliases = $aliases;
 	}
 
@@ -72,7 +172,7 @@ class BrowserConfiguration
 	 */
 	public function setup(array $parameters)
 	{
-		$parameters = array_merge($this->parameters, self::resolveAliases($parameters, $this->aliases));
+		$parameters = $this->prepareParameters($parameters);
 
 		$this->setHost($parameters['host'])->setPort($parameters['port'])->setTimeout($parameters['timeout']);
 		$this->setBrowserName($parameters['browserName'])->setDesiredCapabilities($parameters['desiredCapabilities']);
@@ -80,6 +180,18 @@ class BrowserConfiguration
 		$this->setSessionStrategy($parameters['sessionStrategy']);
 
 		return $this;
+	}
+
+	/**
+	 * Merges together default, given parameter and resolves aliases along the way.
+	 *
+	 * @param array $parameters Browser configuration parameters.
+	 *
+	 * @return array
+	 */
+	protected function prepareParameters(array $parameters)
+	{
+		return array_merge($this->parameters, self::resolveAliases($parameters, $this->aliases));
 	}
 
 	/**
@@ -308,16 +420,14 @@ class BrowserConfiguration
 	/**
 	 * Returns session strategy hash based on given test case and current browser configuration.
 	 *
-	 * @param BrowserTestCase $test_case Test case.
-	 *
 	 * @return integer
 	 */
-	public function getSessionStrategyHash(BrowserTestCase $test_case)
+	public function getSessionStrategyHash()
 	{
 		$ret = $this->getBrowserHash();
 
 		if ( $this->isShared() ) {
-			$ret .= '::' . get_class($test_case);
+			$ret .= '::' . get_class($this->getTestCase());
 		}
 
 		return $ret;
@@ -357,56 +467,6 @@ class BrowserConfiguration
 	}
 
 	/**
-	 * Creates new session based on browser configuration.
-	 *
-	 * @return Session
-	 */
-	public function createSession()
-	{
-		$capabilities = $this->getDesiredCapabilities();
-		$capabilities['browserName'] = $this->getBrowserName();
-
-		// TODO: maybe doesn't work
-		ini_set('default_socket_timeout', $this->getTimeout());
-
-		// create driver:
-		$driver = new Selenium2Driver(
-			$this->getBrowserName(),
-			$capabilities,
-			'http://' . $this->getHost() . ':' . $this->getPort() . '/wd/hub'
-		);
-
-		return new Session($driver);
-	}
-
-	/**
-	 * Resolves browser alias into corresponding browser configuration.
-	 *
-	 * @param array $parameters Browser configuration.
-	 * @param array $aliases    Browser configuration aliases.
-	 *
-	 * @return array
-	 * @throws \InvalidArgumentException When unable to resolve used browser alias.
-	 */
-	public static function resolveAliases(array $parameters, array $aliases)
-	{
-		if ( !isset($parameters['alias']) ) {
-			return $parameters;
-		}
-
-		$browser_alias = $parameters['alias'];
-		unset($parameters['alias']);
-
-		if ( isset($aliases[$browser_alias]) ) {
-			$candidate_params = self::arrayMergeRecursive($aliases[$browser_alias], $parameters);
-
-			return self::resolveAliases($candidate_params, $aliases);
-		}
-
-		throw new \InvalidArgumentException(sprintf('Unable to resolve "%s" browser alias', $browser_alias));
-	}
-
-	/**
 	 * Similar to array_merge_recursive but keyed-valued are always overwritten.
 	 *
 	 * Priority goes to the 2nd array.
@@ -432,31 +492,6 @@ class BrowserConfiguration
 		}
 
 		return $array1;
-	}
-
-	/**
-	 * Hook, called from "BrowserTestCase::setUp" method.
-	 *
-	 * @param BrowserTestCase $test_case Browser test case.
-	 *
-	 * @return self
-	 */
-	public function testSetUpHook(BrowserTestCase $test_case)
-	{
-		return $this;
-	}
-
-	/**
-	 * Hook, called from "BrowserTestCase::run" method.
-	 *
-	 * @param BrowserTestCase               $test_case   Browser test case.
-	 * @param \PHPUnit_Framework_TestResult $test_result Test result.
-	 *
-	 * @return self
-	 */
-	public function testAfterRunHook(BrowserTestCase $test_case, \PHPUnit_Framework_TestResult $test_result)
-	{
-		return $this;
 	}
 
 }
