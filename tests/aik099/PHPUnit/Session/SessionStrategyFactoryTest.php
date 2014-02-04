@@ -14,9 +14,9 @@ namespace tests\aik099\PHPUnit\Session;
 use aik099\PHPUnit\Session\SessionStrategyFactory;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use Mockery as m;
-use tests\aik099\PHPUnit\TestCase\TestApplicationAwareTestCase;
+use tests\aik099\PHPUnit\TestCase\ApplicationAwareTestCase;
 
-class SessionStrategyFactoryTest extends TestApplicationAwareTestCase
+class SessionStrategyFactoryTest extends ApplicationAwareTestCase
 {
 
 	/**

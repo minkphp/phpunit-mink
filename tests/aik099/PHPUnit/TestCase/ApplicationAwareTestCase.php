@@ -11,17 +11,17 @@
 namespace tests\aik099\PHPUnit\TestCase;
 
 
-use aik099\PHPUnit\TestApplication;
+use aik099\PHPUnit\Application;
 use Mockery\MockInterface;
 use Mockery as m;
 
-class TestApplicationAwareTestCase extends \PHPUnit_Framework_TestCase
+class ApplicationAwareTestCase extends \PHPUnit_Framework_TestCase
 {
 
 	/**
 	 * Application.
 	 *
-	 * @var TestApplication|MockInterface
+	 * @var Application|MockInterface
 	 */
 	protected $application;
 
@@ -34,7 +34,7 @@ class TestApplicationAwareTestCase extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		$this->application = m::mock('aik099\\PHPUnit\\TestApplication');
+		$this->application = m::mock('aik099\\PHPUnit\\Application');
 	}
 
 	/**

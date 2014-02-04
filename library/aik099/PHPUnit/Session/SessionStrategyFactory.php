@@ -11,8 +11,8 @@
 namespace aik099\PHPUnit\Session;
 
 
-use aik099\PHPUnit\ITestApplicationAware;
-use aik099\PHPUnit\TestApplication;
+use aik099\PHPUnit\IApplicationAware;
+use aik099\PHPUnit\Application;
 
 
 /**
@@ -20,24 +20,24 @@ use aik099\PHPUnit\TestApplication;
  *
  * @method \Mockery\Expectation shouldReceive
  */
-class SessionStrategyFactory implements ISessionStrategyFactory, ITestApplicationAware
+class SessionStrategyFactory implements ISessionStrategyFactory, IApplicationAware
 {
 
 	/**
 	 * Application.
 	 *
-	 * @var TestApplication
+	 * @var Application
 	 */
 	protected $application;
 
 	/**
 	 * Sets application.
 	 *
-	 * @param TestApplication $application The application.
+	 * @param Application $application The application.
 	 *
 	 * @return void
 	 */
-	public function setApplication(TestApplication $application)
+	public function setApplication(Application $application)
 	{
 		$this->application = $application;
 	}

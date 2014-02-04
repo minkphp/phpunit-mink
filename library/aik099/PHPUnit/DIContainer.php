@@ -24,17 +24,17 @@ use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use aik099\PHPUnit\TestSuite\TestSuiteBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class DIContainer extends \Pimple implements ITestApplicationAware
+class DIContainer extends \Pimple implements IApplicationAware
 {
 
 	/**
 	 * Sets application.
 	 *
-	 * @param TestApplication $application The application.
+	 * @param Application $application The application.
 	 *
 	 * @return void
 	 */
-	public function setApplication(TestApplication $application)
+	public function setApplication(Application $application)
 	{
 		$this['application'] = $application;
 	}

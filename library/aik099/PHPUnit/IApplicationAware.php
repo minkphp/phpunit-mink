@@ -12,18 +12,18 @@ namespace aik099\PHPUnit;
 
 
 /**
- * Interface to indicate that test case or test suite class understands TestApplication.
+ * Interface to indicate that test case or test suite class understands Application.
  */
-interface ITestApplicationAware
+interface IApplicationAware
 {
 
 	/**
 	 * Sets application.
 	 *
-	 * @param TestApplication $application The application.
+	 * @param Application $application The application.
 	 *
 	 * @return void
 	 */
-	public function setApplication(TestApplication $application);
+	public function setApplication(Application $application);
 
 }

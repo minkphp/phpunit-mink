@@ -15,9 +15,9 @@ use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use Mockery as m;
-use tests\aik099\PHPUnit\TestCase\TestApplicationAwareTestCase;
+use tests\aik099\PHPUnit\TestCase\ApplicationAwareTestCase;
 
-class BrowserConfigurationFactoryTest extends TestApplicationAwareTestCase
+class BrowserConfigurationFactoryTest extends ApplicationAwareTestCase
 {
 
 	/**

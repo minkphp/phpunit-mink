@@ -19,7 +19,7 @@ use aik099\PHPUnit\TestSuite\TestSuiteBuilder;
  *
  * @method \Mockery\Expectation shouldReceive
  */
-class TestApplication
+class Application
 {
 
 	/**
