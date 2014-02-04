@@ -168,8 +168,7 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 	 */
 	public function setBrowser(BrowserConfiguration $browser)
 	{
-		$this->_browser = $browser;
-		$browser->attachToTestCase($this);
+		$this->_browser = $browser->attachToTestCase($this);
 
 		// configure session strategy
 		return $this->setSessionStrategy($this->sessionStrategyManager->getSessionStrategy($browser));

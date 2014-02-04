@@ -128,12 +128,14 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 	 *
 	 * @param BrowserTestCase $test_case Test case.
 	 *
-	 * @return void
+	 * @return self
 	 */
 	public function attachToTestCase(BrowserTestCase $test_case)
 	{
 		$this->_testCase = $test_case;
 		$this->_eventDispatcher->addSubscriber($this);
+
+		return $this;
 	}
 
 	/**

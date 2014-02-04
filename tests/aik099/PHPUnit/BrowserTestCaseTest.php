@@ -239,7 +239,7 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 		$browser = m::mock(self::BROWSER_CLASS);
 		$browser->shouldReceive('getHost')->times($times)->andReturnNull();
 		$browser->shouldReceive('getPort')->times($times)->andReturnNull();
-		$browser->shouldReceive('attachToTestCase')->once();
+		$browser->shouldReceive('attachToTestCase')->once()->andReturn($browser);
 
 		return $browser;
 	}

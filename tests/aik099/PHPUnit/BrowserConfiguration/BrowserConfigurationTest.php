@@ -185,8 +185,8 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 
 		/* @var $test_case BrowserTestCase */
 		$test_case = m::mock(self::TEST_CASE_CLASS);
-		$browser->attachToTestCase($test_case);
 
+		$this->assertSame($browser, $browser->attachToTestCase($test_case));
 		$this->assertSame($test_case, $browser->getTestCase());
 	}
 
