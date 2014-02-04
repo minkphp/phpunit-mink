@@ -65,14 +65,23 @@ class PerBrowserConfigTest extends BrowserTestCase
 
 	protected function setUp()
 	{
-		$browser = new BrowserConfiguration($this->getBrowserAliases());
-//		$browser = new SauceLabsBrowserConfiguration($this->getBrowserAliases());
-//		$browser->setSauce(array('username' => 'sauce_username', 'api_key' => 'sauce_api_key'));
+		// to create regular browser configuration via BrowserConfigurationFactory
+		$browser = $this->createBrowserConfiguration(array(
+			// options goes here (optional)
+		));
 
+		// to create "Sauce Labs" browser configuration via BrowserConfigurationFactory
+		$browser = $this->createBrowserConfiguration(array(
+			'sauce' => array('username' => 'sauce_username', 'api_key' => 'sauce_api_key'), // required
+			// options goes here (optional)
+		));
+
+		// options can be changed later (optional)
 		$browser->setHost('selenium_host')->setPort('selenium_port')->setTimeout(30);
 		$browser->setBrowserName('browser name')->setDesiredCapabilities(array('version' => '6.5'));
 		$browser->setBaseUrl('http://www.test-host.com');
 
+		// set browser configuration to test case
 		$this->setBrowser($browser);
 
 		parent::setUp();
@@ -235,7 +244,7 @@ There are also corresponding `set` and `get` methods for each of mentioned above
 ```json
 {
 	"require": {
-		"aik099/phpunit-mink": "dev-master"
+		"aik099/phpunit-mink": "~1.0"
 	},
 	"repositories": [
 		{

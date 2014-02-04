@@ -199,9 +199,19 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 	 */
 	public function setBrowserFromConfiguration(array $browser_config)
 	{
-		$browser = $this->_browserConfigurationFactory->createBrowserConfiguration($browser_config, $this);
+		return $this->setBrowser($this->createBrowserConfiguration($browser_config));
+	}
 
-		return $this->setBrowser($browser);
+	/**
+	 * Returns browser configuration instance.
+	 *
+	 * @param array $browser_config Browser.
+	 *
+	 * @return BrowserConfiguration
+	 */
+	protected function createBrowserConfiguration(array $browser_config)
+	{
+		return $this->_browserConfigurationFactory->createBrowserConfiguration($browser_config, $this);
 	}
 
 	/**
