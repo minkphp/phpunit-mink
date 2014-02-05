@@ -47,10 +47,10 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	 */
 	public function __construct(IBrowserConfigurationFactory $browser_configuration_factory)
 	{
-		parent::__construct();
-
 		$this->_browserConfigurationFactory = $browser_configuration_factory;
-		$this->parameters['sauce'] = array('username' => '', 'api_key' => '');
+		$this->defaultParameters['sauce'] = array('username' => '', 'api_key' => '');
+
+		parent::__construct();
 	}
 
 	/**

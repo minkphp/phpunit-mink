@@ -26,6 +26,26 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 {
 
 	/**
+	 * Default browser configuration.
+	 *
+	 * @var array
+	 */
+	protected $defaultParameters = array(
+		// server related
+		'host' => 'localhost',
+		'port' => 4444,
+		'timeout' => 60,
+
+		// browser related
+		'browserName' => 'firefox',
+		'desiredCapabilities' => array(),
+		'baseUrl' => '',
+
+		// test related
+		'sessionStrategy' => SessionStrategyManager::ISOLATED_STRATEGY,
+	);
+
+	/**
 	 * Browser configuration.
 	 *
 	 * @var array
@@ -85,20 +105,7 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 	 */
 	public function __construct()
 	{
-		$this->parameters = array(
-			// server related
-			'host' => 'localhost',
-			'port' => 4444,
-			'timeout' => 60,
-
-			// browser related
-			'browserName' => 'firefox',
-			'desiredCapabilities' => array(),
-			'baseUrl' => '',
-
-			// test related
-			'sessionStrategy' => SessionStrategyManager::ISOLATED_STRATEGY,
-		);
+		$this->parameters = $this->defaultParameters;
 	}
 
 	/**
@@ -171,10 +178,18 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 	 * @param array $parameters Browser configuration parameters.
 	 *
 	 * @return self
+	 * @throws \InvalidArgumentException When unknown parameter is discovered.
 	 */
 	public function setup(array $parameters)
 	{
 		$parameters = $this->prepareParameters($parameters);
+		$unknown_parameters = array_diff(array_keys($parameters), array_keys($this->defaultParameters));
+
+		if ( $unknown_parameters ) {
+			throw new \InvalidArgumentException(
+				'Following parameter(-s) are unknown: "' . implode('", "', $unknown_parameters) . '"'
+			);
+		}
 
 		$this->setHost($parameters['host'])->setPort($parameters['port'])->setTimeout($parameters['timeout']);
 		$this->setBrowserName($parameters['browserName'])->setDesiredCapabilities($parameters['desiredCapabilities']);
@@ -388,12 +403,6 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 	 */
 	public function setSessionStrategy($session_strategy)
 	{
-		$allowed = array(SessionStrategyManager::ISOLATED_STRATEGY, SessionStrategyManager::SHARED_STRATEGY);
-
-		if ( !in_array($session_strategy, $allowed) ) {
-			throw new \InvalidArgumentException(vsprintf('Session strategy must be either "%s" or "%s"', $allowed));
-		}
-
 		$this->parameters['sessionStrategy'] = $session_strategy;
 
 		return $this;

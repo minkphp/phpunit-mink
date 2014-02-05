@@ -224,6 +224,17 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 * @return void
 	 * @expectedException \InvalidArgumentException
 	 */
+	public function testSetupScreamsAboutUnknownParameters()
+	{
+		$this->browser->setup(array('unknown-parameter' => 'value'));
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 * @expectedException \InvalidArgumentException
+	 */
 	public function testSetHostIncorrect()
 	{
 		$this->browser->setHost(5555);
@@ -352,23 +363,12 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * Test description.
 	 *
-	 * @return void
-	 * @expectedException \InvalidArgumentException
-	 */
-	public function testSetSessionStrategyIncorrect()
-	{
-		$this->browser->setSessionStrategy('wrong');
-	}
-
-	/**
-	 * Test description.
-	 *
 	 * @param string $expected Expected strategy.
 	 *
 	 * @return void
 	 * @dataProvider sessionSharingDataProvider
 	 */
-	public function testSetSessionStrategyCorrect($expected)
+	public function testSetSessionStrategy($expected)
 	{
 		$this->assertSame($this->browser, $this->browser->setSessionStrategy($expected));
 		$this->assertSame($expected, $this->browser->getSessionStrategy());
