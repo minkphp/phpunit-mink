@@ -52,10 +52,10 @@ class SessionStrategyFactory implements ISessionStrategyFactory, IApplicationAwa
 	 */
 	public function createStrategy($strategy_type)
 	{
-		if ( $strategy_type == SessionStrategyManager::ISOLATED_STRATEGY ) {
+		if ( $strategy_type == ISessionStrategyFactory::TYPE_ISOLATED ) {
 			return $this->application->getObject('isolated_session_strategy');
 		}
-		elseif ( $strategy_type == SessionStrategyManager::SHARED_STRATEGY ) {
+		elseif ( $strategy_type == ISessionStrategyFactory::TYPE_SHARED ) {
 			return $this->application->getObject('shared_session_strategy');
 		}
 

@@ -11,8 +11,8 @@
 namespace tests\aik099\PHPUnit\Session;
 
 
+use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use aik099\PHPUnit\Session\SessionStrategyFactory;
-use aik099\PHPUnit\Session\SessionStrategyManager;
 use Mockery as m;
 use tests\aik099\PHPUnit\TestCase\ApplicationAwareTestCase;
 
@@ -63,8 +63,8 @@ class SessionStrategyFactoryTest extends ApplicationAwareTestCase
 	public function createStrategyDataProvider()
 	{
 		return array(
-			array(SessionStrategyManager::ISOLATED_STRATEGY, 'isolated_session_strategy'),
-			array(SessionStrategyManager::SHARED_STRATEGY, 'shared_session_strategy'),
+			array(ISessionStrategyFactory::TYPE_ISOLATED, 'isolated_session_strategy'),
+			array(ISessionStrategyFactory::TYPE_SHARED, 'shared_session_strategy'),
 		);
 	}
 

@@ -22,16 +22,6 @@ class SessionStrategyManager
 {
 
 	/**
-	 * Strategy, that create new session for each test in a test case.
-	 */
-	const ISOLATED_STRATEGY = 'isolated';
-
-	/**
-	 * Strategy, that allows to share session across all tests in a single test case.
-	 */
-	const SHARED_STRATEGY = 'shared';
-
-	/**
 	 * Browser configuration used in last executed test.
 	 *
 	 * @var string
@@ -77,7 +67,9 @@ class SessionStrategyManager
 	public function getDefaultSessionStrategy()
 	{
 		if ( !$this->defaultSessionStrategy ) {
-			$this->defaultSessionStrategy = $this->_sessionStrategyFactory->createStrategy(self::ISOLATED_STRATEGY);
+			$this->defaultSessionStrategy = $this->_sessionStrategyFactory->createStrategy(
+				ISessionStrategyFactory::TYPE_ISOLATED
+			);
 		}
 
 		return $this->defaultSessionStrategy;

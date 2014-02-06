@@ -13,7 +13,7 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\IEventDispatcherAware;
-use aik099\PHPUnit\Session\SessionStrategyManager;
+use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -42,7 +42,7 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 		'baseUrl' => '',
 
 		// test related
-		'sessionStrategy' => SessionStrategyManager::ISOLATED_STRATEGY,
+		'sessionStrategy' => ISessionStrategyFactory::TYPE_ISOLATED,
 	);
 
 	/**
@@ -425,7 +425,7 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 	 */
 	public function isShared()
 	{
-		return $this->getSessionStrategy() == SessionStrategyManager::SHARED_STRATEGY;
+		return $this->getSessionStrategy() == ISessionStrategyFactory::TYPE_SHARED;
 	}
 
 	/**

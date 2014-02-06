@@ -14,7 +14,7 @@ namespace tests\aik099\PHPUnit;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\Event\TestEndedEvent;
 use aik099\PHPUnit\Event\TestEvent;
-use aik099\PHPUnit\Session\SessionStrategyManager;
+use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use Mockery\MockInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
@@ -228,10 +228,10 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	public function setupEventDataProvider()
 	{
 		return array(
-			'isolated, name, build' => array(SessionStrategyManager::ISOLATED_STRATEGY, 'TEST_NAME', 'BUILD_NUMBER'),
-			'shared, no name, build' => array(SessionStrategyManager::SHARED_STRATEGY, self::AUTOMATIC_TEST_NAME, 'BUILD_NUMBER'),
-			'isolated, name, no build' => array(SessionStrategyManager::ISOLATED_STRATEGY, 'TEST_NAME'),
-			'shared, no name, no build' => array(SessionStrategyManager::SHARED_STRATEGY, self::AUTOMATIC_TEST_NAME),
+			'isolated, name, build' => array(ISessionStrategyFactory::TYPE_ISOLATED, 'TEST_NAME', 'BUILD_NUMBER'),
+			'shared, no name, build' => array(ISessionStrategyFactory::TYPE_SHARED, self::AUTOMATIC_TEST_NAME, 'BUILD_NUMBER'),
+			'isolated, name, no build' => array(ISessionStrategyFactory::TYPE_ISOLATED, 'TEST_NAME'),
+			'shared, no name, no build' => array(ISessionStrategyFactory::TYPE_SHARED, self::AUTOMATIC_TEST_NAME),
 		);
 	}
 

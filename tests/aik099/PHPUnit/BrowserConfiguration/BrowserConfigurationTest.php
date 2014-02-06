@@ -13,7 +13,7 @@ namespace tests\aik099\PHPUnit;
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\Session\SessionStrategyManager;
+use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use Mockery as m;
 use Mockery\MockInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -80,7 +80,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 			'browserName' => 'safari',
 			'desiredCapabilities' => array('platform' => 'Windows 7', 'version' => 10),
 			'baseUrl' => 'http://other-host',
-			'sessionStrategy' => SessionStrategyManager::SHARED_STRATEGY,
+			'sessionStrategy' => ISessionStrategyFactory::TYPE_SHARED,
 		);
 
 		$this->eventDispatcher = m::mock('Symfony\\Component\\EventDispatcher\\EventDispatcherInterface');
@@ -404,8 +404,8 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	public function sessionSharingDataProvider()
 	{
 		return array(
-			array(SessionStrategyManager::ISOLATED_STRATEGY),
-			array(SessionStrategyManager::SHARED_STRATEGY),
+			array(ISessionStrategyFactory::TYPE_ISOLATED),
+			array(ISessionStrategyFactory::TYPE_SHARED),
 		);
 	}
 
@@ -418,11 +418,11 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	{
 		$test_case1 = new WithBrowserConfig();
 		$browser1 = $this->createBrowserConfiguration(array(), true);
-		$browser1->setSessionStrategy(SessionStrategyManager::SHARED_STRATEGY)->attachToTestCase($test_case1);
+		$browser1->setSessionStrategy(ISessionStrategyFactory::TYPE_SHARED)->attachToTestCase($test_case1);
 
 		$test_case2 = new WithoutBrowserConfig();
 		$browser2 = $this->createBrowserConfiguration(array(), true);
-		$browser2->setSessionStrategy(SessionStrategyManager::SHARED_STRATEGY)->attachToTestCase($test_case2);
+		$browser2->setSessionStrategy(ISessionStrategyFactory::TYPE_SHARED)->attachToTestCase($test_case2);
 
 		$this->assertNotSame($browser1->getSessionStrategyHash($test_case1), $browser2->getSessionStrategyHash($test_case2));
 	}
@@ -438,7 +438,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 		$test_case->shouldReceive('hasFailed')->once()->andReturn(false);
 		$test_result = m::mock('\\PHPUnit_Framework_TestResult');
 
-		$this->browser->setSessionStrategy(SessionStrategyManager::ISOLATED_STRATEGY);
+		$this->browser->setSessionStrategy(ISessionStrategyFactory::TYPE_ISOLATED);
 		$this->assertTrue($this->browser->getTestStatus($test_case, $test_result));
 	}
 
@@ -453,7 +453,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 		$test_result = m::mock('\\PHPUnit_Framework_TestResult');
 		$test_result->shouldReceive('wasSuccessful')->once()->andReturn(true);
 
-		$this->browser->setSessionStrategy(SessionStrategyManager::SHARED_STRATEGY);
+		$this->browser->setSessionStrategy(ISessionStrategyFactory::TYPE_SHARED);
 		$this->assertTrue($this->browser->getTestStatus($test_case, $test_result));
 	}
 

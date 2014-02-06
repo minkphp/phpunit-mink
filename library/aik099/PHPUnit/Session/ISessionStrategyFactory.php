@@ -20,6 +20,16 @@ interface ISessionStrategyFactory
 {
 
 	/**
+	 * Strategy, that create new session for each test in a test case.
+	 */
+	const TYPE_ISOLATED = 'isolated';
+
+	/**
+	 * Strategy, that allows to share session across all tests in a single test case.
+	 */
+	const TYPE_SHARED = 'shared';
+
+	/**
 	 * Creates specified session strategy.
 	 *
 	 * @param string $strategy_type Session strategy type.
