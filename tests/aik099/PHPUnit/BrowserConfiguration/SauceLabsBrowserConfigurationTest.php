@@ -267,6 +267,28 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	}
 
 	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testTestEndedWithoutSession()
+	{
+		$event_dispatcher = new EventDispatcher();
+		$event_dispatcher->addSubscriber($this->browser);
+
+		$event = m::mock('aik099\\PHPUnit\\Event\\TestEndedEvent');
+		$event->shouldReceive('getSession')->once();
+		$event->shouldReceive('setDispatcher')->once(); // to remove with Symfony 3.0 release
+		$event->shouldReceive('setName')->once(); // to remove with Symfony 3.0 release
+		$event->shouldReceive('isPropagationStopped')->once()->andReturn(false);
+		$event->shouldReceive('getTestCase')->never();
+
+		$returned_event = $event_dispatcher->dispatch(BrowserTestCase::TEST_ENDED_EVENT, $event);
+
+		$this->assertInstanceOf('aik099\\PHPUnit\\Event\\TestEndedEvent', $returned_event);
+	}
+
+	/**
 	 * Creates instance of browser configuration.
 	 *
 	 * @param array   $aliases        Aliases.
