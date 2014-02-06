@@ -215,10 +215,15 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	 */
 	public function onTestEnded(TestEndedEvent $event)
 	{
+		if ( $event->getSession() === null ) {
+			// session wasn't used in particular test
+			return;
+		}
+
 		$test_case = $event->getTestCase();
 
 		$this->getAPIClient()->updateJob(
-			$this->getSessionId($test_case->getSession()),
+			$this->getSessionId($event->getSession()),
 			array('passed' => $this->getTestStatus($test_case, $event->getTestResult()))
 		);
 	}

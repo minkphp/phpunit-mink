@@ -254,7 +254,6 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 		$session->shouldReceive('getDriver')->once()->andReturn(new \stdClass());
 
 		$test_case = m::mock(self::TEST_CASE_CLASS);
-		$test_case->shouldReceive('getSession')->once()->andReturn($session);
 		$test_case->shouldReceive('hasFailed')->once()->andReturn(false); // for shared strategy
 
 		$test_result = m::mock('PHPUnit_Framework_TestResult');
