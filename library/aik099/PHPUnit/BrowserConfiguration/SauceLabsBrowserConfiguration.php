@@ -62,7 +62,6 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	{
 		$events = parent::getSubscribedEvents();
 		$events[BrowserTestCase::TEST_SETUP_EVENT] = array('onTestSetup', 100);
-		$events[BrowserTestCase::TEST_ENDED_EVENT] = array('onTestEnded', 100);
 
 		return $events;
 	}
@@ -215,6 +214,8 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	 */
 	public function onTestEnded(TestEndedEvent $event)
 	{
+		parent::onTestEnded($event);
+
 		if ( $event->getSession() === null ) {
 			// session wasn't used in particular test
 			return;

@@ -8,7 +8,7 @@
  * @link      https://github.com/aik099/phpunit-mink
  */
 
-namespace tests\aik099\PHPUnit;
+namespace tests\aik099\PHPUnit\Integration;
 
 
 use aik099\PHPUnit\TestSuite\BrowserTestSuite;
@@ -102,7 +102,7 @@ class SuiteBuildingTest extends \PHPUnit_Framework_TestCase
 		$suite->shouldReceive('setBackupStaticAttributes')->andReturnNull();
 
 		$suite->shouldReceive('run')->once()->andReturnNull();
-		$suite->shouldReceive('endOfTestCase')->once()->andReturnNull();
+		$suite->shouldReceive('onTestSuiteEnded')->once()->andReturnNull();
 
 		return $suite;
 	}

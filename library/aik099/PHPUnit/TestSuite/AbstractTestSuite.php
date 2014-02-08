@@ -104,7 +104,7 @@ abstract class AbstractTestSuite extends \PHPUnit_Framework_TestSuite implements
 		/* @var $test BrowserTestCase */
 
 		foreach ( $this->tests() as $test ) {
-			$test->endOfTestCase();
+			$test->onTestSuiteEnded();
 		}
 	}
 
@@ -114,9 +114,9 @@ abstract class AbstractTestSuite extends \PHPUnit_Framework_TestSuite implements
 	 * @return void
 	 * @codeCoverageIgnore
 	 */
-	public function endOfTestCase()
+	/*public function onTestSuiteEnded()
 	{
 		// method created just to simplify tearDown method
-	}
+	}*/
 
 }

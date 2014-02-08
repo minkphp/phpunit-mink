@@ -66,7 +66,7 @@ class SharedSessionStrategy implements ISessionStrategy
 	{
 		return array(
 			BrowserTestCase::TEST_FAILED_EVENT => array('onTestFailed', 0),
-			BrowserTestCase::TEST_CASE_ENDED_EVENT => array('onTestCaseEnd', 0),
+			BrowserTestCase::TEST_SUITE_ENDED_EVENT => array('onTestSuiteEnd', 0),
 		);
 	}
 
@@ -157,7 +157,7 @@ class SharedSessionStrategy implements ISessionStrategy
 	 *
 	 * @return void
 	 */
-	public function onTestCaseEnd(TestEvent $event)
+	public function onTestSuiteEnd(TestEvent $event)
 	{
 		if ( $event->getSession() !== null ) {
 			$event->getSession()->stop();

@@ -169,7 +169,7 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 		$session->shouldReceive('stop')->withNoArgs()->once();
 
 		$event = $this->eventDispatcher->dispatch(
-			BrowserTestCase::TEST_CASE_ENDED_EVENT,
+			BrowserTestCase::TEST_SUITE_ENDED_EVENT,
 			new TestEvent(m::mock(self::TEST_CASE_CLASS), $session)
 		);
 

@@ -29,7 +29,7 @@
 
 	<filter>
 		<whitelist>
-			<directory>library/aik099</directory>
+			<directory>library/aik099/PHPUnit</directory>
 		</whitelist>
 	</filter>
 </phpunit>

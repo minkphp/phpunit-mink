@@ -34,7 +34,7 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 
 	const TEST_ENDED_EVENT = 'test.ended';
 
-	const TEST_CASE_ENDED_EVENT = 'test_case.ended';
+	const TEST_SUITE_ENDED_EVENT = 'test_suite.ended';
 
 	const TEST_FAILED_EVENT = 'test.failed';
 
@@ -150,13 +150,10 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 	{
 		parent::setUp();
 
-		// TODO: verify, that still works
 		$this->_eventDispatcher->dispatch(
 			self::TEST_SETUP_EVENT,
 			new TestEvent($this)
 		);
-
-//		$this->getBrowser()->onTestSetup(new TestEvent($this, $this->_session));
 	}
 
 	/**
@@ -293,14 +290,15 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 			$result->getCodeCoverage()->append($this->getRemoteCodeCoverageInformation(), $this);
 		}
 
-		// TODO: verify, that still works
+//		$this->setTestResultObject($result);
+
 		// do not call this before to give the time to the Listeners to run
 		$this->_eventDispatcher->dispatch(
 			self::TEST_ENDED_EVENT,
 			new TestEndedEvent($this, $result, $this->_session)
 		);
-//		$this->getBrowser()->onTestEnded(new TestEndedEvent($this, $result, $this->_session));
-//		$this->getSessionStrategy()->onTestEnd(new TestEndedEvent($this, $result, $this->_session));
+
+//		$this->setTestResultObject(null);
 
 		return $result;
 	}
@@ -346,14 +344,12 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 	 *
 	 * @return self
 	 */
-	public function endOfTestCase()
+	public function onTestSuiteEnded()
 	{
-		// TODO: verify, that still works
 		$this->_eventDispatcher->dispatch(
-			self::TEST_CASE_ENDED_EVENT,
+			self::TEST_SUITE_ENDED_EVENT,
 			new TestEvent($this, $this->_session)
 		);
-//		$this->getSessionStrategy()->onTestCaseEnd(new TestEvent($this, $this->_session));
 
 		return $this;
 	}
@@ -393,12 +389,10 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 	 */
 	protected function onNotSuccessfulTest(\Exception $e)
 	{
-		// TODO: verify, that still works
 		$this->_eventDispatcher->dispatch(
 			self::TEST_FAILED_EVENT,
 			new TestFailedEvent($e, $this, $this->_session)
 		);
-//		$this->getSessionStrategy()->onTestFailed(new TestFailedEvent($this, $e));
 
 		parent::onNotSuccessfulTest($e);
 	}

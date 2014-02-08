@@ -12,6 +12,7 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 
 
 use aik099\PHPUnit\BrowserTestCase;
+use aik099\PHPUnit\Event\TestEndedEvent;
 use aik099\PHPUnit\IEventDispatcherAware;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -115,7 +116,9 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 	 */
 	public static function getSubscribedEvents()
 	{
-		return array();
+		return array(
+			BrowserTestCase::TEST_ENDED_EVENT => array('onTestEnded', 100),
+		);
 	}
 
 	/**
@@ -143,6 +146,17 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 		$this->_eventDispatcher->addSubscriber($this);
 
 		return $this;
+	}
+
+	/**
+	 * Detaches listeners.
+	 *
+	 * @return void
+	 */
+	protected function detachFromTestCase()
+	{
+		$this->_testCase = null;
+		$this->_eventDispatcher->removeSubscriber($this);
 	}
 
 	/**
@@ -503,6 +517,18 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 		}
 
 		return $array1;
+	}
+
+	/**
+	 * Hook, called from "BrowserTestCase::run" method.
+	 *
+	 * @param TestEndedEvent $event Test ended event.
+	 *
+	 * @return void
+	 */
+	public function onTestEnded(TestEndedEvent $event)
+	{
+		$this->detachFromTestCase();
 	}
 
 }

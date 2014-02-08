@@ -47,7 +47,12 @@ class ApplicationAwareTestCase extends \PHPUnit_Framework_TestCase
 	 */
 	protected function expectFactoryCall($service_id, $returned_object)
 	{
-		$this->application->shouldReceive('getObject')->with($service_id)->andReturn($returned_object);
+		if ( is_array($returned_object) ) {
+			$this->application->shouldReceive('getObject')->with($service_id)->andReturnValues($returned_object);
+		}
+		else {
+			$this->application->shouldReceive('getObject')->with($service_id)->andReturn($returned_object);
+		}
 	}
 
 }

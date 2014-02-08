@@ -21,8 +21,9 @@ use Mockery\MockInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
+use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
 
-class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
+class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 {
 
 	const BROWSER_CLASS = '\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
@@ -39,13 +40,6 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	protected $browserConfigurationFactory;
 
 	/**
-	 * Event dispatcher.
-	 *
-	 * @var EventDispatcherInterface|MockInterface
-	 */
-	protected $eventDispatcher;
-
-	/**
 	 * Configures all tests.
 	 *
 	 * @return void
@@ -55,7 +49,6 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 		parent::setUp();
 
 		$this->browserConfigurationFactory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
-		$this->eventDispatcher = m::mock('Symfony\\Component\\EventDispatcher\\EventDispatcherInterface');
 	}
 
 	/**
@@ -342,7 +335,7 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testEndOfTestCase()
 	{
-		$this->expectEvent(BrowserTestCase::TEST_CASE_ENDED_EVENT);
+		$this->expectEvent(BrowserTestCase::TEST_SUITE_ENDED_EVENT);
 
 		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
@@ -351,7 +344,7 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 		$test_case->setEventDispatcher($this->eventDispatcher);
 		$test_case->setSessionStrategy($session_strategy);
 
-		$this->assertSame($test_case, $test_case->endOfTestCase());
+		$this->assertSame($test_case, $test_case->onTestSuiteEnded());
 	}
 
 	/**
@@ -375,6 +368,18 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 		$reflection_method->setAccessible(true);
 
 		$reflection_method->invokeArgs($test_case, array(new \Exception('MSG_TEST')));
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testGetBrowserAliases()
+	{
+		$test_case = $this->getFixture();
+
+		$this->assertEmpty($test_case->getBrowserAliases(), 'Browser configuration aliases are empty by default');
 	}
 
 	/**
@@ -452,21 +457,6 @@ class BrowserTestCaseTest extends \PHPUnit_Framework_TestCase
 		$test_case->setSessionStrategyManager($manager);
 
 		return $test_case;
-	}
-
-	/**
-	 * Expects a specific event to be called.
-	 *
-	 * @param string $event_name Event name.
-	 *
-	 * @return void
-	 */
-	protected function expectEvent($event_name)
-	{
-		$this->eventDispatcher
-			->shouldReceive('dispatch')
-			->with($event_name, m::any())
-			->once();
 	}
 
 }

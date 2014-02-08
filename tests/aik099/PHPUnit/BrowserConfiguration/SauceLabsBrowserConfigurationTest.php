@@ -258,6 +258,8 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 
 		$test_result = m::mock('PHPUnit_Framework_TestResult');
 
+		$this->eventDispatcher->shouldReceive('removeSubscriber')->with($this->browser)->once();
+
 		$event = $event_dispatcher->dispatch(
 			BrowserTestCase::TEST_ENDED_EVENT,
 			new TestEndedEvent($test_case, $test_result, $session)
@@ -283,6 +285,7 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 		$event->shouldReceive('isPropagationStopped')->once()->andReturn(false);
 		$event->shouldReceive('getTestCase')->never();
 
+		$this->eventDispatcher->shouldReceive('removeSubscriber')->with($this->browser)->once();
 		$returned_event = $event_dispatcher->dispatch(BrowserTestCase::TEST_ENDED_EVENT, $event);
 
 		$this->assertInstanceOf('aik099\\PHPUnit\\Event\\TestEndedEvent', $returned_event);
