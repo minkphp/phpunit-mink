@@ -1,4 +1,4 @@
-# phpunit-mink
+# PHPUnit-Mink
 [![Build Status](https://travis-ci.org/aik099/phpunit-mink.png?branch=master)](https://travis-ci.org/aik099/phpunit-mink)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/aik099/phpunit-mink/badges/quality-score.png?s=57e408500d59e10ce44b604df678ec8b59a1b8f8)](https://scrutinizer-ci.com/g/aik099/phpunit-mink/)
 [![Coverage Status](https://coveralls.io/repos/aik099/phpunit-mink/badge.png?branch=master)](https://coveralls.io/r/aik099/phpunit-mink?branch=master)
