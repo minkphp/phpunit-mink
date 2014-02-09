@@ -11,7 +11,7 @@
 namespace aik099\PHPUnit;
 
 
-use aik099\PHPUnit\TestSuite\TestSuiteBuilder;
+use aik099\PHPUnit\TestSuite\TestSuiteFactory;
 
 
 /**
@@ -65,12 +65,12 @@ class Application
 	/**
 	 * Returns test suite builder.
 	 *
-	 * @return TestSuiteBuilder
+	 * @return TestSuiteFactory
 	 * @see    BrowserTestCase::suite()
 	 */
-	public function getTestSuiteBuilder()
+	public function getTestSuiteFactory()
 	{
-		return $this->getObject('test_suite_builder');
+		return $this->getObject('test_suite_factory');
 	}
 
 	/**

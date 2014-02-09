@@ -21,7 +21,7 @@ use aik099\PHPUnit\Session\SessionStrategyManager;
 use aik099\PHPUnit\Session\SharedSessionStrategy;
 use aik099\PHPUnit\TestSuite\BrowserTestSuite;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
-use aik099\PHPUnit\TestSuite\TestSuiteBuilder;
+use aik099\PHPUnit\TestSuite\TestSuiteFactory;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class DIContainer extends \Pimple implements IApplicationAware
@@ -83,11 +83,11 @@ class DIContainer extends \Pimple implements IApplicationAware
 			return $session_strategy;
 		});
 
-		$this['test_suite_builder'] = function ($c) {
-			$test_suite_builder = new TestSuiteBuilder($c['session_strategy_manager'], $c['browser_configuration_factory']);
-			$test_suite_builder->setApplication($c['application']);
+		$this['test_suite_factory'] = function ($c) {
+			$test_suite_factory = new TestSuiteFactory($c['session_strategy_manager'], $c['browser_configuration_factory']);
+			$test_suite_factory->setApplication($c['application']);
 
-			return $test_suite_builder;
+			return $test_suite_factory;
 		};
 
 		$this['regular_test_suite'] = $this->factory(function ($c) {

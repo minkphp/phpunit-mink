@@ -22,7 +22,7 @@ use aik099\PHPUnit\Application;
  *
  * @method \Mockery\Expectation shouldReceive
  */
-class TestSuiteBuilder implements IApplicationAware
+class TestSuiteFactory implements IApplicationAware
 {
 
 	/**

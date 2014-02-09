@@ -14,19 +14,19 @@ namespace tests\aik099\PHPUnit\TestSuite;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use aik099\PHPUnit\TestSuite\BrowserTestSuite;
-use aik099\PHPUnit\TestSuite\TestSuiteBuilder;
+use aik099\PHPUnit\TestSuite\TestSuiteFactory;
 use Mockery as m;
 use tests\aik099\PHPUnit\TestCase\ApplicationAwareTestCase;
 
-class TestSuiteBuilderTest extends ApplicationAwareTestCase
+class TestSuiteFactoryTest extends ApplicationAwareTestCase
 {
 
 	/**
 	 * Suite.
 	 *
-	 * @var TestSuiteBuilder
+	 * @var TestSuiteFactory
 	 */
-	private $_builder;
+	private $_factory;
 
 	/**
 	 * Session strategy manager.
@@ -40,7 +40,7 @@ class TestSuiteBuilderTest extends ApplicationAwareTestCase
 	 *
 	 * @var IBrowserConfigurationFactory
 	 */
-	private $_factory;
+	private $_browserFactory;
 
 	/**
 	 * Creates suite for testing.
@@ -52,9 +52,9 @@ class TestSuiteBuilderTest extends ApplicationAwareTestCase
 		parent::setUp();
 
 		$this->_manager = m::mock('aik099\\PHPUnit\\Session\\SessionStrategyManager');
-		$this->_factory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
-		$this->_builder = new TestSuiteBuilder($this->_manager, $this->_factory);
-		$this->_builder->setApplication($this->application);
+		$this->_browserFactory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
+		$this->_factory = new TestSuiteFactory($this->_manager, $this->_browserFactory);
+		$this->_factory->setApplication($this->application);
 	}
 
 	/**
@@ -70,10 +70,10 @@ class TestSuiteBuilderTest extends ApplicationAwareTestCase
 		$suite = m::mock($suite_class_name);
 		$suite->shouldReceive('setName')->with($test_case_class_name)->once();
 		$suite->shouldReceive('addTestMethods')->with($test_case_class_name)->once();
-		$suite->shouldReceive('setTestDependencies')->with($this->_manager, $this->_factory)->once();
+		$suite->shouldReceive('setTestDependencies')->with($this->_manager, $this->_browserFactory)->once();
 		$this->expectFactoryCall('regular_test_suite', $suite);
 
-		$actual_suite = $this->_builder->createSuiteFromTestCase($test_case_class_name);
+		$actual_suite = $this->_factory->createSuiteFromTestCase($test_case_class_name);
 		$this->assertInstanceOf($suite_class_name, $actual_suite);
 	}
 
@@ -101,7 +101,7 @@ class TestSuiteBuilderTest extends ApplicationAwareTestCase
 		$suite->shouldReceive('addTest')->with($browser_suite2)->once();
 		$this->expectFactoryCall('regular_test_suite', $suite);
 
-		$actual_suite = $this->_builder->createSuiteFromTestCase($test_case_class_name);
+		$actual_suite = $this->_factory->createSuiteFromTestCase($test_case_class_name);
 		$this->assertInstanceOf($suite_class_name, $actual_suite);
 	}
 
@@ -119,7 +119,7 @@ class TestSuiteBuilderTest extends ApplicationAwareTestCase
 		$suite->shouldReceive('nameFromBrowser')->with($browser)->once()->andReturn('OK');
 		$suite->shouldReceive('setName')->with($class_name . ': OK')->once();
 		$suite->shouldReceive('addTestMethods')->with($class_name)->once();
-		$suite->shouldReceive('setTestDependencies')->with($this->_manager, $this->_factory)->once();
+		$suite->shouldReceive('setTestDependencies')->with($this->_manager, $this->_browserFactory)->once();
 		$suite->shouldReceive('setBrowserFromConfiguration')->with($browser)->once();
 
 		return $suite;

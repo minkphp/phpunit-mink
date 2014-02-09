@@ -377,7 +377,7 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 	{
 		$application = Application::getInstance();
 
-		return $application->getTestSuiteBuilder()->createSuiteFromTestCase($class_name);
+		return $application->getTestSuiteFactory()->createSuiteFromTestCase($class_name);
 	}
 
 	/**
