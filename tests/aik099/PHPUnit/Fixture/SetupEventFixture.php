@@ -57,10 +57,13 @@ class SetupEventFixture extends BrowserTestCase
 	 */
 	public function testEvents()
 	{
+		$driver = m::mock('\\Behat\\Mink\\Driver\\Selenium2Driver');
+		$driver->shouldReceive('getWebDriverSessionId')->once()->andReturn('SID');
+
 		$session = m::mock('Behat\\Mink\\Session');
 
 		// for SauceLabsBrowserConfiguration::onTestEnded
-		$session->shouldReceive('getDriver')->once()->andReturn(new \stdClass());
+		$session->shouldReceive('getDriver')->once()->andReturn($driver);
 
 		// for IsolatedSessionStrategy::onTestEnd
 		$session->shouldReceive('stop')->once();

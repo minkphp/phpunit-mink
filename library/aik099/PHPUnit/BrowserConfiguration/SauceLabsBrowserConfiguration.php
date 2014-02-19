@@ -14,6 +14,7 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\Event\TestEndedEvent;
 use aik099\PHPUnit\Event\TestEvent;
+use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Session;
 use WebDriver\SauceLabs\SauceRest;
 
@@ -251,13 +252,11 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	{
 		$driver = $session->getDriver();
 
-		if ( method_exists($driver, 'getWebDriverSession') ) {
-			$wd_session = $driver->getWebDriverSession();
-
-			return $wd_session ? basename($wd_session->getUrl()) : '';
+		if ( $driver instanceof Selenium2Driver ) {
+			return $driver->getWebDriverSessionId();
 		}
 
-		return '';
+		throw new \RuntimeException('Unsupported session driver');
 	}
 
 }

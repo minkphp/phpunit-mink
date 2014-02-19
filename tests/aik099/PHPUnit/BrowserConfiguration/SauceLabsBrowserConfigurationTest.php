@@ -15,6 +15,7 @@ use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\Event\TestEndedEvent;
 use aik099\PHPUnit\Event\TestEvent;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
+use Behat\Mink\Driver\DriverInterface;
 use Mockery\MockInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
@@ -238,23 +239,35 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	/**
 	 * Test description.
 	 *
+	 * @param string $driver_type Driver.
+	 *
 	 * @return void
+	 * @dataProvider theTestEndedEventDataProvider
 	 */
-	public function testTestEndedEvent()
+	public function testTestEndedEvent($driver_type)
 	{
-		$sauce_rest = m::mock('WebDriver\\SauceLabs\\SauceRest');
-		$sauce_rest->shouldReceive('updateJob')->with('', array('passed' => true))->once();
+		$test_case = m::mock(self::TEST_CASE_CLASS);
 
+		$sauce_rest = m::mock('WebDriver\\SauceLabs\\SauceRest');
 		$this->_browserConfigurationFactory->shouldReceive('createAPIClient')->with($this->browser)->andReturn($sauce_rest);
+
+		if ( $driver_type == 'selenium' ) {
+			$driver = m::mock('\\Behat\\Mink\\Driver\\Selenium2Driver');
+			$driver->shouldReceive('getWebDriverSessionId')->once()->andReturn('SID');
+
+			$sauce_rest->shouldReceive('updateJob')->with('SID', array('passed' => true))->once();
+			$test_case->shouldReceive('hasFailed')->once()->andReturn(false); // for shared strategy
+		}
+		else {
+			$driver = m::mock('\\Behat\\Mink\\Driver\\DriverInterface');
+			$this->setExpectedException('RuntimeException');
+		}
+
+		$session = m::mock('Behat\\Mink\\Session');
+		$session->shouldReceive('getDriver')->once()->andReturn($driver);
 
 		$event_dispatcher = new EventDispatcher();
 		$event_dispatcher->addSubscriber($this->browser);
-
-		$session = m::mock('Behat\\Mink\\Session');
-		$session->shouldReceive('getDriver')->once()->andReturn(new \stdClass());
-
-		$test_case = m::mock(self::TEST_CASE_CLASS);
-		$test_case->shouldReceive('hasFailed')->once()->andReturn(false); // for shared strategy
 
 		$test_result = m::mock('PHPUnit_Framework_TestResult');
 
@@ -266,6 +279,19 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 		);
 
 		$this->assertInstanceOf('aik099\\PHPUnit\\Event\\TestEndedEvent', $event);
+	}
+
+	/**
+	 * Returns possible drivers for session creation.
+	 *
+	 * @return array
+	 */
+	public function theTestEndedEventDataProvider()
+	{
+		return array(
+			array('selenium'),
+			array('other'),
+		);
 	}
 
 	/**
