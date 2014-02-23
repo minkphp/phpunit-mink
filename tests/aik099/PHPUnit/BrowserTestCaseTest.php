@@ -14,11 +14,11 @@ namespace tests\aik099\PHPUnit;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserTestCase;
+use aik099\PHPUnit\RemoteCoverage\RemoteCoverageTool;
 use aik099\PHPUnit\Session\ISessionStrategy;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use Mockery as m;
 use Mockery\MockInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
@@ -293,16 +293,57 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
+	 * @expectedException \RuntimeException
 	 */
-	public function testRunWithCoverage()
+	public function testRunWithCoverageWithoutRemoteUrl()
 	{
 		/* @var $test_case BrowserTestCase */
 		/* @var $session_strategy ISessionStrategy */
-		list($test_case, $session_strategy) = $this->prepareForRun(array('getRemoteCodeCoverageInformation'));
+		list($test_case, $session_strategy) = $this->prepareForRun(array(), false);
 		$test_case->setName('getTestId');
 
+		$result = $this->getTestResult($test_case, 1, true);
+		$result->shouldReceive('getCodeCoverage')->once()->andReturn(m::mock('\\PHP_CodeCoverage'));
+
+		$test_id = $test_case->getTestId();
+		$this->assertEmpty($test_id);
+
+		$browser = $test_case->getBrowser();
+		$browser->shouldReceive('getBaseUrl')->once()->andReturn('A');
+
+		$session = m::mock('\\Behat\\Mink\\Session');
+		$session->shouldReceive('visit')->with('A')->once()->andReturnNull();
+		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, null)->once()->andReturnNull();
+		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, m::not(''))->once()->andReturnNull();
+
+		$session_strategy->shouldReceive('session')->once()->andReturn($session);
+
+		$test_case->run($result);
+
+		$this->assertNotEmpty($test_case->getTestId());
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testRunWithCoverage()
+	{
 		$expected_coverage = array('test1' => 'test2');
-		$test_case->shouldReceive('getRemoteCodeCoverageInformation')->andReturn($expected_coverage);
+
+		$remote_coverage_helper = m::mock('aik099\\PHPUnit\\RemoteCoverage\\RemoteCoverageHelper');
+		$remote_coverage_helper
+			->shouldReceive('get')
+			->with('some-url', 'tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig__getTestId')
+			->andReturn($expected_coverage);
+
+		/* @var $test_case BrowserTestCase */
+		/* @var $session_strategy ISessionStrategy */
+		list($test_case, $session_strategy) = $this->prepareForRun();
+		$test_case->setName('getTestId');
+		$test_case->setRemoteCoverageHelper($remote_coverage_helper);
+		$test_case->setRemoteCoverageScriptUrl('some-url');
 
 		$code_coverage = m::mock('\\PHP_CodeCoverage');
 		$code_coverage->shouldReceive('append')->with($expected_coverage, $test_case)->once()->andReturnNull();
@@ -318,8 +359,8 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 
 		$session = m::mock('\\Behat\\Mink\\Session');
 		$session->shouldReceive('visit')->with('A')->once()->andReturnNull();
-		$session->shouldReceive('setCookie')->with('PHPUNIT_SELENIUM_TEST_ID', null)->once()->andReturnNull();
-		$session->shouldReceive('setCookie')->with('PHPUNIT_SELENIUM_TEST_ID', m::not(''))->once()->andReturnNull();
+		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, null)->once()->andReturnNull();
+		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, m::not(''))->once()->andReturnNull();
 
 		$session_strategy->shouldReceive('session')->once()->andReturn($session);
 
@@ -385,14 +426,18 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	/**
 	 * Prepares test case to be used by "run" method.
 	 *
-	 * @param array $mock_methods Method names to mock.
+	 * @param array   $mock_methods      Method names to mock.
+	 * @param boolean $expect_test_ended Tells, that we should expect "test.ended" event.
 	 *
 	 * @return array
 	 */
-	protected function prepareForRun(array $mock_methods = array())
+	protected function prepareForRun(array $mock_methods = array(), $expect_test_ended = true)
 	{
 		$this->expectEvent(BrowserTestCase::TEST_SETUP_EVENT);
-		$this->expectEvent(BrowserTestCase::TEST_ENDED_EVENT);
+
+		if ( $expect_test_ended ) {
+			$this->expectEvent(BrowserTestCase::TEST_ENDED_EVENT);
+		}
 
 		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);

@@ -185,6 +185,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 
 		/* @var $test_case BrowserTestCase */
 		$test_case = m::mock(self::TEST_CASE_CLASS);
+		$test_case->shouldReceive('setRemoteCoverageScriptUrl')->with('')->once();
 
 		$this->assertSame($browser, $browser->attachToTestCase($test_case));
 		$this->assertSame($test_case, $browser->getTestCase());
@@ -384,8 +385,9 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetSessionStrategyHashBrowserSharing($session_strategy)
 	{
-		$test_case = m::mock(self::TEST_CASE_CLASS);
 		/* @var $test_case BrowserTestCase */
+		$test_case = m::mock(self::TEST_CASE_CLASS);
+		$test_case->shouldReceive('setRemoteCoverageScriptUrl')->with('')->twice();
 
 		$browser1 = $this->createBrowserConfiguration(array(), true);
 		$browser1->setSessionStrategy($session_strategy)->attachToTestCase($test_case);

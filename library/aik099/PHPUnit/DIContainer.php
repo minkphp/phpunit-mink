@@ -14,6 +14,8 @@ namespace aik099\PHPUnit;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
+use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
+use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
 use aik099\PHPUnit\Session\IsolatedSessionStrategy;
 use aik099\PHPUnit\Session\SessionFactory;
 use aik099\PHPUnit\Session\SessionStrategyFactory;
@@ -83,8 +85,20 @@ class DIContainer extends \Pimple implements IApplicationAware
 			return $session_strategy;
 		});
 
+		$this['remote_url'] = function ($c) {
+			return new RemoteUrl();
+		};
+
+		$this['remote_coverage_helper'] = function ($c) {
+			return new RemoteCoverageHelper($c['remote_url']);
+		};
+
 		$this['test_suite_factory'] = function ($c) {
-			$test_suite_factory = new TestSuiteFactory($c['session_strategy_manager'], $c['browser_configuration_factory']);
+			$test_suite_factory = new TestSuiteFactory(
+				$c['session_strategy_manager'],
+				$c['browser_configuration_factory'],
+				$c['remote_coverage_helper']
+			);
 			$test_suite_factory->setApplication($c['application']);
 
 			return $test_suite_factory;

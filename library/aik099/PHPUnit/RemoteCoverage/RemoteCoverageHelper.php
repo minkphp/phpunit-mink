@@ -8,7 +8,7 @@
  * @link      https://github.com/aik099/phpunit-mink
  */
 
-namespace aik099\PHPUnit\Common;
+namespace aik099\PHPUnit\RemoteCoverage;
 
 
 /**
@@ -16,61 +16,39 @@ namespace aik099\PHPUnit\Common;
  *
  * @method \Mockery\Expectation shouldReceive
  */
-class RemoteCoverage
+class RemoteCoverageHelper
 {
 
 	/**
-	 * Url to a script, that will provide remote coverage information.
+	 * Remote URL.
 	 *
-	 * @var string
+	 * @var RemoteUrl
 	 */
-	private $_coverageScriptUrl;
-
-	/**
-	 * ID of test, that to look for.
-	 *
-	 * @var string
-	 */
-	private $_testId;
+	private $_remoteUrl;
 
 	/**
 	 * Creates an instance of remote coverage class.
 	 *
-	 * @param string $coverage_script_url Coverage script irl.
-	 * @param string $test_id             Test ID.
-	 *
-	 * @throws \InvalidArgumentException When empty coverage script url given.
+	 * @param RemoteUrl $remote_url Remote URL.
 	 */
-	public function __construct($coverage_script_url, $test_id)
+	public function __construct(RemoteUrl $remote_url)
 	{
-		if ( empty($coverage_script_url) ) {
-			throw new \InvalidArgumentException('Coverage script url is empty');
-		}
-
-		$this->_coverageScriptUrl = $coverage_script_url;
-		$this->_testId = $test_id;
-	}
-
-	/**
-	 * Returns raw remote coverage information.
-	 *
-	 * @return string
-	 */
-	public function getFetchUrl()
-	{
-		return sprintf('%s?PHPUNIT_SELENIUM_TEST_ID=%s', $this->_coverageScriptUrl, $this->_testId);
+		$this->_remoteUrl = $remote_url;
 	}
 
 	/**
 	 * Retrieves remote coverage information.
 	 *
+	 * @param string $coverage_script_url Coverage script irl.
+	 * @param string $test_id             Test ID.
+	 *
+	 * @throws \RuntimeException Broken code coverage retrieved.
 	 * @return array
-	 * @throws \Exception When no data was retrieved.
 	 */
-	public function get()
+	public function get($coverage_script_url, $test_id)
 	{
-		$url = $this->getFetchUrl();
-		$buffer = file_get_contents($url);
+		$url = $this->createUrl($coverage_script_url, $test_id);
+		$buffer = $this->_remoteUrl->getPageContent($url);
 
 		if ( $buffer !== false ) {
 			$coverage_data = unserialize($buffer);
@@ -79,10 +57,37 @@ class RemoteCoverage
 				return $this->matchLocalAndRemotePaths($coverage_data);
 			}
 
-			throw new \RuntimeException(sprintf('Empty or invalid code coverage data received from url "%s"', $url));
+			throw new \RuntimeException('Empty or invalid code coverage data received from url "' . $url . '"');
 		}
 
 		return array();
+	}
+
+	/**
+	 * Returns url for remote code coverage collection.
+	 *
+	 * @param string $coverage_script_url Coverage script irl.
+	 * @param string $test_id             Test ID.
+	 *
+	 * @return string
+	 * @throws \InvalidArgumentException When empty coverage script url given.
+	 */
+	protected function createUrl($coverage_script_url, $test_id)
+	{
+		if ( !$coverage_script_url || !$test_id ) {
+			throw new \InvalidArgumentException('Both Coverage script URL and Test ID must be filled in');
+		}
+
+		$query_string = array(
+			'rct_mode' => 'output',
+			RemoteCoverageTool::TEST_ID_VARIABLE => $test_id,
+		);
+
+		$url = $coverage_script_url;
+		$url .= strpos($url, '?') === false ? '?' : '&';
+		$url .= http_build_query($query_string);
+
+		return $url;
 	}
 
 	/**

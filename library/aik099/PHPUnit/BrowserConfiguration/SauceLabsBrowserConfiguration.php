@@ -55,19 +55,6 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	}
 
 	/**
-	 * Returns an array of event names this subscriber wants to listen to.
-	 *
-	 * @return array The event names to listen to
-	 */
-	public static function getSubscribedEvents()
-	{
-		$events = parent::getSubscribedEvents();
-		$events[BrowserTestCase::TEST_SETUP_EVENT] = array('onTestSetup', 100);
-
-		return $events;
-	}
-
-	/**
 	 * Initializes a browser with given configuration.
 	 *
 	 * @param array $parameters Browser configuration parameters.
@@ -178,6 +165,8 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	 */
 	public function onTestSetup(TestEvent $event)
 	{
+		parent::onTestSetup($event);
+
 		$desired_capabilities = $this->getDesiredCapabilities();
 		$desired_capabilities[self::NAME_CAPABILITY] = $this->getJobName($event->getTestCase());
 

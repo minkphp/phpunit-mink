@@ -13,6 +13,7 @@ namespace aik099\PHPUnit\TestSuite;
 
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\IApplicationAware;
+use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use aik099\PHPUnit\Application;
 
@@ -47,18 +48,28 @@ class TestSuiteFactory implements IApplicationAware
 	private $_browserConfigurationFactory;
 
 	/**
+	 * Remote coverage helper.
+	 *
+	 * @var RemoteCoverageHelper
+	 */
+	private $_remoteCoverageHelper;
+
+	/**
 	 * Creates test suite builder instance.
 	 *
 	 * @param SessionStrategyManager       $session_strategy_manager      Session strategy manager.
 	 * @param IBrowserConfigurationFactory $browser_configuration_factory Browser configuration factory.
+	 * @param RemoteCoverageHelper         $remote_coverage_helper        Remote coverage helper.
 	 */
 	public function __construct(
 		SessionStrategyManager $session_strategy_manager,
-		IBrowserConfigurationFactory $browser_configuration_factory
+		IBrowserConfigurationFactory $browser_configuration_factory,
+		RemoteCoverageHelper $remote_coverage_helper
 	)
 	{
 		$this->_sessionStrategyManager = $session_strategy_manager;
 		$this->_browserConfigurationFactory = $browser_configuration_factory;
+		$this->_remoteCoverageHelper = $remote_coverage_helper;
 	}
 
 	/**
@@ -97,7 +108,11 @@ class TestSuiteFactory implements IApplicationAware
 		else {
 			// create tests from test methods for single browser
 			$suite->addTestMethods($class_name);
-			$suite->setTestDependencies($this->_sessionStrategyManager, $this->_browserConfigurationFactory);
+			$suite->setTestDependencies(
+				$this->_sessionStrategyManager,
+				$this->_browserConfigurationFactory,
+				$this->_remoteCoverageHelper
+			);
 		}
 
 		return $suite;
@@ -133,7 +148,11 @@ class TestSuiteFactory implements IApplicationAware
 		$suite->setName($class_name . ': ' . $suite->nameFromBrowser($browser));
 
 		$suite->addTestMethods($class_name);
-		$suite->setTestDependencies($this->_sessionStrategyManager, $this->_browserConfigurationFactory);
+		$suite->setTestDependencies(
+			$this->_sessionStrategyManager,
+			$this->_browserConfigurationFactory,
+			$this->_remoteCoverageHelper
+		);
 		$suite->setBrowserFromConfiguration($browser);
 
 		return $suite;

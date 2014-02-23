@@ -13,6 +13,7 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\Event\TestEndedEvent;
+use aik099\PHPUnit\Event\TestEvent;
 use aik099\PHPUnit\IEventDispatcherAware;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -117,6 +118,7 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 	public static function getSubscribedEvents()
 	{
 		return array(
+			BrowserTestCase::TEST_SETUP_EVENT => array('onTestSetup', 100),
 			BrowserTestCase::TEST_ENDED_EVENT => array('onTestEnded', 100),
 		);
 	}
@@ -143,6 +145,7 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 	public function attachToTestCase(BrowserTestCase $test_case)
 	{
 		$this->_testCase = $test_case;
+		$this->_testCase->setRemoteCoverageScriptUrl($this->getBaseUrl());
 		$this->_eventDispatcher->addSubscriber($this);
 
 		return $this;
@@ -517,6 +520,18 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 		}
 
 		return $array1;
+	}
+
+	/**
+	 * Hook, called from "BrowserTestCase::setUp" method.
+	 *
+	 * @param TestEvent $event Test event.
+	 *
+	 * @return void
+	 */
+	public function onTestSetup(TestEvent $event)
+	{
+
 	}
 
 	/**

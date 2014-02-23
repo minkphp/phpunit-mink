@@ -13,7 +13,8 @@ namespace aik099\PHPUnit;
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
-use aik099\PHPUnit\Common\RemoteCoverage;
+use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
+use aik099\PHPUnit\RemoteCoverage\RemoteCoverageTool;
 use aik099\PHPUnit\Event\TestEndedEvent;
 use aik099\PHPUnit\Event\TestEvent;
 use aik099\PHPUnit\Event\TestFailedEvent;
@@ -66,7 +67,7 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 	 *
 	 * @var string Override to provide code coverage data from the server
 	 */
-	protected $coverageScriptUrl;
+	private $_remoteCoverageScriptUrl;
 
 	/**
 	 * Current browser configuration.
@@ -88,6 +89,13 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 	 * @var SessionStrategyManager
 	 */
 	protected $sessionStrategyManager;
+
+	/**
+	 * Remote coverage helper.
+	 *
+	 * @var RemoteCoverageHelper
+	 */
+	protected $remoteCoverageHelper;
 
 	/**
 	 * Session strategy, used currently.
@@ -139,6 +147,30 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 		$this->sessionStrategyManager = $session_strategy_manager;
 
 		return $this;
+	}
+
+	/**
+	 * Sets remote coverage helper.
+	 *
+	 * @param RemoteCoverageHelper $remote_coverage_helper Remote coverage helper.
+	 *
+	 * @return void
+	 */
+	public function setRemoteCoverageHelper(RemoteCoverageHelper $remote_coverage_helper)
+	{
+		$this->remoteCoverageHelper = $remote_coverage_helper;
+	}
+
+	/**
+	 * Sets base url for remote coverage information collection.
+	 *
+	 * @param string $url URL.
+	 *
+	 * @return void
+	 */
+	public function setRemoteCoverageScriptUrl($url)
+	{
+		$this->_remoteCoverageScriptUrl = $url;
 	}
 
 	/**
@@ -332,8 +364,8 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 			$this->_testId = get_class($this) . '__' . $this->getName();
 
 			$session = $this->getSession();
-			$session->setCookie('PHPUNIT_SELENIUM_TEST_ID', null);
-			$session->setCookie('PHPUNIT_SELENIUM_TEST_ID', $this->_testId);
+			$session->setCookie(RemoteCoverageTool::TEST_ID_VARIABLE, null);
+			$session->setCookie(RemoteCoverageTool::TEST_ID_VARIABLE, $this->_testId);
 		}
 
 		return parent::runTest();
@@ -358,12 +390,15 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 	 * Returns remote code coverage information.
 	 *
 	 * @return array
+	 * @throws \RuntimeException When no remote coverage script URL set.
 	 */
 	public function getRemoteCodeCoverageInformation()
 	{
-		$remote_coverage = new RemoteCoverage($this->coverageScriptUrl, $this->_testId);
+		if ( $this->_remoteCoverageScriptUrl == '' ) {
+			throw new \RuntimeException('Remote coverage script url not set');
+		}
 
-		return $remote_coverage->get();
+		return $this->remoteCoverageHelper->get($this->_remoteCoverageScriptUrl, $this->_testId);
 	}
 
 	/**

@@ -41,15 +41,17 @@ class RegularTestSuiteTest extends EventDispatcherAwareTestCase
 	{
 		$manager = m::mock('aik099\\PHPUnit\\Session\\SessionStrategyManager');
 		$factory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
+		$helper = m::mock('aik099\\PHPUnit\\RemoteCoverage\\RemoteCoverageHelper');
 
 		$test = m::mock('PHPUnit_Framework_Test');
 		$test->shouldReceive('setEventDispatcher')->with($this->eventDispatcher)->once();
 		$test->shouldReceive('setSessionStrategyManager')->with($manager)->once();
 		$test->shouldReceive('setBrowserConfigurationFactory')->with($factory)->once();
+		$test->shouldReceive('setRemoteCoverageHelper')->with($helper)->once();
 
 		$suite = $this->_createSuite();
 		$suite->addTest($test);
-		$this->assertSame($suite, $suite->setTestDependencies($manager, $factory));
+		$this->assertSame($suite, $suite->setTestDependencies($manager, $factory, $helper));
 	}
 
 	/**

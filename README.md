@@ -211,18 +211,27 @@ Browser tests are executed on different machine, then one, where code coverage i
 Remote server is web-server, where website used in tests is located.
 
 1. Install [Xdebug](http://xdebug.org/) PHP extension on web-server
-2. Copy `library/aik099/PHPUnit/Common/phpunit_coverage.php` into web-server's DocumentRoot directory.
-3. In web-server's `php.ini` configuration file (or `.htaccess` file), configure `library/aik099/PHPUnit/Common/prepend.php` and `library/aik099/PHPUnit/Common/append.php` as the `auto_prepend_file` and `auto_append_file` setting values, respectively.
+2. Copy `library/aik099/PHPUnit/RemoteCoverage/RemoteCoverageTool.php` into web-server's DocumentRoot directory.
+3. Include following code before your application bootstraps:
+
+```php
+require_once 'RemoteCoverageTool.php';
+\aik099\PHPUnit\RemoteCoverage\RemoteCoverageTool::init();
+```
 
 ### On Test Machine
 This is machine, where PHPUnit tests are being executed.
 
-1. In test case class that extends `BrowserTestCase` class, add `protected $coverageScriptUrl = 'http://host/phpunit_coverage.php';` to specify the URL for the `phpunit_coverage.php` script (`host` should be replaced with web server's url).
+By default the `baseUrl` setting from browser configuration is used as the `remote code coverage information url`. However if a need exists to set alternative url on per-test basis, then place following code in the `setUp` method of the test case class, that extends `BrowserTestCase` class:
+
+```php
+	$this->setRemoteCoverageScriptUrl('http://host/'); // `host` should be replaced with web server's url
+```
 
 ### How This Works
 1. each test sets a special cookie on website under test
-2. when cookie is present, then `prepend.php` script collects coverage information and `append.php` stores it on disk
-3. once test finishes it queries `phpunit_coverage.php` script on remote server, which in turn returns collected coverage information
+2. when cookie is present, then `RemoteCoverageTool.php` script collects coverage information and stores it on disk
+3. once test finishes, then `http://host/?rct_mode=output` url is accessed on remote server, which in turn returns collected coverage information
 4. remote coverage information is then joined with coverage information collected locally on test machine
 
 ## Browser Configuration in Details

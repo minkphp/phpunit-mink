@@ -12,6 +12,7 @@ namespace tests\aik099\PHPUnit\TestSuite;
 
 
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
+use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use aik099\PHPUnit\TestSuite\BrowserTestSuite;
 use aik099\PHPUnit\TestSuite\TestSuiteFactory;
@@ -43,6 +44,13 @@ class TestSuiteFactoryTest extends ApplicationAwareTestCase
 	private $_browserFactory;
 
 	/**
+	 * Remote coverage helper.
+	 *
+	 * @var RemoteCoverageHelper
+	 */
+	private $_remoteCoverageHelper;
+
+	/**
 	 * Creates suite for testing.
 	 *
 	 * @return void
@@ -53,7 +61,9 @@ class TestSuiteFactoryTest extends ApplicationAwareTestCase
 
 		$this->_manager = m::mock('aik099\\PHPUnit\\Session\\SessionStrategyManager');
 		$this->_browserFactory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
-		$this->_factory = new TestSuiteFactory($this->_manager, $this->_browserFactory);
+		$this->_remoteCoverageHelper = m::mock('aik099\\PHPUnit\\RemoteCoverage\\RemoteCoverageHelper');
+
+		$this->_factory = new TestSuiteFactory($this->_manager, $this->_browserFactory, $this->_remoteCoverageHelper);
 		$this->_factory->setApplication($this->application);
 	}
 
@@ -70,7 +80,10 @@ class TestSuiteFactoryTest extends ApplicationAwareTestCase
 		$suite = m::mock($suite_class_name);
 		$suite->shouldReceive('setName')->with($test_case_class_name)->once();
 		$suite->shouldReceive('addTestMethods')->with($test_case_class_name)->once();
-		$suite->shouldReceive('setTestDependencies')->with($this->_manager, $this->_browserFactory)->once();
+		$suite
+			->shouldReceive('setTestDependencies')
+			->with($this->_manager, $this->_browserFactory, $this->_remoteCoverageHelper)
+			->once();
 		$this->expectFactoryCall('regular_test_suite', $suite);
 
 		$actual_suite = $this->_factory->createSuiteFromTestCase($test_case_class_name);
@@ -119,7 +132,10 @@ class TestSuiteFactoryTest extends ApplicationAwareTestCase
 		$suite->shouldReceive('nameFromBrowser')->with($browser)->once()->andReturn('OK');
 		$suite->shouldReceive('setName')->with($class_name . ': OK')->once();
 		$suite->shouldReceive('addTestMethods')->with($class_name)->once();
-		$suite->shouldReceive('setTestDependencies')->with($this->_manager, $this->_browserFactory)->once();
+		$suite
+			->shouldReceive('setTestDependencies')
+			->with($this->_manager, $this->_browserFactory, $this->_remoteCoverageHelper)
+			->once();
 		$suite->shouldReceive('setBrowserFromConfiguration')->with($browser)->once();
 
 		return $suite;

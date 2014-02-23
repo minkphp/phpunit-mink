@@ -14,6 +14,7 @@ namespace aik099\PHPUnit\TestSuite;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\IEventDispatcherAware;
+use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use ReflectionClass;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -76,12 +77,14 @@ abstract class AbstractTestSuite extends \PHPUnit_Framework_TestSuite implements
 	 *
 	 * @param SessionStrategyManager       $session_strategy_manager      Session strategy manager.
 	 * @param IBrowserConfigurationFactory $browser_configuration_factory Browser configuration factory.
+	 * @param RemoteCoverageHelper         $remote_coverage_helper        Remote coverage helper.
 	 *
 	 * @return self
 	 */
 	public function setTestDependencies(
 		SessionStrategyManager $session_strategy_manager,
-		IBrowserConfigurationFactory $browser_configuration_factory
+		IBrowserConfigurationFactory $browser_configuration_factory,
+		RemoteCoverageHelper $remote_coverage_helper
 	)
 	{
 		/* @var $test BrowserTestCase */
@@ -89,6 +92,7 @@ abstract class AbstractTestSuite extends \PHPUnit_Framework_TestSuite implements
 			$test->setEventDispatcher($this->_eventDispatcher);
 			$test->setSessionStrategyManager($session_strategy_manager);
 			$test->setBrowserConfigurationFactory($browser_configuration_factory);
+			$test->setRemoteCoverageHelper($remote_coverage_helper);
 		}
 
 		return $this;

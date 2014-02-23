@@ -67,6 +67,8 @@ class DIContainerTest extends \PHPUnit_Framework_TestCase
 			array('session_strategy_manager', 'aik099\\PHPUnit\\Session\\SessionStrategyManager'),
 			array('isolated_session_strategy', 'aik099\\PHPUnit\\Session\\IsolatedSessionStrategy'),
 			array('shared_session_strategy', 'aik099\\PHPUnit\\Session\\SharedSessionStrategy'),
+			array('remote_url', 'aik099\\PHPUnit\\RemoteCoverage\\RemoteUrl'),
+			array('remote_coverage_helper', 'aik099\\PHPUnit\\RemoteCoverage\\RemoteCoverageHelper'),
 			array('test_suite_factory', 'aik099\\PHPUnit\\TestSuite\\TestSuiteFactory'),
 			array('regular_test_suite', 'aik099\\PHPUnit\\TestSuite\\RegularTestSuite'),
 			array('browser_test_suite', 'aik099\\PHPUnit\\TestSuite\\BrowserTestSuite'),

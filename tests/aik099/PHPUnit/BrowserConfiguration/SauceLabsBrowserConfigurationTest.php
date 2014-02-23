@@ -15,7 +15,6 @@ use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\Event\TestEndedEvent;
 use aik099\PHPUnit\Event\TestEvent;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
-use Behat\Mink\Driver\DriverInterface;
 use Mockery\MockInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
