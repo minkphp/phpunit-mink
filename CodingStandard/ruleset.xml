@@ -3,6 +3,7 @@
 	<description>Alexander Obuhovich's coding standard.</description>
 
 	<rule ref="Generic">
+		<!-- TODO: find out why we're excluding following sniffs -->
 		<exclude name="Generic.Formatting.MultipleStatementAlignment"/>
 		<exclude name="Generic.Formatting.SpaceAfterCast"/>
 		<exclude name="Generic.Functions.OpeningFunctionBraceKernighanRitchie"/>
@@ -31,28 +32,18 @@
 		</properties>
 	</rule>
 
-	<!--
-		Copied locally to the standard:
-		<rule ref="Drupal.Array.Array"/>
-		<rule ref="Drupal.Classes.ClassCreateInstance"/>
-		<rule ref="Drupal.ControlStructures.ControlSignature"/>
-		<rule ref="Drupal.ControlStructures.ElseIf"/>
-		<rule ref="Drupal.Formatting.ItemAssignment"/>
-		<rule ref="Drupal.Formatting.SpaceOperator"/>
-		<rule ref="Drupal.Formatting.SpaceUnaryOperator"/>
-		<rule ref="Drupal.Strings.ConcatenationSpacing"/>
-	-->
+
+	<rule ref="Squiz.Arrays.ArrayBracketSpacing"/>
 
 	<rule ref="MySource.PHP.EvalObjectFactory"/>
 
 	<!--
-		Checks for aligned parameters
+		checks for aligned parameters
 		<rule ref="PEAR.Commenting.FunctionComment"/>
 	-->
 
-	<rule ref="PEAR.Commenting.InlineComment"/>
 	<!--
-		Find a way how to check indentation with tabs for multi-line function calls
+		find a way how to check indentation with tabs for multi-line function calls
 		<rule ref="PEAR.Functions.FunctionCallSignature"/>
 	-->
 	<rule ref="PEAR.Functions.FunctionDeclaration"/>
@@ -65,19 +56,21 @@
 
 	<rule ref="Squiz.Classes.LowercaseClassKeywords"/>
 	<rule ref="Squiz.Classes.SelfMemberReference"/>
-		<rule ref="Squiz.Classes.ValidClassName"/>
 
-		<!--
-			Temporarily comment-out, because it considers @var type hinting comments as an error
-			<rule ref="Squiz.Commenting.BlockComment"/>
-		-->
-
-		<rule ref="Squiz.Commenting.DocCommentAlignment"/>
-		<rule ref="Squiz.Commenting.FunctionComment"/>
-		<rule ref="Squiz.Commenting.VariableComment"/>
+	<!-- considers "k*" classes as error, which in fact it is -->
+	<rule ref="Squiz.Classes.ValidClassName"/>
 
 	<!--
-		Doesn't like spaces inside braces
+		temporarily comment-out, because it considers @var type hinting comments as an error
+		<rule ref="Squiz.Commenting.BlockComment"/>
+	-->
+
+	<rule ref="Squiz.Commenting.DocCommentAlignment"/>
+	<rule ref="Squiz.Commenting.FunctionComment"/>
+	<rule ref="Squiz.Commenting.VariableComment"/>
+
+	<!--
+		doesn't like spaces inside braces
 		<rule ref="Squiz.ControlStructures.ForEachLoopDeclaration"/>
 		<rule ref="Squiz.ControlStructures.ForLoopDeclaration"/>
 	-->
@@ -94,7 +87,7 @@
 	<rule ref="Squiz.Functions.GlobalFunction"/>
 
 	<!--
-		Temporarily comment-out, because it reports every commented-out code as error
+		temporarily comment-out, because it reports every commented-out code as error
 		<rule ref="Squiz.PHP.CommentedOutCode"/>
 	-->
 
@@ -104,8 +97,9 @@
 	<rule ref="Squiz.PHP.LowercasePHPFunctions"/>
 	<rule ref="Squiz.PHP.NonExecutableCode"/>
 
-	<rule ref="Squiz.Scope.MemberVarScope"/>
+	<!-- we have a lot of places without scope right now -->
 	<rule ref="Squiz.Scope.MethodScope"/>
+
 	<rule ref="Squiz.Scope.StaticThisUsage"/>
 	<rule ref="Squiz.WhiteSpace.FunctionOpeningBraceSpace"/>
 
@@ -119,6 +113,11 @@
 	<rule ref="Squiz.WhiteSpace.LogicalOperatorSpacing"/>
 
 	<rule ref="Squiz.WhiteSpace.MemberVarSpacing"/>
+
+	<!--
+	enforces "===" usage (like in Symfony), but too aggressive for now
+	<rule ref="Squiz.Operators.ComparisonOperatorUsage"/>
+	-->
 
 	<!--<rule ref="Squiz.WhiteSpace.ObjectOperatorSpacing"/>-->
 	<rule ref="Squiz.WhiteSpace.OperatorSpacing"/>

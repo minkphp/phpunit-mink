@@ -42,6 +42,7 @@ class CodingStandard_Sniffs_Classes_ClassDeclarationSniff extends PSR2_Sniffs_Cl
      */
     public $requireNamespaces = true;
 
+
     /**
      * Processes this test, when one of its tokens is encountered.
      *
@@ -64,13 +65,14 @@ class CodingStandard_Sniffs_Classes_ClassDeclarationSniff extends PSR2_Sniffs_Cl
             $phpcsFile->addError($error, $nextClass, 'MultipleClasses');
         }
 
-        if ($this->requireNamespaces && version_compare(PHP_VERSION, '5.3.0') >= 0) {
+        if ($this->requireNamespaces === true && version_compare(PHP_VERSION, '5.3.0') >= 0) {
             $namespace = $phpcsFile->findPrevious(T_NAMESPACE, ($stackPtr - 1));
             if ($namespace === false) {
                 $error = 'Each class must be in a namespace of at least one level (a top-level vendor name)';
                 $phpcsFile->addError($error, $stackPtr, 'MissingNamespace');
             }
         }
+
     }//end process()
 
 
@@ -146,13 +148,7 @@ class CodingStandard_Sniffs_Classes_ClassDeclarationSniff extends PSR2_Sniffs_Cl
 
         // Check that the closing brace has one blank line after it.
         $nextContent = $phpcsFile->findNext(array(T_WHITESPACE, T_COMMENT), ($closeBrace + 1), null, true);
-        if ($nextContent === false) {
-            // No content found, so we reached the end of the file.
-            // That means there was no closing tag either.
-            /*$error = 'Closing brace of a %s must be followed by a blank line and then a closing PHP tag';
-            $data  = array($tokens[$stackPtr]['content']);
-            $phpcsFile->addError($error, $closeBrace, 'EndFileAfterCloseBrace', $data);*/
-        } else {
+        if ($nextContent !== false) {
             $nextLine  = $tokens[$nextContent]['line'];
             $braceLine = $tokens[$closeBrace]['line'];
             if ($braceLine === $nextLine) {

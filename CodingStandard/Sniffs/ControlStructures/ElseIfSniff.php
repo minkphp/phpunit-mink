@@ -33,6 +33,7 @@ if (class_exists('PHP_CodeSniffer_Standards_AbstractPatternSniff', true) === fal
 class CodingStandard_Sniffs_ControlStructures_ElseIfSniff implements PHP_CodeSniffer_Sniff
 {
 
+
     /**
      * Returns an array of tokens this test wants to listen for.
      *
@@ -60,17 +61,19 @@ class CodingStandard_Sniffs_ControlStructures_ElseIfSniff implements PHP_CodeSni
 
         $nextNonWhiteSpace = $phpcsFile->findNext(
             T_WHITESPACE,
-            $stackPtr + 1,
+            ($stackPtr + 1),
             null,
             true,
             null,
             true
         );
 
-        if ($tokens[$nextNonWhiteSpace]['code'] == T_IF) {
+        if ($tokens[$nextNonWhiteSpace]['code'] === T_IF) {
             $phpcsFile->addError('Use "elseif" in place of "else if"', $nextNonWhiteSpace);
         }
+
     }//end process()
+
 
 }//end class
 

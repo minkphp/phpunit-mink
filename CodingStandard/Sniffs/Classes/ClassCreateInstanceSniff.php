@@ -4,10 +4,10 @@
  *
  * PHP version 5
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Peter Philipp <peter.philipp@cando-image.com>
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @category PHP
+ * @package  PHP_CodeSniffer
+ * @author   Peter Philipp <peter.philipp@cando-image.com>
+ * @link     http://pear.php.net/package/PHP_CodeSniffer
  */
 
 /**
@@ -15,10 +15,10 @@
  *
  * Checks the declaration of the class is correct.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Peter Philipp <peter.philipp@cando-image.com>
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @category PHP
+ * @package  PHP_CodeSniffer
+ * @author   Peter Philipp <peter.philipp@cando-image.com>
+ * @link     http://pear.php.net/package/PHP_CodeSniffer
  */
 class CodingStandard_Sniffs_Classes_ClassCreateInstanceSniff implements PHP_CodeSniffer_Sniff
 {
@@ -31,9 +31,7 @@ class CodingStandard_Sniffs_Classes_ClassCreateInstanceSniff implements PHP_Code
      */
     public function register()
     {
-        return array(
-                T_NEW,
-               );
+        return array(T_NEW);
 
     }//end register()
 
@@ -51,18 +49,30 @@ class CodingStandard_Sniffs_Classes_ClassCreateInstanceSniff implements PHP_Code
     {
         $tokens = $phpcsFile->getTokens();
 
-        $nextParenthesis = $phpcsFile->findNext(array(T_OPEN_PARENTHESIS,T_SEMICOLON), $stackPtr, null, false, null, true);
+        $nextParenthesis = $phpcsFile->findNext(
+            array(
+             T_OPEN_PARENTHESIS,
+             T_SEMICOLON,
+            ),
+            $stackPtr,
+            null,
+            false,
+            null,
+            true
+        );
+
         if ($tokens[$nextParenthesis]['code'] != T_OPEN_PARENTHESIS || $tokens[$nextParenthesis]['line'] != $tokens[$stackPtr]['line']) {
-            $error  = 'Calling class constructors must always include parentheses';
+            $error = 'Calling class constructors must always include parentheses';
             $phpcsFile->addError($error, $nextParenthesis);
             return;
         }
 
-        if ($tokens[$nextParenthesis-1]['code'] == T_WHITESPACE) {
-            $error  = 'Between the class name and the opening parenthesis spaces are not welcome';
-            $phpcsFile->addError($error, $nextParenthesis-1);
+        if ($tokens[($nextParenthesis - 1)]['code'] === T_WHITESPACE) {
+            $error = 'Between the class name and the opening parenthesis spaces are not welcome';
+            $phpcsFile->addError($error, ($nextParenthesis - 1));
             return;
         }
+
     }//end process()
 
 

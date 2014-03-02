@@ -4,10 +4,10 @@
  *
  * PHP version 5
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Peter Philipp <peter.philipp@cando-image.com>
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @category PHP
+ * @package  PHP_CodeSniffer
+ * @author   Peter Philipp <peter.philipp@cando-image.com>
+ * @link     http://pear.php.net/package/PHP_CodeSniffer
  */
 
 /**
@@ -15,11 +15,11 @@
  *
  * Ensures there is a single space after a operator
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Peter Philipp <peter.philipp@cando-image.com>
- * @version   Release: 1.2.2
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @category PHP
+ * @package  PHP_CodeSniffer
+ * @author   Peter Philipp <peter.philipp@cando-image.com>
+ * @version  Release: 1.2.2
+ * @link     http://pear.php.net/package/PHP_CodeSniffer
  */
 class CodingStandard_Sniffs_Formatting_SpaceOperatorSniff implements PHP_CodeSniffer_Sniff
 {
@@ -54,20 +54,29 @@ class CodingStandard_Sniffs_Formatting_SpaceOperatorSniff implements PHP_CodeSni
      */
     public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
-        $tokens = $phpcsFile->getTokens();
+        $tokens   = $phpcsFile->getTokens();
+        $operator = $tokens[$stackPtr]['content'];
 
-        if ($tokens[($stackPtr + 1)]['code'] !== T_WHITESPACE
-            || $tokens[($stackPtr + 1)]['content'] != ' '
-        ) {
-            $error = 'A operator statement must be followed by a single space';
-            $phpcsFile->addError($error, $stackPtr);
+        if ($tokens[($stackPtr - 1)]['code'] !== T_WHITESPACE || $tokens[($stackPtr - 1)]['content'] !== ' ') {
+            $found = strlen($tokens[($stackPtr - 1)]['content']);
+            $error = 'Expected 1 space before "%s"; %s found';
+            $data  = array(
+                      $operator,
+                      $found,
+                     );
+            $phpcsFile->addError($error, $stackPtr, 'SpacingBefore', $data);
         }
-        if ($tokens[($stackPtr - 1)]['code'] !== T_WHITESPACE
-            || $tokens[($stackPtr - 1)]['content'] != ' '
-        ) {
-            $error = 'There must be a single space before an operator statement';
-            $phpcsFile->addError($error, $stackPtr);
-        }
+
+        // is handled by "Squiz.WhiteSpace.OperatorSpacing"
+        /*if ($tokens[($stackPtr + 1)]['code'] !== T_WHITESPACE || $tokens[($stackPtr + 1)]['content'] != ' ') {
+            $found = strlen($tokens[($stackPtr + 1)]['content']);
+            $error = 'Expected 1 space after "%s"; %s found';
+            $data = array(
+                $operator,
+                $found,
+            );
+            $phpcsFile->addError($error, $stackPtr, 'SpacingAfter', $data);
+        }*/
 
     }//end process()
 

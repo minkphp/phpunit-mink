@@ -4,10 +4,10 @@
  *
  * PHP version 5
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Peter Philipp <peter.philipp@cando-image.com>
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @category PHP
+ * @package  PHP_CodeSniffer
+ * @author   Peter Philipp <peter.philipp@cando-image.com>
+ * @link     http://pear.php.net/package/PHP_CodeSniffer
  */
 
 /**
@@ -16,10 +16,10 @@
  * Makes sure there are the needed spaces between the concatenation operator (.) and
  * the strings being concatenated.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Peter Philipp <peter.philipp@cando-image.com>
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @category PHP
+ * @package  PHP_CodeSniffer
+ * @author   Peter Philipp <peter.philipp@cando-image.com>
+ * @link     http://pear.php.net/package/PHP_CodeSniffer
  */
 class CodingStandard_Sniffs_Strings_ConcatenationSpacingSniff implements PHP_CodeSniffer_Sniff
 {

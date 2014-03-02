@@ -4,10 +4,10 @@
  *
  * PHP version 5
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Peter Philipp <peter.philipp@cando-image.com>
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @category PHP
+ * @package  PHP_CodeSniffer
+ * @author   Peter Philipp <peter.philipp@cando-image.com>
+ * @link     http://pear.php.net/package/PHP_CodeSniffer
  */
 
 /**
@@ -15,11 +15,11 @@
  *
  * Ensures there are no spaces on increment / decrement statements.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Peter Philipp <peter.philipp@cando-image.com>
- * @version   Release: 1.2.2
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @category PHP
+ * @package  PHP_CodeSniffer
+ * @author   Peter Philipp <peter.philipp@cando-image.com>
+ * @version  Release: 1.2.2
+ * @link     http://pear.php.net/package/PHP_CodeSniffer
  */
 class CodingStandard_Sniffs_Formatting_SpaceUnaryOperatorSniff implements PHP_CodeSniffer_Sniff
 {
@@ -32,7 +32,10 @@ class CodingStandard_Sniffs_Formatting_SpaceUnaryOperatorSniff implements PHP_Co
      */
     public function register()
     {
-         return array(T_DEC, T_INC);
+         return array(
+                 T_DEC,
+                 T_INC,
+                );
 
     }//end register()
 
@@ -50,15 +53,15 @@ class CodingStandard_Sniffs_Formatting_SpaceUnaryOperatorSniff implements PHP_Co
     {
         $tokens = $phpcsFile->getTokens();
 
-        $modifyLeft = substr($tokens[($stackPtr - 1)]['content'], 0, 1) == '$' ||
-                      $tokens[($stackPtr + 1)]['content'] == ';';
+        $modifyLeft = substr($tokens[($stackPtr - 1)]['content'], 0, 1) === '$' ||
+                      $tokens[($stackPtr + 1)]['content'] === ';';
 
-        if ($modifyLeft && $tokens[($stackPtr - 1)]['code'] === T_WHITESPACE) {
+        if ($modifyLeft === true && $tokens[($stackPtr - 1)]['code'] === T_WHITESPACE) {
             $error = 'There must not be a single space before an unary operator statement';
             $phpcsFile->addError($error, $stackPtr);
         }
 
-        if (!$modifyLeft && substr($tokens[($stackPtr + 1)]['content'], 0, 1) != '$') {
+        if ($modifyLeft === false && substr($tokens[($stackPtr + 1)]['content'], 0, 1) !== '$') {
             $error = 'A unary operator statement must not followed by a single space';
             $phpcsFile->addError($error, $stackPtr);
         }
