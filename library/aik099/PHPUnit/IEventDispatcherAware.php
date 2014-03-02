@@ -13,7 +13,6 @@ namespace aik099\PHPUnit;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-
 /**
  * Interface to indicate that class is capable of using event dispatcher.
  */

@@ -14,7 +14,6 @@ namespace aik099\PHPUnit\Session;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use Behat\Mink\Session;
 
-
 /**
  * Specifies how to create Session objects for running tests.
  *

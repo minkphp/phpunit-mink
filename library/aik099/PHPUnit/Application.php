@@ -13,7 +13,6 @@ namespace aik099\PHPUnit;
 
 use aik099\PHPUnit\TestSuite\TestSuiteFactory;
 
-
 /**
  * Main application class.
  *

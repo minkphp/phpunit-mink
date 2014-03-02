@@ -19,7 +19,6 @@ use aik099\PHPUnit\Session\SessionStrategyManager;
 use ReflectionClass;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-
 /**
  * Base Test Suite class for browser tests.
  *

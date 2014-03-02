@@ -13,7 +13,6 @@ namespace aik099\PHPUnit\TestSuite;
 
 use aik099\PHPUnit\BrowserTestCase;
 
-
 /**
  * Test Suite class for a set of tests from a single Test Case Class executed with a particular browser.
  */

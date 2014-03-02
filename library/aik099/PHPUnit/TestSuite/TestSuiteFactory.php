@@ -17,7 +17,6 @@ use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use aik099\PHPUnit\Application;
 
-
 /**
  * Creates test suites based on test case class configuration.
  *
