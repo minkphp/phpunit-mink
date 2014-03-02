@@ -2,8 +2,6 @@
 <ruleset name="alex">
 	<description>Alexander Obuhovich's coding standard.</description>
 
-	<rule ref="PSR1.Classes.ClassDeclaration"/>
-
 	<rule ref="Generic">
 		<exclude name="Generic.Formatting.MultipleStatementAlignment"/>
 		<exclude name="Generic.Formatting.SpaceAfterCast"/>
@@ -61,6 +59,9 @@
 	<rule ref="PEAR.Functions.ValidDefaultValue"/>
 	<rule ref="PEAR.NamingConventions.ValidVariableName"/>
 	<rule ref="PEAR.NamingConventions.ValidFunctionName"/>
+
+	<rule ref="PSR2.Namespaces.NamespaceDeclaration"/>
+	<rule ref="PSR2.Namespaces.UseDeclaration"/>
 
 	<rule ref="Squiz.Classes.LowercaseClassKeywords"/>
 	<rule ref="Squiz.Classes.SelfMemberReference"/>

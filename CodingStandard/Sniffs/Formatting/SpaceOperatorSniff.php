@@ -59,13 +59,13 @@ class CodingStandard_Sniffs_Formatting_SpaceOperatorSniff implements PHP_CodeSni
         if ($tokens[($stackPtr + 1)]['code'] !== T_WHITESPACE
             || $tokens[($stackPtr + 1)]['content'] != ' '
         ) {
-            $error = 'A opeator statement must be followed by a single space';
+            $error = 'A operator statement must be followed by a single space';
             $phpcsFile->addError($error, $stackPtr);
         }
         if ($tokens[($stackPtr - 1)]['code'] !== T_WHITESPACE
             || $tokens[($stackPtr - 1)]['content'] != ' '
         ) {
-            $error = 'There must be a single space befora a opeator statement';
+            $error = 'There must be a single space before an operator statement';
             $phpcsFile->addError($error, $stackPtr);
         }
 

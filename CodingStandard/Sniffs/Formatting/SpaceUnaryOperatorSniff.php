@@ -54,12 +54,12 @@ class CodingStandard_Sniffs_Formatting_SpaceUnaryOperatorSniff implements PHP_Co
                       $tokens[($stackPtr + 1)]['content'] == ';';
 
         if ($modifyLeft && $tokens[($stackPtr - 1)]['code'] === T_WHITESPACE) {
-            $error = 'There must not be a single space befora a unary opeator statement';
+            $error = 'There must not be a single space before an unary operator statement';
             $phpcsFile->addError($error, $stackPtr);
         }
 
         if (!$modifyLeft && substr($tokens[($stackPtr + 1)]['content'], 0, 1) != '$') {
-            $error = 'A unary opeator statement must not followed by a single space';
+            $error = 'A unary operator statement must not followed by a single space';
             $phpcsFile->addError($error, $stackPtr);
         }
 

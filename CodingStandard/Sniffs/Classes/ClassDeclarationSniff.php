@@ -35,6 +35,12 @@ if (class_exists('PSR2_Sniffs_Classes_ClassDeclarationSniff', true) === false) {
 class CodingStandard_Sniffs_Classes_ClassDeclarationSniff extends PSR2_Sniffs_Classes_ClassDeclarationSniff
 {
 
+    /**
+     * Requires each class declaration to be namespaced.
+     *
+     * @var bool
+     */
+    public $requireNamespaces = true;
 
     /**
      * Processes this test, when one of its tokens is encountered.
@@ -50,8 +56,6 @@ class CodingStandard_Sniffs_Classes_ClassDeclarationSniff extends PSR2_Sniffs_Cl
         // We want all the errors from the PSR2 standard, plus some of our own.
         parent::process($phpcsFile, $stackPtr);
 
-        $tokens = $phpcsFile->getTokens();
-
         // Check that this is the only class or interface in the file.
         $nextClass = $phpcsFile->findNext(array(T_CLASS, T_INTERFACE), ($stackPtr + 1));
         if ($nextClass !== false) {
@@ -60,6 +64,13 @@ class CodingStandard_Sniffs_Classes_ClassDeclarationSniff extends PSR2_Sniffs_Cl
             $phpcsFile->addError($error, $nextClass, 'MultipleClasses');
         }
 
+        if ($this->requireNamespaces && version_compare(PHP_VERSION, '5.3.0') >= 0) {
+            $namespace = $phpcsFile->findPrevious(T_NAMESPACE, ($stackPtr - 1));
+            if ($namespace === false) {
+                $error = 'Each class must be in a namespace of at least one level (a top-level vendor name)';
+                $phpcsFile->addError($error, $stackPtr, 'MissingNamespace');
+            }
+        }
     }//end process()
 
 

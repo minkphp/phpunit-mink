@@ -56,23 +56,20 @@ class CodingStandard_Sniffs_ControlStructures_ElseIfSniff implements PHP_CodeSni
      */
     public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
+        $tokens = $phpcsFile->getTokens();
 
-      $tokens = $phpcsFile->getTokens();
+        $nextNonWhiteSpace = $phpcsFile->findNext(
+            T_WHITESPACE,
+            $stackPtr + 1,
+            null,
+            true,
+            null,
+            true
+        );
 
-      $nextNonWhiteSpace = $phpcsFile->findNext(
-        T_WHITESPACE,
-        $stackPtr + 1,
-        null,
-        true,
-        null,
-        true
-      );
-
-      if($tokens[$nextNonWhiteSpace]['code'] == T_IF){
-        $phpcsFile->addError('Use "elseif" in place of "else if"', $nextNonWhiteSpace);
-      }
-
-
+        if ($tokens[$nextNonWhiteSpace]['code'] == T_IF) {
+            $phpcsFile->addError('Use "elseif" in place of "else if"', $nextNonWhiteSpace);
+        }
     }//end process()
 
 }//end class

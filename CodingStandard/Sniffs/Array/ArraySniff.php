@@ -48,10 +48,8 @@ class CodingStandard_Sniffs_Array_ArraySniff implements PHP_CodeSniffer_Sniff
      */
     public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
-
-      $tokens = $phpcsFile->getTokens();
-      $this->sniffItemClosings($phpcsFile, $stackPtr, $tokens);
-
+        $tokens = $phpcsFile->getTokens();
+        $this->sniffItemClosings($phpcsFile, $stackPtr, $tokens);
     }//end process()
 
     /**
@@ -61,31 +59,33 @@ class CodingStandard_Sniffs_Array_ArraySniff implements PHP_CodeSniffer_Sniff
      *
      * @param $tokens
      */
-    function sniffItemClosings(PHP_CodeSniffer_File $phpcsFile, $stackPtr, $tokens){
-      $lastItem = $phpcsFile->findPrevious(
-        array(T_WHITESPACE),
-        $tokens[$stackPtr]['parenthesis_closer']-1,
-        $stackPtr,
-        true
-      );
+    function sniffItemClosings(PHP_CodeSniffer_File $phpcsFile, $stackPtr, $tokens)
+    {
+        $lastItem = $phpcsFile->findPrevious(
+            array(T_WHITESPACE),
+            $tokens[$stackPtr]['parenthesis_closer']-1,
+            $stackPtr,
+            true
+        );
 
-      //empty array
-      if ($lastItem == $tokens[$stackPtr]['parenthesis_opener'] ) {
-          return;
-      }
-      //Inline array
-      $isInlineArray = $tokens[$tokens[$stackPtr]['parenthesis_opener']]['line'] == $tokens[$tokens[$stackPtr]['parenthesis_closer']]['line'];
+        //empty array
+        if ($lastItem == $tokens[$stackPtr]['parenthesis_opener']) {
+            return;
+        }
 
-      //Check if the last item in a multiline array has a "closing" comma.
-      if ($tokens[$lastItem]['code'] !== T_COMMA && !$isInlineArray) {
-          $phpcsFile->addWarning('A comma should follow the last multiline array item. Found: ' . $tokens[$lastItem]['content'], $lastItem);
-          return;
-      }
+        //Inline array
+        $isInlineArray = $tokens[$tokens[$stackPtr]['parenthesis_opener']]['line'] == $tokens[$tokens[$stackPtr]['parenthesis_closer']]['line'];
 
-      if($tokens[$lastItem]['code'] == T_COMMA && $isInlineArray){
-          $phpcsFile->addWarning('Last item of an inline array must not followed by a comma', $lastItem);
-          return;
-      }
+        //Check if the last item in a multiline array has a "closing" comma.
+        if ($tokens[$lastItem]['code'] !== T_COMMA && !$isInlineArray) {
+            $phpcsFile->addWarning('A comma should follow the last multiline array item. Found: ' . $tokens[$lastItem]['content'], $lastItem);
+            return;
+        }
+
+        if ($tokens[$lastItem]['code'] == T_COMMA && $isInlineArray) {
+            $phpcsFile->addWarning('Last item of an inline array must not followed by a comma', $lastItem);
+            return;
+        }
     }
 
 

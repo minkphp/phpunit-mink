@@ -48,10 +48,8 @@ class CodingStandard_Sniffs_Formatting_ItemAssignmentSniff implements PHP_CodeSn
      */
     public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
-
-      $tokens = $phpcsFile->getTokens();
-      $this->sniffElementItemAssignmentOperator($phpcsFile, $stackPtr, $tokens);
-
+        $tokens = $phpcsFile->getTokens();
+        $this->sniffElementItemAssignmentOperator($phpcsFile, $stackPtr, $tokens);
     }//end process()
 
     /**
@@ -60,13 +58,14 @@ class CodingStandard_Sniffs_Formatting_ItemAssignmentSniff implements PHP_CodeSn
      * Enter description here ...
      * @param $tokens
      */
-    function sniffElementItemAssignmentOperator(PHP_CodeSniffer_File $phpcsFile, $stackPtr, $tokens) {
-      if ($tokens[$stackPtr - 1]['code'] !== T_WHITESPACE) {
-          $phpcsFile->addError('A whitespace must prefix the item assignment operator =>', $stackPtr);
-      }
-      if ($tokens[$stackPtr + 1]['code'] !== T_WHITESPACE) {
-          $phpcsFile->addError('A whitespace must follow to the item assignemtn operator =>', $stackPtr);
-      }
+    function sniffElementItemAssignmentOperator(PHP_CodeSniffer_File $phpcsFile, $stackPtr, $tokens)
+    {
+        if ($tokens[$stackPtr - 1]['code'] !== T_WHITESPACE) {
+            $phpcsFile->addError('A whitespace must prefix the item assignment operator =>', $stackPtr);
+        }
+        if ($tokens[$stackPtr + 1]['code'] !== T_WHITESPACE) {
+            $phpcsFile->addError('A whitespace must follow to the item assignment operator =>', $stackPtr);
+        }
     }
 
     /**
@@ -76,35 +75,38 @@ class CodingStandard_Sniffs_Formatting_ItemAssignmentSniff implements PHP_CodeSn
      *
      * @param $tokens
      */
-    function sniffItemClosings(PHP_CodeSniffer_File $phpcsFile, $stackPtr, $tokens){
-      $lastItem = $phpcsFile->findPrevious(
-        array(T_WHITESPACE),
-        $tokens[$stackPtr]['parenthesis_closer']-1,
-        $stackPtr,
-        true
-      );
+    function sniffItemClosings(PHP_CodeSniffer_File $phpcsFile, $stackPtr, $tokens)
+    {
+        $lastItem = $phpcsFile->findPrevious(
+            array(T_WHITESPACE),
+            $tokens[$stackPtr]['parenthesis_closer'] - 1,
+            $stackPtr,
+            true
+        );
 
-      //empty array
-      if ($lastItem == $tokens[$stackPtr]['parenthesis_opener'] ) {
-          return;
-      }
-      //Check if the last item in the array has a "closing" comma.
-      if ($tokens[$lastItem]['code'] !== T_COMMA) {
-          $phpcsFile->addWarning('A comma followed by a whitespace should follow the last array item. Found: ' . $tokens[$lastItem]['content'], $lastItem);
-          return;
-      }
+        //empty array
+        if ($lastItem == $tokens[$stackPtr]['parenthesis_opener']) {
+            return;
+        }
 
-      //If the closing parenthesis is on the
-      //same line as the last item there has to be a whitespace
-      //after the comma
-      if ($tokens[$lastItem]['line'] == $tokens[$tokens[$stackPtr]['parenthesis_closer']]['line']
-        && $tokens[$lastItem+1]['code'] !== T_WHITESPACE
-      ) {
-        $phpcsFile->addWarning('Afther the last comma in an array must be a whitespace', $lastItem);
-        return;
-      }
+        //Check if the last item in the array has a "closing" comma.
+        if ($tokens[$lastItem]['code'] !== T_COMMA) {
+            $phpcsFile->addWarning('A comma followed by a whitespace should follow the last array item. Found: ' . $tokens[$lastItem]['content'], $lastItem);
+
+            return;
+        }
+
+        //If the closing parenthesis is on the
+        //same line as the last item there has to be a whitespace
+        //after the comma
+        if ($tokens[$lastItem]['line'] == $tokens[$tokens[$stackPtr]['parenthesis_closer']]['line']
+            && $tokens[$lastItem + 1]['code'] !== T_WHITESPACE
+        ) {
+            $phpcsFile->addWarning('Afther the last comma in an array must be a whitespace', $lastItem);
+
+            return;
+        }
     }
-
 
 }//end class
 
