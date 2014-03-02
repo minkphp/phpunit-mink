@@ -85,16 +85,16 @@ class SessionStrategyManagerTest extends \PHPUnit_Framework_TestCase
 				return m::mock('aik099\\PHPUnit\\Session\\ISessionStrategy');
 			});
 
-		// sequential identical browser configurations share strategy
+		// Sequential identical browser configurations share strategy.
 		$strategy1 = $this->_getStrategy(ISessionStrategyFactory::TYPE_ISOLATED, 'H1');
 		$strategy2 = $this->_getStrategy(ISessionStrategyFactory::TYPE_ISOLATED, 'H1');
 		$this->assertSame($strategy1, $strategy2);
 
-		// different browser configuration use different strategy
+		// Different browser configuration use different strategy.
 		$strategy3 = $this->_getStrategy(ISessionStrategyFactory::TYPE_ISOLATED, 'H2');
 		$this->assertNotSame($strategy2, $strategy3);
 
-		// different browser configuration break the sequence
+		// Different browser configuration break the sequence.
 		$strategy4 = $this->_getStrategy(ISessionStrategyFactory::TYPE_ISOLATED, 'H1');
 		$this->assertNotSame($strategy1, $strategy4);
 	}

@@ -199,7 +199,7 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 	{
 		$this->_browser = $browser->attachToTestCase($this);
 
-		// configure session strategy
+		// Configure session strategy.
 		return $this->setSessionStrategy($this->sessionStrategyManager->getSessionStrategy($browser));
 	}
 
@@ -268,7 +268,7 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 			return $this->sessionStrategy;
 		}
 
-		// default session strategy (not session itself) shared across all test cases
+		// Default session strategy (not session itself) shared across all test cases.
 		return $this->sessionStrategyManager->getDefaultSessionStrategy();
 	}
 
@@ -322,15 +322,15 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 			$result->getCodeCoverage()->append($this->getRemoteCodeCoverageInformation(), $this);
 		}
 
-//		$this->setTestResultObject($result);
+		/*$this->setTestResultObject($result);*/
 
-		// do not call this before to give the time to the Listeners to run
+		// Do not call this before to give the time to the Listeners to run.
 		$this->_eventDispatcher->dispatch(
 			self::TEST_ENDED_EVENT,
 			new TestEndedEvent($this, $result, $this->_session)
 		);
 
-//		$this->setTestResultObject(null);
+		/*$this->setTestResultObject(null);*/
 
 		return $result;
 	}

@@ -255,7 +255,7 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 			$driver->shouldReceive('getWebDriverSessionId')->once()->andReturn('SID');
 
 			$sauce_rest->shouldReceive('updateJob')->with('SID', array('passed' => true))->once();
-			$test_case->shouldReceive('hasFailed')->once()->andReturn(false); // for shared strategy
+			$test_case->shouldReceive('hasFailed')->once()->andReturn(false); // For shared strategy.
 		}
 		else {
 			$driver = m::mock('\\Behat\\Mink\\Driver\\DriverInterface');
@@ -305,8 +305,8 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 
 		$event = m::mock('aik099\\PHPUnit\\Event\\TestEndedEvent');
 		$event->shouldReceive('getSession')->once();
-		$event->shouldReceive('setDispatcher')->once(); // to remove with Symfony 3.0 release
-		$event->shouldReceive('setName')->once(); // to remove with Symfony 3.0 release
+		$event->shouldReceive('setDispatcher')->once(); // To remove with Symfony 3.0 release.
+		$event->shouldReceive('setName')->once(); // To remove with Symfony 3.0 release.
 		$event->shouldReceive('isPropagationStopped')->once()->andReturn(false);
 		$event->shouldReceive('getTestCase')->never();
 

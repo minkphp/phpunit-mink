@@ -185,15 +185,15 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$test_case->setBrowser($browser);
 		$test_case->setTestResultObject($this->getTestResult($test_case, 0));
 
-		// create session when missing
+		// Create session when missing.
 		$session1 = $test_case->getSession();
 		$this->assertSame($expected_session1, $session1);
 
-		// create session when present, but stopped
+		// Create session when present, but stopped.
 		$session2 = $test_case->getSession();
 		$this->assertSame($expected_session2, $session2);
 
-		// reuse created session, when started
+		// Reuse created session, when started.
 		$session3 = $test_case->getSession();
 		$this->assertSame($session2, $session3);
 	}

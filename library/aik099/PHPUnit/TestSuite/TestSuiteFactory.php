@@ -99,13 +99,13 @@ class TestSuiteFactory implements IApplicationAware
 		$browsers = $this->_getBrowsers($class_name);
 
 		if ( $browsers ) {
-			// create tests from test methods for multiple browsers
+			// Create tests from test methods for multiple browsers.
 			foreach ( $browsers as $browser ) {
 				$suite->addTest($this->_createBrowserSuite($class_name, $browser));
 			}
 		}
 		else {
-			// create tests from test methods for single browser
+			// Create tests from test methods for single browser.
 			$suite->addTestMethods($class_name);
 			$suite->setTestDependencies(
 				$this->_sessionStrategyManager,

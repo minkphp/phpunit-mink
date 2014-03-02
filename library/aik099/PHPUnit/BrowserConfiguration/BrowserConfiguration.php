@@ -33,17 +33,17 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 	 * @var array
 	 */
 	protected $defaultParameters = array(
-		// server related
+		// Server related.
 		'host' => 'localhost',
 		'port' => 4444,
 		'timeout' => 60,
 
-		// browser related
+		// Browser related.
 		'browserName' => 'firefox',
 		'desiredCapabilities' => array(),
 		'baseUrl' => '',
 
-		// test related
+		// Test related.
 		'sessionStrategy' => ISessionStrategyFactory::TYPE_ISOLATED,
 	);
 
@@ -474,11 +474,11 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 	public function getTestStatus(BrowserTestCase $test_case, \PHPUnit_Framework_TestResult $test_result)
 	{
 		if ( $this->isShared() ) {
-			// all tests in a test case use same session -> failed even if 1 test fails
+			// All tests in a test case use same session -> failed even if 1 test fails.
 			return $test_result->wasSuccessful();
 		}
 
-		// each test in a test case are using it's own session -> failed if test fails
+		// Each test in a test case are using it's own session -> failed if test fails.
 		return !$test_case->hasFailed();
 	}
 

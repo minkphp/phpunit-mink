@@ -49,7 +49,7 @@ class SessionFactory implements ISessionFactory
 		$capabilities = $browser->getDesiredCapabilities();
 		$capabilities['browserName'] = $browser_name;
 
-		// TODO: maybe doesn't work
+		// TODO: maybe doesn't work!
 		ini_set('default_socket_timeout', $browser->getTimeout());
 
 		$driver = new Selenium2Driver(

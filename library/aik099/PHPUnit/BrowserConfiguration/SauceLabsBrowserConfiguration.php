@@ -207,7 +207,7 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 		parent::onTestEnded($event);
 
 		if ( $event->getSession() === null ) {
-			// session wasn't used in particular test
+			// Session wasn't used in particular test.
 			return;
 		}
 

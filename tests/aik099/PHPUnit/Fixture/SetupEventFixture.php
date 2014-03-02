@@ -62,15 +62,15 @@ class SetupEventFixture extends BrowserTestCase
 
 		$session = m::mock('Behat\\Mink\\Session');
 
-		// for SauceLabsBrowserConfiguration::onTestEnded
+		// For SauceLabsBrowserConfiguration::onTestEnded.
 		$session->shouldReceive('getDriver')->once()->andReturn($driver);
 
-		// for IsolatedSessionStrategy::onTestEnd
+		// For IsolatedSessionStrategy::onTestEnd.
 		$session->shouldReceive('stop')->once();
 
 		$this->_setSession($session);
 
-		// for SauceLabsBrowserConfiguration::onTestSetup
+		// For SauceLabsBrowserConfiguration::onTestSetup.
 		$desired_capabilities = $this->getBrowser()->getDesiredCapabilities();
 		$this->assertArrayHasKey(SauceLabsBrowserConfiguration::NAME_CAPABILITY, $desired_capabilities);
 	}
