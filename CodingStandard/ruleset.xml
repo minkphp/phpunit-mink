@@ -21,6 +21,10 @@
 		<exclude name="Generic.Commenting.Todo"/>
 		<exclude name="Generic.Files.LowercasedFilename"/>
 
+		<!-- exclude in favor of "CodingStandard.Classes.ClassDeclaration" -->
+		<exclude name="Generic.Files.OneClassPerFile"/>
+		<exclude name="Generic.Files.OneInterfacePerFile"/>
+
 		<!-- exclude because of multifile sniff, that eats a lot of memory, better to create a separate ruleset -->
 		<exclude name="Generic.Classes.DuplicateClassName"/>
 	</rule>
@@ -49,7 +53,6 @@
 	<rule ref="PEAR.Functions.FunctionDeclaration"/>
 	<rule ref="PEAR.Functions.ValidDefaultValue"/>
 	<rule ref="PEAR.NamingConventions.ValidVariableName"/>
-	<rule ref="PEAR.NamingConventions.ValidFunctionName"/>
 
 	<rule ref="PSR2.Namespaces.NamespaceDeclaration"/>
 	<rule ref="PSR2.Namespaces.UseDeclaration"/>
