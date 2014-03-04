@@ -78,6 +78,13 @@
 		<rule ref="Squiz.ControlStructures.ForLoopDeclaration"/>
 	-->
 
+	<rule ref="PSR2.ControlStructures.ControlStructureSpacing">
+		<properties>
+			<property name="requiredSpacesAfterOpen" value="1"/>
+			<property name="requiredSpacesBeforeClose" value="1"/>
+		</properties>
+	</rule>
+
 	<rule ref="Squiz.ControlStructures.LowercaseDeclaration"/>
 
 	<rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
