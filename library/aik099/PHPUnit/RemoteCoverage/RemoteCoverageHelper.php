@@ -102,7 +102,7 @@ class RemoteCoverageHelper
 	{
 		$coverage_with_local_paths = array();
 
-		foreach ($coverage as $original_remote_path => $data) {
+		foreach ( $coverage as $original_remote_path => $data ) {
 			$remote_path = $original_remote_path;
 			$separator = $this->findDirectorySeparator($remote_path);
 
