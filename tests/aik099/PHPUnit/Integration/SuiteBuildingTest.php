@@ -100,9 +100,12 @@ class SuiteBuildingTest extends \PHPUnit_Framework_TestCase
 		$suite->shouldReceive('getGroups')->once()->andReturn(array());
 		$suite->shouldReceive('setBackupGlobals')->andReturnNull();
 		$suite->shouldReceive('setBackupStaticAttributes')->andReturnNull();
+		$suite->shouldReceive('setRunTestInSeparateProcess')->andReturnNull();
 
 		$suite->shouldReceive('run')->once()->andReturnNull();
 		$suite->shouldReceive('onTestSuiteEnded')->once()->andReturnNull();
+
+		$suite->shouldReceive('count')->once()->andReturn(1);
 
 		return $suite;
 	}
