@@ -20,6 +20,6 @@ if ( !is_dir($vendor_path) ) {
 require_once ($vendor_path . '/autoload.php');
 
 $auto_loader = new \Composer\Autoload\ClassLoader();
-$auto_loader->add("aik099\\", FULL_PATH . '/library/');
-$auto_loader->add("tests\\aik099\\", FULL_PATH . '/');
+$auto_loader->add('aik099\\', FULL_PATH . '/library/');
+$auto_loader->add('tests\\aik099\\', FULL_PATH . '/');
 $auto_loader->register();
