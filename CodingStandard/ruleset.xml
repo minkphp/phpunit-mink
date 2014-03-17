@@ -14,12 +14,14 @@
 		<exclude name="Generic.PHP.ClosingPHPTag"/>
 		<exclude name="Generic.VersionControl.SubversionProperties"/>
 		<exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
-		<exclude name="Generic.WhiteSpace.ScopeIndent"/>
 		<exclude name="Generic.Files.EndFileNoNewline"/>
 		<exclude name="Generic.CodeAnalysis.UnusedFunctionParameter"/>
 		<exclude name="Generic.Commenting.Fixme"/>
 		<exclude name="Generic.Commenting.Todo"/>
 		<exclude name="Generic.Files.LowercasedFilename"/>
+
+		<!-- exclude in favor of "Squiz.CodeAnalysis.EmptyStatement" -->
+		<exclude name="Generic.CodeAnalysis.EmptyStatement"/>
 
 		<!-- exclude in favor of "CodingStandard.Classes.ClassDeclaration" -->
 		<exclude name="Generic.Files.OneClassPerFile"/>
@@ -27,6 +29,15 @@
 
 		<!-- exclude because of multifile sniff, that eats a lot of memory, better to create a separate ruleset -->
 		<exclude name="Generic.Classes.DuplicateClassName"/>
+
+		<!-- let "PHP Mess Detector" deal with that -->
+		<exclude name="Generic.Metrics.CyclomaticComplexity"/>
+	</rule>
+
+	<rule ref="Generic.WhiteSpace.ScopeIndent">
+		<properties>
+			<property name="indent" value="1"/>
+		</properties>
 	</rule>
 
 	<rule ref="Generic.Files.LineLength">
@@ -34,6 +45,7 @@
 			<property name="lineLimit" value="120"/>
 			<property name="absoluteLineLimit" value="140"/>
 		</properties>
+		<exclude-pattern>**/*_config.php</exclude-pattern>
 	</rule>
 
 
@@ -41,16 +53,20 @@
 
 	<rule ref="MySource.PHP.EvalObjectFactory"/>
 
+	<rule ref="Squiz.CodeAnalysis.EmptyStatement"/>
+
 	<!--
 		checks for aligned parameters
 		<rule ref="PEAR.Commenting.FunctionComment"/>
 	-->
 
-	<!--
-		find a way how to check indentation with tabs for multi-line function calls
-		<rule ref="PEAR.Functions.FunctionCallSignature"/>
-	-->
-	<rule ref="PEAR.Functions.FunctionDeclaration"/>
+	<rule ref="PSR2.Methods.FunctionCallSignature">
+		<properties>
+			<property name="indent" value="1"/>
+			<property name="allowMultipleArguments" value="true"/>
+		</properties>
+	</rule>
+
 	<rule ref="PEAR.Functions.ValidDefaultValue"/>
 	<rule ref="PEAR.NamingConventions.ValidVariableName"/>
 
@@ -111,6 +127,8 @@
 	<rule ref="Squiz.Scope.MethodScope"/>
 
 	<rule ref="Squiz.Scope.StaticThisUsage"/>
+	<rule ref="Squiz.Strings.EchoedStrings"/>
+	<rule ref="Squiz.Strings.DoubleQuoteUsage"/>
 	<rule ref="Squiz.WhiteSpace.FunctionOpeningBraceSpace"/>
 
 	<rule ref="Squiz.WhiteSpace.FunctionSpacing">
@@ -122,14 +140,28 @@
 	<rule ref="Squiz.WhiteSpace.LanguageConstructSpacing"/>
 	<rule ref="Squiz.WhiteSpace.LogicalOperatorSpacing"/>
 
+	<!--
+		Reports multi-line chained method calls as error
+		<rule ref="Squiz.WhiteSpace.ObjectOperatorSpacing"/>
+	-->
+
+	<rule ref="PEAR.WhiteSpace.ObjectOperatorIndent">
+		<properties>
+			<property name="indent" value="1"/>
+		</properties>
+	</rule>
+
 	<rule ref="Squiz.WhiteSpace.MemberVarSpacing"/>
+
+	<!-- maybe can be improved to locate empty lines "right after scope opening" and "right before scope closing" -->
+	<rule ref="Squiz.WhiteSpace.SuperfluousWhitespace"/>
 
 	<!--
 	enforces "===" usage (like in Symfony), but too aggressive for now
 	<rule ref="Squiz.Operators.ComparisonOperatorUsage"/>
 	-->
 
-	<!--<rule ref="Squiz.WhiteSpace.ObjectOperatorSpacing"/>-->
+
 	<rule ref="Squiz.WhiteSpace.OperatorSpacing"/>
 	<rule ref="Squiz.WhiteSpace.ScopeKeywordSpacing"/>
 	<rule ref="Squiz.WhiteSpace.SemicolonSpacing"/>

@@ -62,11 +62,11 @@ class CodingStandard_Sniffs_Classes_ClassDeclarationSniff extends PSR2_Sniffs_Cl
             return;
         }
 
-        // Check that this is the only class or interface in the file.
-        $nextClass = $phpcsFile->findNext(array(T_CLASS, T_INTERFACE), ($stackPtr + 1));
+        // Check that this is the only class, interface or trait in the file.
+        $nextClass = $phpcsFile->findNext(array(T_CLASS, T_INTERFACE, T_TRAIT), ($stackPtr + 1));
         if ($nextClass !== false) {
             // We have another, so an error is thrown.
-            $error = 'Only one interface or class is allowed in a file';
+            $error = 'Only one class, interface or trait is allowed in a file';
             $phpcsFile->addError($error, $nextClass, 'MultipleClasses');
         }
 

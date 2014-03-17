@@ -39,9 +39,14 @@ class CodingStandard_Sniffs_NamingConventions_ValidFunctionNameSniff extends PEA
                                          'SetCustomQuery',
                                          'CheckPermission',
                                          'LoadItem',
+                                         'ListPrepareQuery',
+                                         'ItemPrepareQuery',
+                                         'SetPagination',
+                                         'SetSorting',
                                         );
 
-    protected $tagProcessorExclusions = array();
+    protected $tagProcessorExclusions = array('PrepareListElementParams');
+
 
     /**
      * Processes the tokens within the scope.
@@ -170,7 +175,7 @@ class CodingStandard_Sniffs_NamingConventions_ValidFunctionNameSniff extends PEA
 
 
     /**
-     * Determines if a method is an event in the event handler class.
+     * Determines if a method is an tag in the tag processor class.
      *
      * @param string $className    Class name.
      * @param string $methodName   Method name.
