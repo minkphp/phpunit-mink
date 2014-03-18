@@ -105,7 +105,9 @@ class SuiteBuildingTest extends \PHPUnit_Framework_TestCase
 		$suite->shouldReceive('run')->once()->andReturnNull();
 		$suite->shouldReceive('onTestSuiteEnded')->once()->andReturnNull();
 
-		$suite->shouldReceive('count')->once()->andReturn(1);
+		if ( version_compare(\PHPUnit_Runner_Version::id(), '4.0.0', '>=') ) {
+			$suite->shouldReceive('count')->once()->andReturn(1);
+		}
 
 		return $suite;
 	}
