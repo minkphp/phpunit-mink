@@ -11,6 +11,7 @@
 namespace aik099\PHPUnit\BrowserConfiguration;
 
 
+use aik099\PHPUnit\APIClient\IAPIClient;
 use aik099\PHPUnit\BrowserTestCase;
 
 /**
@@ -46,7 +47,7 @@ interface IBrowserConfigurationFactory
 	 *
 	 * @param BrowserConfiguration $browser Browser configuration.
 	 *
-	 * @return \stdClass
+	 * @return IAPIClient
 	 * @throws \LogicException When unsupported browser configuration given.
 	 */
 	public function createAPIClient(BrowserConfiguration $browser);

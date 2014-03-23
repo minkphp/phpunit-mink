@@ -14,11 +14,11 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Browser configuration tailored to use with "Sauce Labs" service.
+ * Browser configuration tailored to use with "BrowserStack" service.
  *
- * @link https://saucelabs.com/php
+ * @link https://www.browserstack.com/automate
  */
-class SauceLabsBrowserConfiguration extends ApiBrowserConfiguration
+class BrowserStackBrowserConfiguration extends ApiBrowserConfiguration
 {
 
 	/**
@@ -32,7 +32,7 @@ class SauceLabsBrowserConfiguration extends ApiBrowserConfiguration
 		IBrowserConfigurationFactory $browser_configuration_factory
 	)
 	{
-		$this->defaultParameters['type'] = 'saucelabs';
+		$this->defaultParameters['type'] = 'browserstack';
 
 		parent::__construct($event_dispatcher, $browser_configuration_factory);
 	}
@@ -44,24 +44,26 @@ class SauceLabsBrowserConfiguration extends ApiBrowserConfiguration
 	 */
 	public function getHost()
 	{
-		return $this->getApiUsername() . ':' . $this->getApiKey() . '@ondemand.saucelabs.com';
+		return $this->getApiUsername() . ':' . $this->getApiKey() . '@hub.browserstack.com';
 	}
 
 	/**
 	 * Returns desired capabilities from browser configuration.
 	 *
 	 * @return array
+	 * @link http://www.browserstack.com/automate/capabilities
 	 */
 	public function getDesiredCapabilities()
 	{
 		$capabilities = parent::getDesiredCapabilities();
 
-		if ( !isset($capabilities['platform']) ) {
-			$capabilities['platform'] = 'Windows XP';
+		if ( !isset($capabilities['os']) ) {
+			$capabilities['os'] = 'Windows';
+			$capabilities['os_version'] = 'XP';
 		}
 
-		if ( !isset($capabilities['version']) ) {
-			$capabilities['version'] = '';
+		if ( !isset($capabilities['acceptSslCerts']) ) {
+			$capabilities['acceptSslCerts'] = 'true';
 		}
 
 		return $capabilities;

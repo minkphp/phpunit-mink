@@ -13,10 +13,10 @@ namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 use Mockery as m;
 
-class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
+class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 {
 
-	const HOST = ':@ondemand.saucelabs.com';
+	const HOST = ':@hub.browserstack.com';
 
 	/**
 	 * Configures all tests.
@@ -25,11 +25,15 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 	 */
 	protected function setUp()
 	{
-		$this->browserConfigurationClass = 'aik099\\PHPUnit\\BrowserConfiguration\\SauceLabsBrowserConfiguration';
+		$this->browserConfigurationClass = 'aik099\\PHPUnit\\BrowserConfiguration\\BrowserStackBrowserConfiguration';
 
 		parent::setUp();
 
-		$this->setup['host'] = 'UN:AK@ondemand.saucelabs.com';
+		$this->setup['desiredCapabilities'] = array(
+			'os' => 'Windows', 'os_version' => '7', 'version' => 10,
+			'acceptSslCerts' => 'true',
+		);
+		$this->setup['host'] = 'UN:AK@hub.browserstack.com';
 	}
 
 	/**
@@ -42,7 +46,7 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 		$browser = $this->createBrowserConfiguration(array(), false, true);
 
 		$this->assertSame($browser, $browser->setHost('EXAMPLE_HOST'));
-		$this->assertSame('A:B@ondemand.saucelabs.com', $browser->getHost());
+		$this->assertSame('A:B@hub.browserstack.com', $browser->getHost());
 	}
 
 	/**
@@ -54,12 +58,12 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 	{
 		return array(
 			array(
-				array('platform' => 'pl1'),
-				array('platform' => 'pl1', 'version' => ''),
+				array('os' => 'os-name', 'os_version' => 'os-version'),
+				array('os' => 'os-name', 'os_version' => 'os-version', 'acceptSslCerts' => 'true'),
 			),
 			array(
-				array('version' => 'ver1'),
-				array('version' => 'ver1', 'platform' => 'Windows XP'),
+				array('acceptSslCerts' => 'false'),
+				array('acceptSslCerts' => 'false', 'os' => 'Windows', 'os_version' => 'XP'),
 			),
 		);
 	}

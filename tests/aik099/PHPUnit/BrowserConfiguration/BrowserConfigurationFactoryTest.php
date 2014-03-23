@@ -8,11 +8,12 @@
  * @link      https://github.com/aik099/phpunit-mink
  */
 
-namespace tests\aik099\PHPUnit;
+namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfigurationFactory;
+use aik099\PHPUnit\BrowserConfiguration\BrowserStackBrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use Mockery as m;
 use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
@@ -124,8 +125,11 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 	{
 		$browser = new SauceLabsBrowserConfiguration($this->eventDispatcher, $this->_factory);
 		$api_client = $this->_factory->createAPIClient($browser);
+		$this->assertInstanceOf('aik099\\PHPUnit\\APIClient\\SauceLabsAPIClient', $api_client);
 
-		$this->assertInstanceOf('WebDriver\\SauceLabs\\SauceRest', $api_client);
+		$browser = new BrowserStackBrowserConfiguration($this->eventDispatcher, $this->_factory);
+		$api_client = $this->_factory->createAPIClient($browser);
+		$this->assertInstanceOf('aik099\\PHPUnit\\APIClient\\BrowserStackAPIClient', $api_client);
 	}
 
 	/**

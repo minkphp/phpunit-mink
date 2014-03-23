@@ -11,7 +11,6 @@
 namespace tests\aik099\PHPUnit\Fixture;
 
 
-use aik099\PHPUnit\Application;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
@@ -28,8 +27,8 @@ class SetupEventFixture extends BrowserTestCase
 	 */
 	protected function setUp()
 	{
-		$api_client = m::mock('WebDriver\\SauceLabs\\SauceRest');
-		$api_client->shouldReceive('updateJob')->withAnyArgs()->once();
+		$api_client = m::mock('aik099\\PHPUnit\\APIClient\\IAPIClient');
+		$api_client->shouldReceive('updateStatus')->withAnyArgs()->once();
 
 		/** @var IBrowserConfigurationFactory $factory */
 		$factory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');

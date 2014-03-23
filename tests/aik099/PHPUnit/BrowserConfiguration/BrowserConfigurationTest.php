@@ -8,15 +8,13 @@
  * @link      https://github.com/aik099/phpunit-mink
  */
 
-namespace tests\aik099\PHPUnit;
+namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use Mockery as m;
-use Mockery\MockInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;

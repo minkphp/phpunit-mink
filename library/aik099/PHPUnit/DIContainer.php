@@ -13,6 +13,7 @@ namespace aik099\PHPUnit;
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfigurationFactory;
+use aik099\PHPUnit\BrowserConfiguration\BrowserStackBrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
@@ -120,11 +121,15 @@ class DIContainer extends \Pimple implements IApplicationAware
 
 		$this['browser_configuration_factory'] = function ($c) {
 			$browser_configuration_factory = new BrowserConfigurationFactory();
+
 			$browser_configuration_factory->register(
 				new BrowserConfiguration($c['event_dispatcher'])
 			);
 			$browser_configuration_factory->register(
 				new SauceLabsBrowserConfiguration($c['event_dispatcher'], $browser_configuration_factory)
+			);
+			$browser_configuration_factory->register(
+				new BrowserStackBrowserConfiguration($c['event_dispatcher'], $browser_configuration_factory)
 			);
 
 			return $browser_configuration_factory;
