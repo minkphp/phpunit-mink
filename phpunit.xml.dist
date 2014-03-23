@@ -23,10 +23,10 @@
 			 lowUpperBound="35" highLowerBound="70"/>
 	</logging>-->
 
-	<php>
+	<!--<php>
 		<env name="SAUCE_USERNAME" value=""/>
 		<env name="SAUCE_ACCESS_KEY" value=""/>
-	</php>
+	</php>-->
 
 	<listeners>
 		<listener class="\Mockery\Adapter\Phpunit\TestListener"/>
