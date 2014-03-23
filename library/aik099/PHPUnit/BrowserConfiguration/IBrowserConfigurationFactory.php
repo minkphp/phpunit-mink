@@ -13,6 +13,11 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 
 use aik099\PHPUnit\BrowserTestCase;
 
+/**
+ * Interface for browser factory creation.
+ *
+ * @method \Mockery\Expectation shouldReceive
+ */
 interface IBrowserConfigurationFactory
 {
 
@@ -25,6 +30,16 @@ interface IBrowserConfigurationFactory
 	 * @return BrowserConfiguration
 	 */
 	public function createBrowserConfiguration(array $config, BrowserTestCase $test_case);
+
+	/**
+	 * Registers a browser configuration.
+	 *
+	 * @param BrowserConfiguration $browser Browser configuration.
+	 *
+	 * @return void
+	 * @throws \InvalidArgumentException When browser configuration is already registered.
+	 */
+	public function register(BrowserConfiguration $browser);
 
 	/**
 	 * Creates API client.

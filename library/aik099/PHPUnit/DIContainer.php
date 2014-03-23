@@ -120,24 +120,15 @@ class DIContainer extends \Pimple implements IApplicationAware
 
 		$this['browser_configuration_factory'] = function ($c) {
 			$browser_configuration_factory = new BrowserConfigurationFactory();
-			$browser_configuration_factory->setApplication($c['application']);
+			$browser_configuration_factory->register(
+				new BrowserConfiguration($c['event_dispatcher'])
+			);
+			$browser_configuration_factory->register(
+				new SauceLabsBrowserConfiguration($c['event_dispatcher'], $browser_configuration_factory)
+			);
 
 			return $browser_configuration_factory;
 		};
-
-		$this['browser_configuration'] = $this->factory(function ($c) {
-			$browser = new BrowserConfiguration();
-			$browser->setEventDispatcher($c['event_dispatcher']);
-
-			return $browser;
-		});
-
-		$this['sauce_labs_browser_configuration'] = $this->factory(function ($c) {
-			$browser = new SauceLabsBrowserConfiguration($c['browser_configuration_factory']);
-			$browser->setEventDispatcher($c['event_dispatcher']);
-
-			return $browser;
-		});
 	}
 
 }

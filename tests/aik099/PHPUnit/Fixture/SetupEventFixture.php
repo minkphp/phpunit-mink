@@ -12,6 +12,7 @@ namespace tests\aik099\PHPUnit\Fixture;
 
 
 use aik099\PHPUnit\Application;
+use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
 use Behat\Mink\Session;
@@ -30,22 +31,16 @@ class SetupEventFixture extends BrowserTestCase
 		$api_client = m::mock('WebDriver\\SauceLabs\\SauceRest');
 		$api_client->shouldReceive('updateJob')->withAnyArgs()->once();
 
+		/** @var IBrowserConfigurationFactory $factory */
 		$factory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
 		$factory->shouldReceive('createAPIClient')->once()->andReturn($api_client);
 
-		$application = Application::getInstance();
-		$service_backup = $application->replaceObject('sauce_labs_browser_configuration', function ($c) use ($factory) {
-			$browser = new SauceLabsBrowserConfiguration($factory);
-			$browser->setEventDispatcher($c['event_dispatcher']);
+		$browser_config = array('api_username' => 'a', 'api_key' => 'b');
+		$browser = new SauceLabsBrowserConfiguration($this->readAttribute($this, '_eventDispatcher'), $factory);
+		$factory->shouldReceive('createBrowserConfiguration')->with($browser_config, $this)->once()->andReturn($browser);
+		$this->setBrowserConfigurationFactory($factory);
 
-			return $browser;
-		}, true);
-
-		$this->setBrowserFromConfiguration(array(
-			'sauce' => array('username' => 'a', 'api_key' => 'b'),
-		));
-
-		$application->replaceObject('sauce_labs_browser_configuration', $service_backup, true);
+		$this->setBrowserFromConfiguration($browser_config);
 
 		parent::setUp();
 	}

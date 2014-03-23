@@ -16,6 +16,7 @@ use aik099\PHPUnit\Event\TestEndedEvent;
 use aik099\PHPUnit\Event\TestEvent;
 use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Session;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use WebDriver\SauceLabs\SauceRest;
 
 /**
@@ -44,14 +45,20 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	/**
 	 * Creates browser configuration.
 	 *
+	 * @param EventDispatcherInterface     $event_dispatcher              Event dispatcher.
 	 * @param IBrowserConfigurationFactory $browser_configuration_factory Browser configuration factory.
 	 */
-	public function __construct(IBrowserConfigurationFactory $browser_configuration_factory)
+	public function __construct(
+		EventDispatcherInterface $event_dispatcher,
+		IBrowserConfigurationFactory $browser_configuration_factory
+	)
 	{
 		$this->_browserConfigurationFactory = $browser_configuration_factory;
-		$this->defaultParameters['sauce'] = array('username' => '', 'api_key' => '');
+		$this->defaultParameters['api_username'] = '';
+		$this->defaultParameters['api_key'] = '';
+		$this->defaultParameters['type'] = 'saucelabs';
 
-		parent::__construct();
+		parent::__construct($event_dispatcher);
 	}
 
 	/**
@@ -64,42 +71,66 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	public function setup(array $parameters)
 	{
 		$prepared_parameters = $this->prepareParameters($parameters);
-		$this->setSauce($prepared_parameters['sauce']);
+		$this->setApiUsername($prepared_parameters['api_username']);
+		$this->setApiKey($prepared_parameters['api_key']);
 
 		return parent::setup($parameters);
 	}
 
 	/**
-	 * Sets "Sauce Labs" connection details.
+	 * Sets "Sauce Labs" API username.
 	 *
 	 * To be called from TestCase::setUp().
 	 *
-	 * @param array $sauce Connection details.
+	 * @param string $api_username API username.
 	 *
 	 * @return self
-	 * @throws \InvalidArgumentException When incorrect sauce is given.
 	 * @link https://saucelabs.com/php
 	 */
-	public function setSauce(array $sauce)
+	public function setApiUsername($api_username)
 	{
-		if ( !isset($sauce['username']) || !isset($sauce['api_key']) ) {
-			throw new \InvalidArgumentException('Incorrect sauce');
-		}
-
-		$this->parameters['sauce'] = $sauce;
+		$this->parameters['api_username'] = $api_username;
 
 		return $this;
 	}
 
 	/**
-	 * Returns "Sauce Labs" connection details.
+	 * Returns "Sauce Labs" api username.
 	 *
-	 * @return array
+	 * @return string
 	 * @link https://saucelabs.com/php
 	 */
-	public function getSauce()
+	public function getApiUsername()
 	{
-		return $this->parameters['sauce'];
+		return $this->parameters['api_username'];
+	}
+
+	/**
+	 * Sets "Sauce Labs" API key.
+	 *
+	 * To be called from TestCase::setUp().
+	 *
+	 * @param string $api_key API key.
+	 *
+	 * @return self
+	 * @link https://saucelabs.com/php
+	 */
+	public function setApiKey($api_key)
+	{
+		$this->parameters['api_key'] = $api_key;
+
+		return $this;
+	}
+
+	/**
+	 * Returns "Sauce Labs" api key.
+	 *
+	 * @return string
+	 * @link https://saucelabs.com/php
+	 */
+	public function getApiKey()
+	{
+		return $this->parameters['api_key'];
 	}
 
 	/**
@@ -109,9 +140,7 @@ class SauceLabsBrowserConfiguration extends BrowserConfiguration
 	 */
 	public function getHost()
 	{
-		$sauce = $this->getSauce();
-
-		return $sauce['username'] . ':' . $sauce['api_key'] . '@ondemand.saucelabs.com';
+		return $this->getApiUsername() . ':' . $this->getApiKey() . '@ondemand.saucelabs.com';
 	}
 
 	/**

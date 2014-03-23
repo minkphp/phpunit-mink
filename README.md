@@ -72,8 +72,11 @@ class PerBrowserConfigTest extends BrowserTestCase
 
 		// to create "Sauce Labs" browser configuration via BrowserConfigurationFactory
 		$browser = $this->createBrowserConfiguration(array(
-			'sauce' => array('username' => 'sauce_username', 'api_key' => 'sauce_api_key'), // required
-			// options goes here (optional)
+			// required
+			'type' => 'saucelabs',
+			'api_username' => 'sauce_username',
+			'api_key' => 'sauce_api_key',
+			// options (optional) goes here
 		));
 
 		// options can be changed later (optional)
@@ -202,7 +205,7 @@ class ConcreteTest extends BrowserAliasTest
 ```
 
 ## Using "Sauce Labs"
-When using "Sauce Labs" account to perform Selenium server-based testing you need to specify `'sauce' => array('username' => '...', 'api_key' => '...')` instead of `host` or `port` settings. In all other aspects all will work the same as if all tests are running locally.
+When using "Sauce Labs" account to perform Selenium server-based testing you need to specify `'type' => 'saucelabs', 'api_username' => '...', 'api_key' => '...'` instead of `host` or `port` settings. In all other aspects all will work the same as if all tests are running locally.
 
 ## Remote Code Coverage
 Browser tests are executed on different machine, then one, where code coverage information is collected (and tests are executed). To solve that problem this library uses remote coverage collection. Following steps needs to be performed before using this feature:

@@ -19,8 +19,9 @@ use Mockery\MockInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
+use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
 
-class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
+class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 {
 
 	const TEST_CASE_CLASS = '\\aik099\\PHPUnit\\BrowserTestCase';
@@ -58,13 +59,6 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	protected $browser;
 
 	/**
-	 * Event dispatcher.
-	 *
-	 * @var EventDispatcherInterface|MockInterface
-	 */
-	protected $eventDispatcher;
-
-	/**
 	 * Configures all tests.
 	 *
 	 * @return void
@@ -83,7 +77,6 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 			'sessionStrategy' => ISessionStrategyFactory::TYPE_SHARED,
 		);
 
-		$this->eventDispatcher = m::mock('Symfony\\Component\\EventDispatcher\\EventDispatcherInterface');
 		$this->browser = $this->createBrowserConfiguration();
 	}
 
@@ -99,7 +92,7 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testAliasResolution(array $aliases, array $browser_config, array $expected_config)
 	{
-		$this->browser->setAliases($aliases);
+		$this->assertSame($this->browser, $this->browser->setAliases($aliases));
 		$this->browser->setup($browser_config);
 
 		$this->assertEquals($expected_config['host'], $this->browser->getHost());
@@ -469,10 +462,9 @@ class BrowserConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function createBrowserConfiguration(array $aliases = array(), $add_subscriber = false)
 	{
-		$browser = new BrowserConfiguration();
+		$browser = new BrowserConfiguration($this->eventDispatcher);
 		$browser->setAliases($aliases);
 
-		$browser->setEventDispatcher($this->eventDispatcher);
 		$this->eventDispatcher->shouldReceive('addSubscriber')->with($browser)->times($add_subscriber ? 1 : 0);
 
 		return $browser;

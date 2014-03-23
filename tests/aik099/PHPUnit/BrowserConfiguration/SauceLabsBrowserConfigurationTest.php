@@ -50,7 +50,8 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 
 		$this->setup['host'] = 'UN:AK@ondemand.saucelabs.com';
 		$this->setup['port'] = 80;
-		$this->setup['sauce'] = array('username' => 'UN', 'api_key' => 'AK');
+		$this->setup['api_username'] = 'UN';
+		$this->setup['api_key'] = 'AK';
 	}
 
 	/**
@@ -62,19 +63,8 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	{
 		parent::testSetup();
 
-		$this->assertSame($this->setup['sauce'], $this->browser->getSauce());
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 * @expectedException \InvalidArgumentException
-	 */
-	public function testSetSauceIncorrect()
-	{
-		$browser = $this->createBrowserConfiguration();
-		$browser->setSauce(array());
+		$this->assertSame($this->setup['api_username'], $this->browser->getApiUsername());
+		$this->assertSame($this->setup['api_key'], $this->browser->getApiKey());
 	}
 
 	/**
@@ -82,13 +72,12 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	 *
 	 * @return void
 	 */
-	public function testSetSauceCorrect()
+	public function testSetAPICorrect()
 	{
-		$expected = array('username' => '', 'api_key' => '');
 		$browser = $this->createBrowserConfiguration();
 
-		$this->assertSame($browser, $browser->setSauce($expected));
-		$this->assertSame($expected, $browser->getSauce());
+		$this->assertEmpty($browser->getApiUsername());
+		$this->assertEmpty($browser->getApiKey());
 	}
 
 	/**
@@ -327,14 +316,14 @@ class SauceLabsBrowserConfigurationTest extends BrowserConfigurationTest
 	 */
 	protected function createBrowserConfiguration(array $aliases = array(), $add_subscriber = false, $with_sauce = false)
 	{
-		$browser = new SauceLabsBrowserConfiguration($this->_browserConfigurationFactory);
+		$browser = new SauceLabsBrowserConfiguration($this->eventDispatcher, $this->_browserConfigurationFactory);
 		$browser->setAliases($aliases);
 
-		$browser->setEventDispatcher($this->eventDispatcher);
 		$this->eventDispatcher->shouldReceive('addSubscriber')->with($browser)->times($add_subscriber ? 1 : 0);
 
 		if ( $with_sauce ) {
-			$browser->setSauce(array('username' => 'A', 'api_key' => 'B'));
+			$browser->setApiUsername('A');
+			$browser->setApiKey('B');
 		}
 
 		return $browser;

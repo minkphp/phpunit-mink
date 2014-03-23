@@ -12,30 +12,40 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 
 
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\IApplicationAware;
-use aik099\PHPUnit\Application;
 use WebDriver\SauceLabs\SauceRest;
 
-class BrowserConfigurationFactory implements IBrowserConfigurationFactory, IApplicationAware
+/**
+ * Browser configuration factory.
+ *
+ * @method \Mockery\Expectation shouldReceive
+ */
+class BrowserConfigurationFactory implements IBrowserConfigurationFactory
 {
 
 	/**
-	 * Application.
+	 * Browser configurations.
 	 *
-	 * @var Application
+	 * @var array
 	 */
-	protected $application;
+	protected $browserConfigurations = array();
 
 	/**
-	 * Sets application.
+	 * Registers a browser configuration.
 	 *
-	 * @param Application $application The application.
+	 * @param BrowserConfiguration $browser Browser configuration.
 	 *
 	 * @return void
+	 * @throws \InvalidArgumentException When browser configuration is already registered.
 	 */
-	public function setApplication(Application $application)
+	public function register(BrowserConfiguration $browser)
 	{
-		$this->application = $application;
+		$type = $browser->getType();
+
+		if ( isset($this->browserConfigurations[$type]) ) {
+			throw new \InvalidArgumentException('Browser configuration with type "' . $type . '" is already registered');
+		}
+
+		$this->browserConfigurations[$type] = $browser;
 	}
 
 	/**
@@ -51,18 +61,26 @@ class BrowserConfigurationFactory implements IBrowserConfigurationFactory, IAppl
 		$aliases = $test_case->getBrowserAliases();
 		$config = BrowserConfiguration::resolveAliases($config, $aliases);
 
-		/** @var BrowserConfiguration $browser */
-		if ( isset($config['sauce']) ) {
-			$browser = $this->application->getObject('sauce_labs_browser_configuration');
-		}
-		else {
-			$browser = $this->application->getObject('browser_configuration');
+		$type = isset($config['type']) ? $config['type'] : 'default';
+
+		return $this->create($type)->setAliases($aliases)->setup($config);
+	}
+
+	/**
+	 * Creates browser configuration based on give type.
+	 *
+	 * @param string $type Type.
+	 *
+	 * @return BrowserConfiguration
+	 * @throws \InvalidArgumentException When browser configuration not registered.
+	 */
+	protected function create($type)
+	{
+		if ( !isset($this->browserConfigurations[$type]) ) {
+			throw new \InvalidArgumentException('Browser configuration type "' . $type . '" not registered');
 		}
 
-		$browser->setAliases($aliases);
-		$browser->setup($config);
-
-		return $browser;
+		return clone $this->browserConfigurations[$type];
 	}
 
 	/**
@@ -76,9 +94,7 @@ class BrowserConfigurationFactory implements IBrowserConfigurationFactory, IAppl
 	public function createAPIClient(BrowserConfiguration $browser)
 	{
 		if ( $browser instanceof SauceLabsBrowserConfiguration ) {
-			$sauce = $browser->getSauce();
-
-			return new SauceRest($sauce['username'], $sauce['api_key']);
+			return new SauceRest($browser->getApiUsername(), $browser->getApiKey());
 		}
 
 		throw new \LogicException('Unsupported browser configuration given');

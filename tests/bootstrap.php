@@ -10,6 +10,9 @@
 
 define('FULL_PATH', realpath(__DIR__ . '/..'));
 
+// TODO: until https://github.com/padraic/mockery/issues/160 is fixed.
+ini_set('xdebug.scream', 0);
+
 $vendor_path = FULL_PATH . '/vendor';
 
 if ( !is_dir($vendor_path) ) {

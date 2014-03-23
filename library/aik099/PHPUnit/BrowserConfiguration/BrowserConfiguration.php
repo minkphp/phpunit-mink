@@ -24,7 +24,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  *
  * @method \Mockery\Expectation shouldReceive
  */
-class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcherAware
+class BrowserConfiguration implements EventSubscriberInterface
 {
 
 	/**
@@ -44,6 +44,7 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 		'baseUrl' => '',
 
 		// Test related.
+		'type' => 'default',
 		'sessionStrategy' => ISessionStrategyFactory::TYPE_ISOLATED,
 	);
 
@@ -104,10 +105,23 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 
 	/**
 	 * Creates browser configuration.
+	 *
+	 * @param EventDispatcherInterface $event_dispatcher Event dispatcher.
 	 */
-	public function __construct()
+	public function __construct(EventDispatcherInterface $event_dispatcher)
 	{
 		$this->parameters = $this->defaultParameters;
+		$this->_eventDispatcher = $event_dispatcher;
+	}
+
+	/**
+	 * Returns type of browser configuration.
+	 *
+	 * @return string
+	 */
+	public function getType()
+	{
+		return $this->parameters['type'];
 	}
 
 	/**
@@ -121,18 +135,6 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 			BrowserTestCase::TEST_SETUP_EVENT => array('onTestSetup', 100),
 			BrowserTestCase::TEST_ENDED_EVENT => array('onTestEnded', 100),
 		);
-	}
-
-	/**
-	 * Sets event dispatcher.
-	 *
-	 * @param EventDispatcherInterface $event_dispatcher Event dispatcher.
-	 *
-	 * @return void
-	 */
-	public function setEventDispatcher(EventDispatcherInterface $event_dispatcher)
-	{
-		$this->_eventDispatcher = $event_dispatcher;
 	}
 
 	/**
@@ -182,11 +184,13 @@ class BrowserConfiguration implements EventSubscriberInterface, IEventDispatcher
 	 *
 	 * @param array $aliases Browser configuration aliases.
 	 *
-	 * @return void
+	 * @return self
 	 */
 	public function setAliases(array $aliases = array())
 	{
 		$this->aliases = $aliases;
+
+		return $this;
 	}
 
 	/**

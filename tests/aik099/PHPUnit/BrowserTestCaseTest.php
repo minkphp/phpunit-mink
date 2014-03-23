@@ -82,8 +82,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 
 		$test_case = $this->getFixture($session_strategy);
 
-		$browser = new BrowserConfiguration();
-		$browser->setEventDispatcher($this->eventDispatcher);
+		$browser = new BrowserConfiguration($this->eventDispatcher);
 		$this->eventDispatcher->shouldReceive('addSubscriber')->with($browser)->once();
 
 		$this->assertSame($test_case, $test_case->setBrowser($browser));
