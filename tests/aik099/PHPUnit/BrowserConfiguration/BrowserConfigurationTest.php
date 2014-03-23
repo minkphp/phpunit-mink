@@ -57,6 +57,13 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	protected $browser;
 
 	/**
+	 * Tests names, that require subscriber.
+	 *
+	 * @var array
+	 */
+	protected $testsRequireSubscriber = array();
+
+	/**
 	 * Configures all tests.
 	 *
 	 * @return void
@@ -75,7 +82,7 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 			'sessionStrategy' => ISessionStrategyFactory::TYPE_SHARED,
 		);
 
-		$this->browser = $this->createBrowserConfiguration();
+		$this->browser = $this->createBrowserConfiguration(array(), in_array($this->getName(false), $this->testsRequireSubscriber));
 	}
 
 	/**

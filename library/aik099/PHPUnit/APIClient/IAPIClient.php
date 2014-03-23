@@ -23,7 +23,7 @@ interface IAPIClient
 	 * @param string  $session_id  Session ID.
 	 * @param boolean $test_status Test status.
 	 *
-	 * @return void
+	 * @return boolean
 	 */
 	public function updateStatus($session_id, $test_status);
 

@@ -75,6 +75,7 @@ class IsolatedSessionStrategyTest extends SessionStrategyTestCase
 	{
 		$session = m::mock(self::SESSION_CLASS);
 		$session->shouldReceive('stop')->once();
+		$session->shouldReceive('isStarted')->once()->andReturn(true);
 
 		$event = $this->eventDispatcher->dispatch(
 			BrowserTestCase::TEST_ENDED_EVENT,

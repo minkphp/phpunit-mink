@@ -5,6 +5,14 @@ php:
     - 5.4
     - 5.5
 
+env:
+    global:
+        - secure: XTlGGWYR/0OwJLQMHHvTopTj37OL97wiFIMMmiZQtmyf2neNia/Se9ASftgeFHI6WeSxcjC0hYF9LtPNHCHW30Qv8E2/L6PtENxZY8tBGUq0O/4XaCIhGUdc9NxkteZ3M5rgTWkLbs8Sctl31/vqG4bYstNwgLvHnw2Jh4TBHuU=
+        - secure: KIgQ3vADaLcuzlRNNjq3veFp9p4Vq30GYbYyqaEpz7eUI/t7r/THhSmsUc04+tcmc6iXXfMzjQmylUerE8pDNBBtBfBsmUkuVvXDQTeIv8WYgBVMalFR0rfI/v3mzn9gzRHbtEEJMtsRenvfBJPqrrAdI4W4vyEOCSTIKklumck=
+
+addons:
+    sauce_connect: true
+
 before_script:
     - composer require satooshi/php-coveralls:dev-master --dev --prefer-source
 

@@ -535,7 +535,11 @@ class BrowserConfiguration implements EventSubscriberInterface
 	 */
 	public function onTestSetup(TestEvent $event)
 	{
+		if ( !$this->isEventForMe($event) ) {
+			return;
+		}
 
+		// Place code here.
 	}
 
 	/**
@@ -547,7 +551,25 @@ class BrowserConfiguration implements EventSubscriberInterface
 	 */
 	public function onTestEnded(TestEndedEvent $event)
 	{
+		if ( !$this->isEventForMe($event) ) {
+			return;
+		}
+
 		$this->detachFromTestCase();
+	}
+
+	/**
+	 * Determines if received event is designed for this recipient.
+	 *
+	 * @param TestEvent $event Event.
+	 *
+	 * @return boolean
+	 */
+	protected function isEventForMe(TestEvent $event)
+	{
+		$test_case = $event->getTestCase();
+
+		return get_class($test_case) === get_class($this->_testCase) && $test_case->getName() === $this->_testCase->getName();
 	}
 
 }

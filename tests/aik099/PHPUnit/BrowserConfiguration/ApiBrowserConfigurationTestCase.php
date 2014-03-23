@@ -49,6 +49,9 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 */
 	protected function setUp()
 	{
+		$this->testsRequireSubscriber[] = 'testTestSetupEvent';
+		$this->testsRequireSubscriber[] = 'testTestEndedEvent';
+		$this->testsRequireSubscriber[] = 'testTestEndedWithoutSession';
 		$this->browserConfigurationFactory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
 
 		parent::setUp();
@@ -160,11 +163,11 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 
 		$this->browser->setSessionStrategy($session_strategy);
 
+		$test_case = $this->createTestCase($test_name);
+		$test_case->shouldReceive('toString')->times($this->_isAutomaticTestName($test_name) ? 0 : 1)->andReturn($test_name);
+
 		$event_dispatcher = new EventDispatcher();
 		$event_dispatcher->addSubscriber($this->browser);
-
-		$test_case = m::mock(self::TEST_CASE_CLASS);
-		$test_case->shouldReceive('toString')->times($this->_isAutomaticTestName($test_name) ? 0 : 1)->andReturn($test_name);
 
 		if ( $this->_isAutomaticTestName($test_name) ) {
 			$test_name = get_class($test_case);
@@ -226,16 +229,16 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 */
 	public function testTestEndedEvent($driver_type)
 	{
-		$test_case = m::mock(self::TEST_CASE_CLASS);
+		$test_case = $this->createTestCase('TEST_NAME');
 
-		$sauce_rest = m::mock('WebDriver\\SauceLabs\\SauceRest');
-		$this->browserConfigurationFactory->shouldReceive('createAPIClient')->with($this->browser)->andReturn($sauce_rest);
+		$api_client = m::mock('aik099\\PHPUnit\\APIClient\\IAPIClient');
+		$this->browserConfigurationFactory->shouldReceive('createAPIClient')->with($this->browser)->andReturn($api_client);
 
 		if ( $driver_type == 'selenium' ) {
 			$driver = m::mock('\\Behat\\Mink\\Driver\\Selenium2Driver');
 			$driver->shouldReceive('getWebDriverSessionId')->once()->andReturn('SID');
 
-			$sauce_rest->shouldReceive('updateStatus')->with('SID', true)->once();
+			$api_client->shouldReceive('updateStatus')->with('SID', true)->once();
 			$test_case->shouldReceive('hasFailed')->once()->andReturn(false); // For shared strategy.
 		}
 		else {
@@ -281,6 +284,8 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 */
 	public function testTestEndedWithoutSession()
 	{
+		$test_case = $this->createTestCase('TEST_NAME');
+
 		$event_dispatcher = new EventDispatcher();
 		$event_dispatcher->addSubscriber($this->browser);
 
@@ -289,12 +294,29 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$event->shouldReceive('setDispatcher')->once(); // To remove with Symfony 3.0 release.
 		$event->shouldReceive('setName')->once(); // To remove with Symfony 3.0 release.
 		$event->shouldReceive('isPropagationStopped')->once()->andReturn(false);
-		$event->shouldReceive('getTestCase')->never();
+		$event->shouldReceive('getTestCase')->andReturn($test_case);
 
 		$this->eventDispatcher->shouldReceive('removeSubscriber')->with($this->browser)->once();
 		$returned_event = $event_dispatcher->dispatch(BrowserTestCase::TEST_ENDED_EVENT, $event);
 
 		$this->assertInstanceOf('aik099\\PHPUnit\\Event\\TestEndedEvent', $returned_event);
+	}
+
+	/**
+	 * Create TestCase with Browser.
+	 *
+	 * @param string $name Test case name.
+	 *
+	 * @return BrowserTestCase
+	 */
+	protected function createTestCase($name)
+	{
+		$test_case = m::mock(self::TEST_CASE_CLASS);
+		$test_case->shouldReceive('setRemoteCoverageScriptUrl')->once();
+		$test_case->shouldReceive('getName')->andReturn($name);
+		$this->browser->attachToTestCase($test_case);
+
+		return $test_case;
 	}
 
 	/**

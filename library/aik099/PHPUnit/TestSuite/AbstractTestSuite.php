@@ -117,9 +117,9 @@ abstract class AbstractTestSuite extends \PHPUnit_Framework_TestSuite implements
 	 * @return void
 	 * @codeCoverageIgnore
 	 */
-	/*public function onTestSuiteEnded()
+	public function onTestSuiteEnded()
 	{
-		// method created just to simplify tearDown method
-	}*/
+		// Method created just to simplify tearDown method.
+	}
 
 }

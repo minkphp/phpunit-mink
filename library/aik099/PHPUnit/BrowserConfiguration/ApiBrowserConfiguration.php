@@ -18,7 +18,6 @@ use aik099\PHPUnit\Event\TestEvent;
 use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Session;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use WebDriver\SauceLabs\SauceRest;
 
 /**
  * Browser configuration tailored to use with API-based service.
@@ -160,15 +159,20 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 	 */
 	public function onTestSetup(TestEvent $event)
 	{
+		if ( !$this->isEventForMe($event) ) {
+			return;
+		}
+
 		parent::onTestSetup($event);
 
 		$desired_capabilities = $this->getDesiredCapabilities();
 		$desired_capabilities[self::NAME_CAPABILITY] = $this->getJobName($event->getTestCase());
 
-		$jenkins_build_number = getenv('BUILD_NUMBER');
-
-		if ( $jenkins_build_number ) {
-			$desired_capabilities[self::BUILD_NUMBER_CAPABILITY] = $jenkins_build_number;
+		if ( getenv('BUILD_NUMBER') ) {
+			$desired_capabilities[self::BUILD_NUMBER_CAPABILITY] = getenv('BUILD_NUMBER'); // Jenkins.
+		}
+		elseif ( getenv('TRAVIS_BUILD_NUMBER') ) {
+			$desired_capabilities[self::BUILD_NUMBER_CAPABILITY] = getenv('TRAVIS_BUILD_NUMBER');
 		}
 
 		$this->setDesiredCapabilities($desired_capabilities);
@@ -199,6 +203,10 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 	 */
 	public function onTestEnded(TestEndedEvent $event)
 	{
+		if ( !$this->isEventForMe($event) ) {
+			return;
+		}
+
 		parent::onTestEnded($event);
 
 		if ( $event->getSession() === null ) {

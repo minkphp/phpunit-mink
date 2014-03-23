@@ -39,11 +39,11 @@ class SauceLabsAPIClient implements IAPIClient
 	 * @param string  $session_id  Session ID.
 	 * @param boolean $test_status Test status.
 	 *
-	 * @return void
+	 * @return boolean
 	 */
 	public function updateStatus($session_id, $test_status)
 	{
-		$this->_sauceRest->updateJob($session_id, array('passed' => $test_status));
+		return $this->_sauceRest->updateJob($session_id, array('passed' => $test_status));
 	}
 
 }

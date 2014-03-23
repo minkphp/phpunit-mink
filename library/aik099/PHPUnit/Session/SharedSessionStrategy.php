@@ -159,8 +159,10 @@ class SharedSessionStrategy implements ISessionStrategy
 	 */
 	public function onTestSuiteEnd(TestEvent $event)
 	{
-		if ( $event->getSession() !== null ) {
-			$event->getSession()->stop();
+		$session = $event->getSession();
+
+		if ( $session !== null && $session->isStarted() ) {
+			$session->stop();
 		}
 	}
 

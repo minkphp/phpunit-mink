@@ -167,6 +167,7 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 	{
 		$session = $this->createSession();
 		$session->shouldReceive('stop')->withNoArgs()->once();
+		$session->shouldReceive('isStarted')->once()->andReturn(true);
 
 		$event = $this->eventDispatcher->dispatch(
 			BrowserTestCase::TEST_SUITE_ENDED_EVENT,

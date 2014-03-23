@@ -11,6 +11,7 @@
 namespace aik099\PHPUnit\BrowserConfiguration;
 
 
+use aik099\PHPUnit\Event\TestEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -38,6 +39,30 @@ class SauceLabsBrowserConfiguration extends ApiBrowserConfiguration
 	}
 
 	/**
+	 * Hook, called from "BrowserTestCase::setUp" method.
+	 *
+	 * @param TestEvent $event Test event.
+	 *
+	 * @return void
+	 */
+	public function onTestSetup(TestEvent $event)
+	{
+		if ( !$this->isEventForMe($event) ) {
+			return;
+		}
+
+		parent::onTestSetup($event);
+
+		$desired_capabilities = $this->getDesiredCapabilities();
+
+		if ( getenv('TRAVIS_JOB_NUMBER') ) {
+			$desired_capabilities['tunnel-identifier'] = getenv('TRAVIS_JOB_NUMBER');
+		}
+
+		$this->setDesiredCapabilities($desired_capabilities);
+	}
+
+	/**
 	 * Returns hostname from browser configuration.
 	 *
 	 * @return string
@@ -57,7 +82,7 @@ class SauceLabsBrowserConfiguration extends ApiBrowserConfiguration
 		$capabilities = parent::getDesiredCapabilities();
 
 		if ( !isset($capabilities['platform']) ) {
-			$capabilities['platform'] = 'Windows XP';
+			$capabilities['platform'] = 'Windows 7';
 		}
 
 		if ( !isset($capabilities['version']) ) {

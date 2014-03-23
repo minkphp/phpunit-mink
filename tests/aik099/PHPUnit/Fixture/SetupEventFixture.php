@@ -59,8 +59,9 @@ class SetupEventFixture extends BrowserTestCase
 		// For SauceLabsBrowserConfiguration::onTestEnded.
 		$session->shouldReceive('getDriver')->once()->andReturn($driver);
 
-		// For IsolatedSessionStrategy::onTestEnd.
-		$session->shouldReceive('stop')->once();
+		// For IsolatedSessionStrategy::onTestEnd (twice because we have 2 strategies listening for test end).
+		$session->shouldReceive('stop')->twice();
+		$session->shouldReceive('isStarted')->andReturn(true);
 
 		$this->_setSession($session);
 

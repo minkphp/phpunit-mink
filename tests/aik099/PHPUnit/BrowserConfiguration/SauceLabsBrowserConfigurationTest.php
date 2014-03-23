@@ -59,7 +59,7 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 			),
 			array(
 				array('version' => 'ver1'),
-				array('version' => 'ver1', 'platform' => 'Windows XP'),
+				array('version' => 'ver1', 'platform' => 'Windows 7'),
 			),
 		);
 	}
