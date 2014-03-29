@@ -69,30 +69,60 @@ class CodingStandard_Sniffs_Array_ArraySniff implements PHP_CodeSniffer_Sniff
      */
     protected function sniffItemClosings(PHP_CodeSniffer_File $phpcsFile, $stackPtr, array $tokens)
     {
-        $lastItem = $phpcsFile->findPrevious(
-            array(T_WHITESPACE),
-            ($tokens[$stackPtr]['parenthesis_closer'] - 1),
-            $stackPtr,
-            true
-        );
+        $arrayStart = $tokens[$stackPtr]['parenthesis_opener'];
+        $arrayEnd   = $tokens[$arrayStart]['parenthesis_closer'];
+
+        if ($arrayStart !== ($stackPtr + 1)) {
+            $error = 'There must be no space between the Array keyword and the opening parenthesis';
+            $phpcsFile->addError($error, $stackPtr, 'SpaceAfterKeyword');
+        }
+
+        // Check for empty arrays.
+        $content = $phpcsFile->findNext(array(T_WHITESPACE), ($arrayStart + 1), ($arrayEnd + 1), true);
+        if ($content === $arrayEnd) {
+            // Empty array, but if the brackets aren't together, there's a problem.
+            if (($arrayEnd - $arrayStart) !== 1) {
+                $error = 'Empty array declaration must have no space between the parentheses';
+                $phpcsFile->addError($error, $stackPtr, 'SpaceInEmptyArray');
+
+                // We can return here because there is nothing else to check. All code
+                // below can assume that the array is not empty.
+                return;
+            }
+        }
+
+        $lastItem = $phpcsFile->findPrevious(PHP_CodeSniffer_Tokens::$emptyTokens, ($arrayEnd - 1), $stackPtr, true);
 
         // Empty array.
-        if ($lastItem === $tokens[$stackPtr]['parenthesis_opener']) {
+        if ($lastItem === $arrayStart) {
             return;
         }
 
         // Inline array.
-        $isInlineArray = $tokens[$tokens[$stackPtr]['parenthesis_opener']]['line'] == $tokens[$tokens[$stackPtr]['parenthesis_closer']]['line'];
+        $isInlineArray = $tokens[$arrayStart]['line'] === $tokens[$arrayEnd]['line'];
 
         // Check if the last item in a multiline array has a "closing" comma.
         if ($tokens[$lastItem]['code'] !== T_COMMA && $isInlineArray === false) {
-            $phpcsFile->addWarning('A comma should follow the last multiline array item. Found: ' . $tokens[$lastItem]['content'], $lastItem);
+            $phpcsFile->addWarning('A comma should follow the last multiline array item. Found: '.$tokens[$lastItem]['content'], $lastItem);
             return;
         }
 
-        if ($tokens[$lastItem]['code'] === T_COMMA && $isInlineArray === true) {
-            $phpcsFile->addWarning('Last item of an inline array must not followed by a comma', $lastItem);
-            return;
+        if ($isInlineArray === true) {
+            if ($tokens[$lastItem]['code'] === T_COMMA) {
+                $phpcsFile->addWarning('Comma not allowed after last value in single-line array declaration', $lastItem);
+                return;
+            }
+
+            // Inline array must not have spaces within parenthesis.
+            if ($content !== ($arrayStart + 1)) {
+                $error = 'Space found after opening parenthesis of Array';
+                $phpcsFile->addError($error, $stackPtr, 'SpaceAfterOpen');
+            }
+
+            if ($lastItem !== ($arrayEnd - 1)) {
+                $error = 'Space found before closing parenthesis of Array';
+                $phpcsFile->addError($error, $stackPtr, 'SpaceAfterClose');
+            }
         }
 
     }//end sniffItemClosings()
