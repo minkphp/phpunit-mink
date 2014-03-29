@@ -217,6 +217,13 @@ class CodingStandard_Sniffs_WhiteSpace_ControlStructureSpacingSniff implements P
                 $phpcsFile->addError($error, $scopeCloser, 'LineAfterClose');
             }
         } else {
+            $trailingCode = $tokens[$trailingContent]['code'];
+
+            if ($trailingCode === T_ELSE || $trailingCode === T_ELSEIF || $trailingCode === T_COMMENT) {
+                // Allow else/elseif/comment to come right after 'if' closing brace.
+                return;
+            }
+
             if ($tokens[$trailingContent]['line'] === ($tokens[$scopeCloser]['line'] + 1)) {
                 $error = 'No blank line found after control structure';
                 $phpcsFile->addError($error, $scopeCloser, 'NoLineAfterClose');
