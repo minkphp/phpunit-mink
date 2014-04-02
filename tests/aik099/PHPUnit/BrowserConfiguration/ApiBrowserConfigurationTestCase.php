@@ -152,14 +152,21 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 *
 	 * @param string $session_strategy Session strategy.
 	 * @param string $test_name        Expected job name.
+	 * @param string $build_env_name   Name of ENV variable to set build number to.
 	 * @param string $build_number     Build number.
 	 *
 	 * @return void
 	 * @dataProvider setupEventDataProvider
 	 */
-	public function testTestSetupEvent($session_strategy, $test_name, $build_number = null)
+	public function testTestSetupEvent($session_strategy, $test_name, $build_env_name = null, $build_number = null)
 	{
-		putenv('BUILD_NUMBER' . ($build_number ? '=' . $build_number : ''));
+		// Reset any global env vars that might be left from previous tests.
+		putenv('BUILD_NUMBER');
+		putenv('TRAVIS_BUILD_NUMBER');
+
+		if ( isset($build_number) ) {
+			putenv($build_env_name . '=' . $build_number);
+		}
 
 		$this->browser->setSessionStrategy($session_strategy);
 
@@ -211,9 +218,21 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 */
 	public function setupEventDataProvider()
 	{
+		$seed = uniqid();
+
 		return array(
-			'isolated, name, build' => array(ISessionStrategyFactory::TYPE_ISOLATED, 'TEST_NAME', 'BUILD_NUMBER'),
-			'shared, no name, build' => array(ISessionStrategyFactory::TYPE_SHARED, self::AUTOMATIC_TEST_NAME, 'BUILD_NUMBER'),
+			'isolated, name, jenkins' => array(
+				ISessionStrategyFactory::TYPE_ISOLATED, 'TEST_NAME', 'BUILD_NUMBER', 'JENKINS ' . $seed,
+			),
+			'shared, no name, jenkins' => array(
+				ISessionStrategyFactory::TYPE_SHARED, self::AUTOMATIC_TEST_NAME, 'BUILD_NUMBER', 'JENKINS ' . $seed,
+			),
+			'isolated, name, travis' => array(
+				ISessionStrategyFactory::TYPE_ISOLATED, 'TEST_NAME', 'TRAVIS_BUILD_NUMBER', 'TRAVIS ' . $seed,
+			),
+			'shared, no name, travis' => array(
+				ISessionStrategyFactory::TYPE_SHARED, self::AUTOMATIC_TEST_NAME, 'TRAVIS_BUILD_NUMBER', 'TRAVIS ' . $seed,
+			),
 			'isolated, name, no build' => array(ISessionStrategyFactory::TYPE_ISOLATED, 'TEST_NAME'),
 			'shared, no name, no build' => array(ISessionStrategyFactory::TYPE_SHARED, self::AUTOMATIC_TEST_NAME),
 		);

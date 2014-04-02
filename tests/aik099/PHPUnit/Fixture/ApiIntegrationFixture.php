@@ -63,8 +63,14 @@ class ApiIntegrationFixture extends BrowserTestCase
 		$browser = $this->getBrowser();
 
 		if ( $browser instanceof SauceLabsBrowserConfiguration ) {
+			$session = $event->getSession();
+
+			if ( $session === null ) {
+				$this->markTestSkipped('Unable to connect to SauceLabs. Please check Internet connection.');
+			}
+
 			$sauce_rest = new SauceRest($browser->getApiUsername(), $browser->getApiKey());
-			$job_info = $sauce_rest->getJob($event->getSession()->getDriver()->getWebDriverSessionId());
+			$job_info = $sauce_rest->getJob($session->getDriver()->getWebDriverSessionId());
 
 			$passed_mapping = array(
 				'testSuccess' => true,
