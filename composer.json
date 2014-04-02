@@ -1,7 +1,7 @@
 {
 	"name": "aik099/phpunit-mink",
-	"description": "Library for using Mink in PHPUnit tests. Supports test case-wide session sharing.",
-	"keywords": ["PHPUnit", "Selenium", "Mink", "Tests"],
+	"description": "Library for using Mink in PHPUnit tests. Supports session sharing between tests in a test case.",
+	"keywords": ["PHPUnit", "Selenium", "SauceLabs", "Sauce", "BrowserStack", "Mink", "Tests"],
 	"homepage": "http://github.com/aik099/phpunit-mink",
 	"license": "BSD-3-Clause",
 
