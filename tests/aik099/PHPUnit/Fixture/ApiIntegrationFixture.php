@@ -72,6 +72,8 @@ class ApiIntegrationFixture extends BrowserTestCase
 			$sauce_rest = new SauceRest($browser->getApiUsername(), $browser->getApiKey());
 			$job_info = $sauce_rest->getJob($session->getDriver()->getWebDriverSessionId());
 
+			$this->assertEquals(get_class($test_case) . '::' . $test_case->getName(), $job_info['name']);
+
 			$passed_mapping = array(
 				'testSuccess' => true,
 				'testFailure' => false,
