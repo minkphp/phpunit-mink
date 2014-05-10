@@ -11,8 +11,9 @@
 namespace aik099\PHPUnit\RemoteCoverage;
 
 
+/* Include file from PEAR.
 require_once 'File/Iterator/Autoload.php';
-require_once 'PHP/CodeCoverage/Autoload.php';
+require_once 'PHP/CodeCoverage/Autoload.php';*/
 
 class RemoteCoverageTool
 {

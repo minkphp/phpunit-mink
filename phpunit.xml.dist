@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit backupGlobals="true"
 	backupStaticAttributes="false"
-	bootstrap="tests/bootstrap.php"
+	bootstrap="vendor/autoload.php"
 	colors="true"
 	convertErrorsToExceptions="true"
 	convertNoticesToExceptions="true"
@@ -23,10 +23,13 @@
 			 lowUpperBound="35" highLowerBound="70"/>
 	</logging>-->
 
-	<!--<php>
-		<env name="SAUCE_USERNAME" value=""/>
-		<env name="SAUCE_ACCESS_KEY" value=""/>
-	</php>-->
+	<php>
+		<ini name="xdebug.scream" value="0"/>
+		<!--
+			<env name="SAUCE_USERNAME" value=""/>
+			<env name="SAUCE_ACCESS_KEY" value=""/>
+		-->
+	</php>
 
 	<listeners>
 		<listener class="\Mockery\Adapter\Phpunit\TestListener"/>
