@@ -240,13 +240,15 @@ By default the `baseUrl` setting from browser configuration is used as the `remo
 ## Browser Configuration in Details
 Each browser configuration consists of the following settings:
 
-* `host` - host, where Selenium Server is located (defaults to `localhost`)
-* `port` - port, on which Selenium Server is listening for incoming connections (defaults to `4444`)
-* `timeout` - connection timeout of the server in seconds (defaults to `60`)
-* `browserName` - name of browser to use (e.g. `firefox`, `chrome`, etc., defaults to `firefox`)
-* `desiredCapabilities` - parameters, that specify additional browser configuration (e.g. browser version, platform, etc.)
-* `baseUrl` - base url of website, that is tested
-* `sauce` - Sauce Labs connection configuration (e.g. `array('username' => 'username_here', 'api_key' => 'api_key_here')`)
+| Name | Description |
+|---|---|
+| `host` | host, where Selenium Server is located (defaults to `localhost`) |
+| `port` | port, on which Selenium Server is listening for incoming connections (defaults to `4444`) |
+| `timeout` | connection timeout of the server in seconds (defaults to `60`) |
+| `browserName` | name of browser to use (e.g. `firefox`, `chrome`, etc., defaults to `firefox`) |
+| `desiredCapabilities` | parameters, that specify additional browser configuration (e.g. browser version, platform, etc.) |
+| `baseUrl` | base url of website, that is tested |
+| `sauce` | Sauce Labs connection configuration (e.g. `array('username' => 'username_here', 'api_key' => 'api_key_here')`) |
 
 There are also corresponding `set` and `get` methods for each of mentioned above settings, that allow to individually change them before test has started (from `setUp` method).
 
