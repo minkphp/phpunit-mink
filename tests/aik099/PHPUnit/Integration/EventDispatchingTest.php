@@ -24,7 +24,7 @@ class EventDispatchingTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetupEvent()
 	{
-		/**
+		/*
 		 * BrowserTestCase::TEST_SETUP_EVENT
 		 * - SauceLabsBrowserConfiguration::onTestSetup (called, verified)
 		 *

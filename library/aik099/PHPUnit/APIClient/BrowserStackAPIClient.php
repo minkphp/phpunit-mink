@@ -69,25 +69,25 @@ class BrowserStackAPIClient implements IAPIClient
 	/**
 	 * Execute BrowserStack REST API command.
 	 *
-	 * @param string $requestMethod HTTP request method.
-	 * @param string $url           URL.
-	 * @param mixed  $parameters    Parameters.
+	 * @param string $request_method HTTP request method.
+	 * @param string $url            URL.
+	 * @param mixed  $parameters     Parameters.
 	 *
 	 * @return mixed
 	 * @see    http://www.browserstack.com/automate/rest-api
 	 */
-	protected function execute($requestMethod, $url, $parameters = null)
+	protected function execute($request_method, $url, $parameters = null)
 	{
-		$extraOptions = array(
+		$extra_options = array(
 			CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
 			CURLOPT_USERPWD => $this->_apiUsername . ':' . $this->_apiKey,
 		);
 
 		$url = 'https://www.browserstack.com/automate/' . $url;
 
-		list($rawResults, $info) = $this->_curlService->execute($requestMethod, $url, $parameters, $extraOptions);
+		list($raw_results, $info) = $this->_curlService->execute($request_method, $url, $parameters, $extra_options);
 
-		return json_decode($rawResults, true);
+		return json_decode($raw_results, true);
 	}
 
 }

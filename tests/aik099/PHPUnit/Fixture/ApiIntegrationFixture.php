@@ -28,7 +28,7 @@ class ApiIntegrationFixture extends BrowserTestCase
 	 */
 	public static $browsers = array(
 		array('alias' => 'saucelabs'),
-//		array('alias' => 'browserstack'),
+		// array('alias' => 'browserstack'),
 	);
 
 	/**

@@ -84,7 +84,7 @@ class SessionStrategyManager
 	 */
 	public function getSessionStrategy(BrowserConfiguration $browser)
 	{
-		/**
+		/*
 		 * This logic creates separate strategy for:
 		 * - each browser configuration in BrowserTestCase::$browsers (for isolated strategy)
 		 * - each browser configuration in BrowserTestCase::$browsers for each test case class (for shared strategy)

@@ -75,13 +75,13 @@ class Application
 	/**
 	 * Returns object from the container.
 	 *
-	 * @param string $serviceId Name of the object in the container.
+	 * @param string $service_id Name of the object in the container.
 	 *
 	 * @return \stdClass
 	 */
-	public function getObject($serviceId)
+	public function getObject($service_id)
 	{
-		return $this->container[$serviceId];
+		return $this->container[$service_id];
 	}
 
 	/**
