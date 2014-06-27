@@ -14,7 +14,7 @@ namespace aik099\PHPUnit\RemoteCoverage;
 /**
  * Class makes request to remote server and returns url.
  *
- * @method \Mockery\Expectation shouldReceive
+ * @method \Mockery\Expectation shouldReceive(string $name)
  */
 class RemoteUrl
 {

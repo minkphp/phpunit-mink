@@ -21,7 +21,7 @@ use WebDriver\ServiceFactory;
 /**
  * Browser configuration factory.
  *
- * @method \Mockery\Expectation shouldReceive
+ * @method \Mockery\Expectation shouldReceive(string $name)
  */
 class BrowserConfigurationFactory implements IBrowserConfigurationFactory
 {

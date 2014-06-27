@@ -22,7 +22,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Browser configuration for browser.
  *
- * @method \Mockery\Expectation shouldReceive
+ * @method \Mockery\Expectation shouldReceive(string $name)
  */
 class BrowserConfiguration implements EventSubscriberInterface
 {

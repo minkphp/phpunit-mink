@@ -28,7 +28,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Test Case class for writing browser-based tests.
  *
- * @method \Mockery\Expectation shouldReceive
+ * @method \Mockery\Expectation shouldReceive(string $name)
  */
 abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IEventDispatcherAware
 {

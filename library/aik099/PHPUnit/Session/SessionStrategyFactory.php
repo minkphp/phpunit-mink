@@ -17,7 +17,7 @@ use aik099\PHPUnit\Application;
 /**
  * Produces sessions.
  *
- * @method \Mockery\Expectation shouldReceive
+ * @method \Mockery\Expectation shouldReceive(string $name)
  */
 class SessionStrategyFactory implements ISessionStrategyFactory, IApplicationAware
 {

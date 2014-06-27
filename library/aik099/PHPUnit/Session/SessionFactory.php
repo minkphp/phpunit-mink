@@ -19,7 +19,7 @@ use Behat\Mink\Session;
 /**
  * Produces sessions.
  *
- * @method \Mockery\Expectation shouldReceive
+ * @method \Mockery\Expectation shouldReceive(string $name)
  */
 class SessionFactory implements ISessionFactory
 {

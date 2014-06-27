@@ -20,7 +20,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Produces a new Session object shared for each test.
  *
- * @method \Mockery\Expectation shouldReceive
+ * @method \Mockery\Expectation shouldReceive(string $name)
  */
 class IsolatedSessionStrategy implements ISessionStrategy
 {

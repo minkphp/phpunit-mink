@@ -16,7 +16,7 @@ use aik099\PHPUnit\TestSuite\TestSuiteFactory;
 /**
  * Main application class.
  *
- * @method \Mockery\Expectation shouldReceive
+ * @method \Mockery\Expectation shouldReceive(string $name)
  */
 class Application
 {

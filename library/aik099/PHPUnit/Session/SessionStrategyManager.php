@@ -16,7 +16,7 @@ use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 /**
  * Manages session strategies used across browser tests.
  *
- * @method \Mockery\Expectation shouldReceive
+ * @method \Mockery\Expectation shouldReceive(string $name)
  */
 class SessionStrategyManager
 {

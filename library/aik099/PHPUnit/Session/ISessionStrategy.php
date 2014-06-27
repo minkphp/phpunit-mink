@@ -19,7 +19,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Specifies how to create Session objects for running tests.
  *
- * @method \Mockery\Expectation shouldReceive
+ * @method \Mockery\Expectation shouldReceive(string $name)
  */
 interface ISessionStrategy extends EventSubscriberInterface, IEventDispatcherAware
 {

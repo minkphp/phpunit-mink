@@ -17,7 +17,7 @@ use Behat\Mink\Session;
 /**
  * Specifies how to create Session objects for running tests.
  *
- * @method \Mockery\Expectation shouldReceive
+ * @method \Mockery\Expectation shouldReceive(string $name)
  */
 interface ISessionFactory
 {

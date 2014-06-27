@@ -22,7 +22,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Base Test Suite class for browser tests.
  *
- * @method \Mockery\Expectation shouldReceive
+ * @method \Mockery\Expectation shouldReceive(string $name)
  */
 abstract class AbstractTestSuite extends \PHPUnit_Framework_TestSuite implements IEventDispatcherAware
 {

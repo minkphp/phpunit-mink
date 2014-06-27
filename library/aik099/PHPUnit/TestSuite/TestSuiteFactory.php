@@ -20,7 +20,7 @@ use aik099\PHPUnit\Application;
 /**
  * Creates test suites based on test case class configuration.
  *
- * @method \Mockery\Expectation shouldReceive
+ * @method \Mockery\Expectation shouldReceive(string $name)
  */
 class TestSuiteFactory implements IApplicationAware
 {

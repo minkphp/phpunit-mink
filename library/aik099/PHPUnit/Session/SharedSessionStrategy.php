@@ -21,7 +21,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Keeps a Session object shared between test runs to save time.
  *
- * @method \Mockery\Expectation shouldReceive
+ * @method \Mockery\Expectation shouldReceive(string $name)
  */
 class SharedSessionStrategy implements ISessionStrategy
 {

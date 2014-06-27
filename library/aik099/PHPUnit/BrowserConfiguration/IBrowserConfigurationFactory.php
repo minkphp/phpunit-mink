@@ -17,7 +17,7 @@ use aik099\PHPUnit\BrowserTestCase;
 /**
  * Interface for browser factory creation.
  *
- * @method \Mockery\Expectation shouldReceive
+ * @method \Mockery\Expectation shouldReceive(string $name)
  */
 interface IBrowserConfigurationFactory
 {

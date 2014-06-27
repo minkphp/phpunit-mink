@@ -14,7 +14,7 @@ namespace aik099\PHPUnit\RemoteCoverage;
 /**
  * Class collects remove code coverage information and maps patch from remote to local server.
  *
- * @method \Mockery\Expectation shouldReceive
+ * @method \Mockery\Expectation shouldReceive(string $name)
  */
 class RemoteCoverageHelper
 {
