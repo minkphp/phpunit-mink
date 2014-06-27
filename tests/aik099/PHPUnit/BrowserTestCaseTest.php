@@ -229,8 +229,8 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	protected function getBrowser($times)
 	{
 		$browser = m::mock(self::BROWSER_CLASS);
-		$browser->shouldReceive('getHost')->times($times)->andReturnNull();
-		$browser->shouldReceive('getPort')->times($times)->andReturnNull();
+		$browser->shouldReceive('getHost')->times($times);
+		$browser->shouldReceive('getPort')->times($times);
 		$browser->shouldReceive('attachToTestCase')->once()->andReturn($browser);
 
 		return $browser;
@@ -311,9 +311,9 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$browser->shouldReceive('getBaseUrl')->once()->andReturn('A');
 
 		$session = m::mock('\\Behat\\Mink\\Session');
-		$session->shouldReceive('visit')->with('A')->once()->andReturnNull();
-		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, null)->once()->andReturnNull();
-		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, m::not(''))->once()->andReturnNull();
+		$session->shouldReceive('visit')->with('A')->once();
+		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, null)->once();
+		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, m::not(''))->once();
 
 		$session_strategy->shouldReceive('session')->once()->andReturn($session);
 
@@ -345,7 +345,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$test_case->setRemoteCoverageScriptUrl('some-url');
 
 		$code_coverage = m::mock('\\PHP_CodeCoverage');
-		$code_coverage->shouldReceive('append')->with($expected_coverage, $test_case)->once()->andReturnNull();
+		$code_coverage->shouldReceive('append')->with($expected_coverage, $test_case)->once();
 
 		$result = $this->getTestResult($test_case, 1, true);
 		$result->shouldReceive('getCodeCoverage')->once()->andReturn($code_coverage);
@@ -357,9 +357,9 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$browser->shouldReceive('getBaseUrl')->once()->andReturn('A');
 
 		$session = m::mock('\\Behat\\Mink\\Session');
-		$session->shouldReceive('visit')->with('A')->once()->andReturnNull();
-		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, null)->once()->andReturnNull();
-		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, m::not(''))->once()->andReturnNull();
+		$session->shouldReceive('visit')->with('A')->once();
+		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, null)->once();
+		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, m::not(''))->once();
 
 		$session_strategy->shouldReceive('session')->once()->andReturn($session);
 

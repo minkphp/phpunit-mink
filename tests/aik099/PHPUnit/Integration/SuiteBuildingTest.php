@@ -79,9 +79,9 @@ class SuiteBuildingTest extends \PHPUnit_Framework_TestCase
 		$suite->addTest($sub_test_suite);
 
 		$result = m::mock('\\PHPUnit_Framework_TestResult');
-		$result->shouldReceive('startTestSuite')->andReturnNull();
+		$result->shouldReceive('startTestSuite');
 		$result->shouldReceive('shouldStop')->andReturn(false);
-		$result->shouldReceive('endTestSuite')->andReturnNull();
+		$result->shouldReceive('endTestSuite');
 
 		$this->assertSame($result, $suite->run($result));
 	}
@@ -98,12 +98,12 @@ class SuiteBuildingTest extends \PHPUnit_Framework_TestCase
 		$suite = m::mock($class_name);
 
 		$suite->shouldReceive('getGroups')->once()->andReturn(array());
-		$suite->shouldReceive('setBackupGlobals')->andReturnNull();
-		$suite->shouldReceive('setBackupStaticAttributes')->andReturnNull();
-		$suite->shouldReceive('setRunTestInSeparateProcess')->andReturnNull();
+		$suite->shouldReceive('setBackupGlobals');
+		$suite->shouldReceive('setBackupStaticAttributes');
+		$suite->shouldReceive('setRunTestInSeparateProcess');
 
-		$suite->shouldReceive('run')->once()->andReturnNull();
-		$suite->shouldReceive('onTestSuiteEnded')->once()->andReturnNull();
+		$suite->shouldReceive('run')->once();
+		$suite->shouldReceive('onTestSuiteEnded')->once();
 
 		if ( version_compare(\PHPUnit_Runner_Version::id(), '4.0.0', '>=') ) {
 			$suite->shouldReceive('count')->once()->andReturn(1);
