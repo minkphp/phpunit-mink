@@ -424,7 +424,7 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 		$browser2 = $this->createBrowserConfiguration(array(), true);
 		$browser2->setSessionStrategy(ISessionStrategyFactory::TYPE_SHARED)->attachToTestCase($test_case2);
 
-		$this->assertNotSame($browser1->getSessionStrategyHash($test_case1), $browser2->getSessionStrategyHash($test_case2));
+		$this->assertNotSame($browser1->getSessionStrategyHash(), $browser2->getSessionStrategyHash());
 	}
 
 	/**

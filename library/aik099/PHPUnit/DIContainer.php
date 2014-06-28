@@ -54,11 +54,11 @@ class DIContainer extends Container implements IApplicationAware
 	{
 		parent::__construct($values);
 
-		$this['event_dispatcher'] = function ($c) {
+		$this['event_dispatcher'] = function () {
 			return new EventDispatcher();
 		};
 
-		$this['session_factory'] = function ($c) {
+		$this['session_factory'] = function () {
 			return new SessionFactory();
 		};
 
@@ -87,7 +87,7 @@ class DIContainer extends Container implements IApplicationAware
 			return $session_strategy;
 		});
 
-		$this['remote_url'] = function ($c) {
+		$this['remote_url'] = function () {
 			return new RemoteUrl();
 		};
 

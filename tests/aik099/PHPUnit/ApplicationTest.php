@@ -74,7 +74,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 	public function testReplaceObjectSuccess()
 	{
 		$object = new \stdClass();
-		$this->_application->replaceObject('application', function ($c) use ($object) {
+		$this->_application->replaceObject('application', function () use ($object) {
 			return $object;
 		});
 

@@ -87,9 +87,9 @@ class Application
 	/**
 	 * Replaces object in the container.
 	 *
-	 * @param string  $service_id Name of the object in the container.
-	 * @param mixed   $callable   The callable that will return the object.
-	 * @param boolean $is_factory The callable should be considered as a factory.
+	 * @param string   $service_id Name of the object in the container.
+	 * @param callable $callable   The callable that will return the object.
+	 * @param boolean  $is_factory The callable should be considered as a factory.
 	 *
 	 * @return callable Previous service version.
 	 * @throws \InvalidArgumentException When attempt is made to replace non-existing service.

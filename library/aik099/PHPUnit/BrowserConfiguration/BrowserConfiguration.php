@@ -452,7 +452,7 @@ class BrowserConfiguration implements EventSubscriberInterface
 	/**
 	 * Returns session strategy hash based on given test case and current browser configuration.
 	 *
-	 * @return integer
+	 * @return string
 	 */
 	public function getSessionStrategyHash()
 	{
