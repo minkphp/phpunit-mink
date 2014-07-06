@@ -161,8 +161,9 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	public function testTestSetupEvent($session_strategy, $test_name, $build_env_name = null, $build_number = null)
 	{
 		// Reset any global env vars that might be left from previous tests.
-		putenv('BUILD_NUMBER');
-		putenv('TRAVIS_BUILD_NUMBER');
+		$hhvm_hack = defined('HHVM_VERSION') ? '=' : '';
+		putenv('BUILD_NUMBER' . $hhvm_hack);
+		putenv('TRAVIS_BUILD_NUMBER' . $hhvm_hack);
 
 		if ( isset($build_number) ) {
 			putenv($build_env_name . '=' . $build_number);

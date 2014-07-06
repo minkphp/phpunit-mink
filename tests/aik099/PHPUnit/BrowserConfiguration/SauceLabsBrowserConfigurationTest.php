@@ -48,7 +48,8 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 	public function testTunnelIdentifier($travis_job_number = null)
 	{
 		// Reset any global env vars that might be left from previous tests.
-		putenv('TRAVIS_JOB_NUMBER');
+		$hhvm_hack = defined('HHVM_VERSION') ? '=' : '';
+		putenv('TRAVIS_JOB_NUMBER' . $hhvm_hack);
 
 		if ( isset($travis_job_number) ) {
 			putenv('TRAVIS_JOB_NUMBER=' . $travis_job_number);
