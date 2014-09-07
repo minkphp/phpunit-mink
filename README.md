@@ -1,13 +1,12 @@
 # PHPUnit-Mink
-[![Build Status](https://travis-ci.org/aik099/phpunit-mink.png?branch=master)](https://travis-ci.org/aik099/phpunit-mink)
-[![HHVM Status](http://hhvm.h4cc.de/badge/aik099/phpunit-mink.png)](http://hhvm.h4cc.de/package/aik099/phpunit-mink)
+[![Build Status](https://travis-ci.org/aik099/phpunit-mink.svg?branch=master)](https://travis-ci.org/aik099/phpunit-mink)
+[![HHVM Status](http://hhvm.h4cc.de/badge/aik099/phpunit-mink.svg)](http://hhvm.h4cc.de/package/aik099/phpunit-mink)
 
-[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/aik099/phpunit-mink/badges/quality-score.png?s=57e408500d59e10ce44b604df678ec8b59a1b8f8)](https://scrutinizer-ci.com/g/aik099/phpunit-mink/)
-[![Coverage Status](https://coveralls.io/repos/aik099/phpunit-mink/badge.png?branch=master)](https://coveralls.io/r/aik099/phpunit-mink?branch=master)
-[![Dependency Status](https://www.versioneye.com/user/projects/52ad65e0ec1375ead3000049/badge.png)](https://www.versioneye.com/user/projects/52ad65e0ec1375ead3000049)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/aik099/phpunit-mink/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/aik099/phpunit-mink/?branch=master)
+[![Coverage Status](https://img.shields.io/coveralls/aik099/phpunit-mink.svg)](https://coveralls.io/r/aik099/phpunit-mink?branch=master)
+[![Dependency Status](https://www.versioneye.com/user/projects/52ad65e0ec1375ead3000049/badge.svg?style=flat)](https://www.versioneye.com/user/projects/52ad65e0ec1375ead3000049)
 
-[![Latest Stable Version](https://poser.pugx.org/aik099/phpunit-mink/v/stable.png)](https://packagist.org/packages/aik099/phpunit-mink)
-[![Total Downloads](https://poser.pugx.org/aik099/phpunit-mink/downloads.png)](https://packagist.org/packages/aik099/phpunit-mink)
+[![Latest Stable Version](https://poser.pugx.org/aik099/phpunit-mink/v/stable.svg)](https://packagist.org/packages/aik099/phpunit-mink) [![Total Downloads](https://poser.pugx.org/aik099/phpunit-mink/downloads.svg)](https://packagist.org/packages/aik099/phpunit-mink) [![Latest Unstable Version](https://poser.pugx.org/aik099/phpunit-mink/v/unstable.svg)](https://packagist.org/packages/aik099/phpunit-mink) [![License](https://poser.pugx.org/aik099/phpunit-mink/license.svg)](https://packagist.org/packages/aik099/phpunit-mink)
 
 This library is an extension for [PHPUnit](sebastianbergmann/phpunit), that allows to write tests with help of [Mink](Behat/Mink).
 
@@ -260,14 +259,8 @@ There are also corresponding `set` and `get` methods for each of mentioned above
 ```json
 {
 	"require": {
-		"aik099/phpunit-mink": "~1.0"
-	},
-	"repositories": [
-		{
-			"type": "vcs",
-			"url": "https://github.com/aik099/phpunit-mink"
-		},
-	]
+		"aik099/phpunit-mink": "~2.0"
+	}
 }
 ```
 
