@@ -17,10 +17,13 @@ addons:
 
 before_script:
     - composer require satooshi/php-coveralls:dev-master --dev --prefer-source
+    - sudo easy_install -U Sphinx
+    - sudo pip install sphinx_rtd_theme
 
 script:
     - mkdir -p build/logs
     - phpunit -v --coverage-clover build/logs/clover.xml
+    - sphinx-build -nW -b html -d docs/build/doctrees docs docs/build/html
 
 after_script:
     - php vendor/bin/coveralls -v
