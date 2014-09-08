@@ -1,6 +1,7 @@
 # PHPUnit-Mink
 [![Build Status](https://travis-ci.org/aik099/phpunit-mink.svg?branch=master)](https://travis-ci.org/aik099/phpunit-mink)
 [![HHVM Status](http://hhvm.h4cc.de/badge/aik099/phpunit-mink.svg)](http://hhvm.h4cc.de/package/aik099/phpunit-mink)
+[![Documentation Status](https://readthedocs.org/projects/phpunit-mink/badge/?version=latest)](https://readthedocs.org/projects/phpunit-mink/?badge=latest)
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/aik099/phpunit-mink/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/aik099/phpunit-mink/?branch=master)
 [![Coverage Status](https://img.shields.io/coveralls/aik099/phpunit-mink.svg)](https://coveralls.io/r/aik099/phpunit-mink?branch=master)
