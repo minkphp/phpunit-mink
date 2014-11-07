@@ -24,10 +24,10 @@
  * THE SOFTWARE.
  */
 
-namespace Pimple\Tests\Fixtures;
+namespace aik099\Pimple\Tests\Fixtures;
 
-use Pimple\Container;
-use Pimple\ServiceProviderInterface;
+use aik099\Pimple\Container;
+use aik099\Pimple\ServiceProviderInterface;
 
 class PimpleServiceProvider implements ServiceProviderInterface
 {

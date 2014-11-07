@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace Pimple\Tests\Fixtures;
+namespace aik099\Pimple\Tests\Fixtures;
 
 /**
  * @author  Igor Wiedler <igor@wiedler.ch>

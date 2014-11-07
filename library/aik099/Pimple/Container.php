@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace Pimple;
+namespace aik099\Pimple;
 
 /**
  * Container main class.
