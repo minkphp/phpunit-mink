@@ -17,7 +17,6 @@
 		"behat/mink": "~1.5@dev",
 		"behat/mink-selenium2-driver": "~1.1@dev",
 		"symfony/event-dispatcher": "~2.4",
-		"pimple/pimple": "~2.0",
 		"phpunit/phpunit": ">=3.7.8"
 	},
 
