@@ -13,6 +13,12 @@ PHPUnit-Mink is an open source, community-driven project. If you'd like to contr
 5. Squash your commits by topic to preserve a clean and readable log.
 6. Create Pull Request.
 
+## Coding standard
+Make sure coding standards pass:
+```bash
+$> phpcs --standard=vendor/aik099/coding-standard/CodingStandard/ library/ tests/
+```
+
 # Running tests
 Make sure that you don't break anything with your changes by running:
 
