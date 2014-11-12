@@ -52,7 +52,7 @@ class ApiIntegrationFixture extends BrowserTestCase
 	 *
 	 * @return void
 	 */
-	public function lverifyRemoteAPICalls(TestEvent $event)
+	public function verifyRemoteAPICalls(TestEvent $event)
 	{
 		$test_case = $event->getTestCase();
 
