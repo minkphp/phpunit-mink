@@ -332,7 +332,6 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	protected function createTestCase($name)
 	{
 		$test_case = m::mock(self::TEST_CASE_CLASS);
-		$test_case->shouldReceive('setRemoteCoverageScriptUrl')->once();
 		$test_case->shouldReceive('getName')->andReturn($name);
 		$this->browser->attachToTestCase($test_case);
 

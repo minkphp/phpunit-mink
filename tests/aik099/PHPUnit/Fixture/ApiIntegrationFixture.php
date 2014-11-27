@@ -126,6 +126,7 @@ class ApiIntegrationFixture extends BrowserTestCase
 
 				'browserName' => 'chrome',
 				'desiredCapabilities' => array('version' => 28),
+				'baseUrl' => 'http://www.google.com',
 			),
 			/*'browserstack' => array(
 				'type' => 'browserstack',

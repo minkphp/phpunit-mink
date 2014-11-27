@@ -17,6 +17,16 @@ use Mockery as m;
 class DataProviderTest extends BrowserTestCase
 {
 
+	/**
+	 * Browser list to be used in tests.
+	 *
+	 * @var array
+	 */
+	public static $browsers = array(
+		array('alias' => 'saucelabs'),
+		// array('alias' => 'browserstack'),
+	);
+
 	public function sampleDataProvider()
 	{
 		return array(
@@ -43,6 +53,31 @@ class DataProviderTest extends BrowserTestCase
 	protected function customMethod()
 	{
 		return 5;
+	}
+
+	/**
+	 * Gets browser configuration aliases.
+	 *
+	 * Allows to decouple actual test server connection details from test cases.
+	 *
+	 * @return array
+	 */
+	public function getBrowserAliases()
+	{
+		return array(
+			'saucelabs' => array(
+				'type' => 'saucelabs',
+				'api_username' => getenv('SAUCE_USERNAME'),
+				'api_key' => getenv('SAUCE_ACCESS_KEY'),
+
+				'browserName' => 'chrome',
+				'desiredCapabilities' => array('version' => 28),
+				'baseUrl' => 'http://www.google.com',
+			),
+			/*'browserstack' => array(
+				'type' => 'browserstack',
+			),*/
+		);
 	}
 
 }

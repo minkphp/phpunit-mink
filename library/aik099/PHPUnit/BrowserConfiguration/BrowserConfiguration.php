@@ -147,7 +147,6 @@ class BrowserConfiguration implements EventSubscriberInterface
 	public function attachToTestCase(BrowserTestCase $test_case)
 	{
 		$this->_testCase = $test_case;
-		$this->_testCase->setRemoteCoverageScriptUrl($this->getBaseUrl());
 		$this->_eventDispatcher->addSubscriber($this);
 
 		return $this;

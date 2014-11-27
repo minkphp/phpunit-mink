@@ -254,17 +254,6 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \RuntimeException
-	 */
-	public function testGetCollectCodeCoverageInformationFailure()
-	{
-		$this->getFixture()->getCollectCodeCoverageInformation();
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
 	 */
 	public function testRun()
 	{
@@ -292,17 +281,19 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \RuntimeException
 	 */
 	public function testRunWithCoverageWithoutRemoteUrl()
 	{
 		/* @var $test_case BrowserTestCase */
 		/* @var $session_strategy ISessionStrategy */
-		list($test_case, $session_strategy) = $this->prepareForRun(array(), false);
+		list($test_case, $session_strategy) = $this->prepareForRun(array());
 		$test_case->setName('getTestId');
 
+		$code_coverage = m::mock('\\PHP_CodeCoverage');
+		$code_coverage->shouldReceive('append')->with(m::mustBe(array()), $test_case)->once();
+
 		$result = $this->getTestResult($test_case, 1, true);
-		$result->shouldReceive('getCodeCoverage')->once()->andReturn(m::mock('\\PHP_CodeCoverage'));
+		$result->shouldReceive('getCodeCoverage')->once()->andReturn($code_coverage);
 
 		$test_id = $test_case->getTestId();
 		$this->assertEmpty($test_id);

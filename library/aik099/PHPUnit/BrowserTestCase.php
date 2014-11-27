@@ -387,18 +387,17 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 	}
 
 	/**
-	 * Returns remote code coverage information.
+	 * Returns remote code coverage information, when enabled.
 	 *
 	 * @return array
-	 * @throws \RuntimeException When no remote coverage script URL set.
 	 */
 	public function getRemoteCodeCoverageInformation()
 	{
-		if ( $this->_remoteCoverageScriptUrl == '' ) {
-			throw new \RuntimeException('Remote coverage script url not set');
+		if ( $this->_remoteCoverageScriptUrl ) {
+			return $this->remoteCoverageHelper->get($this->_remoteCoverageScriptUrl, $this->_testId);
 		}
 
-		return $this->remoteCoverageHelper->get($this->_remoteCoverageScriptUrl, $this->_testId);
+		return array();
 	}
 
 	/**

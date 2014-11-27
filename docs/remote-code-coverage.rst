@@ -23,10 +23,8 @@ On Test Machine
 ^^^^^^^^^^^^^^^
 This is machine, where PHPUnit tests are being executed.
 
-By default the ``baseUrl`` setting from browser configuration is used as the
-"remote code coverage information url". However if a need exists to set alternative url on
-per-test basis, then place following code in the ``setUp`` method of the test case class,
-that extends ``BrowserTestCase`` class:
+Following code needs to be placed in the ``setUp`` method of the test case class (that extends ``BrowserTestCase``
+class) to enable remote coverage information collection:
 
 .. code-block:: php
 
