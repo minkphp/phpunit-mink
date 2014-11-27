@@ -77,21 +77,37 @@ abstract class AbstractTestSuite extends \PHPUnit_Framework_TestSuite implements
 	 * @param SessionStrategyManager       $session_strategy_manager      Session strategy manager.
 	 * @param IBrowserConfigurationFactory $browser_configuration_factory Browser configuration factory.
 	 * @param RemoteCoverageHelper         $remote_coverage_helper        Remote coverage helper.
+	 * @param array                        $tests                         Tests to process.
 	 *
 	 * @return self
 	 */
 	public function setTestDependencies(
 		SessionStrategyManager $session_strategy_manager,
 		IBrowserConfigurationFactory $browser_configuration_factory,
-		RemoteCoverageHelper $remote_coverage_helper
+		RemoteCoverageHelper $remote_coverage_helper,
+		array $tests = null
 	)
 	{
-		/* @var $test BrowserTestCase */
-		foreach ( $this->tests() as $test ) {
-			$test->setEventDispatcher($this->_eventDispatcher);
-			$test->setSessionStrategyManager($session_strategy_manager);
-			$test->setBrowserConfigurationFactory($browser_configuration_factory);
-			$test->setRemoteCoverageHelper($remote_coverage_helper);
+		if ( !isset($tests) ) {
+			$tests = $this->tests();
+		}
+
+		foreach ( $tests as $test ) {
+			if ( $test instanceof \PHPUnit_Framework_TestSuite_DataProvider ) {
+				$this->setTestDependencies(
+					$session_strategy_manager,
+					$browser_configuration_factory,
+					$remote_coverage_helper,
+					$test->tests()
+				);
+			}
+			else {
+				/** @var BrowserTestCase $test */
+				$test->setEventDispatcher($this->_eventDispatcher);
+				$test->setSessionStrategyManager($session_strategy_manager);
+				$test->setBrowserConfigurationFactory($browser_configuration_factory);
+				$test->setRemoteCoverageHelper($remote_coverage_helper);
+			}
 		}
 
 		return $this;
@@ -100,14 +116,24 @@ abstract class AbstractTestSuite extends \PHPUnit_Framework_TestSuite implements
 	/**
 	 * Report back suite ending to each it's test.
 	 *
+	 * @param array $tests Tests to process.
+	 *
 	 * @return void
 	 */
-	protected function tearDown()
+	protected function tearDown(array $tests = null)
 	{
-		/* @var $test BrowserTestCase */
+		if ( !isset($tests) ) {
+			$tests = $this->tests();
+		}
 
-		foreach ( $this->tests() as $test ) {
-			$test->onTestSuiteEnded();
+		foreach ( $tests as $test ) {
+			if ( $test instanceof \PHPUnit_Framework_TestSuite_DataProvider ) {
+				$this->tearDown($test->tests());
+			}
+			else {
+				/* @var $test BrowserTestCase */
+				$test->onTestSuiteEnded();
+			}
 		}
 	}
 

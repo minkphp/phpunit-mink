@@ -43,14 +43,24 @@ class BrowserTestSuite extends AbstractTestSuite
 	 * Sets given browser to be used in each underlying test cases and test suites.
 	 *
 	 * @param array $browser Browser configuration.
+	 * @param array $tests   Tests to process.
 	 *
 	 * @return self
 	 */
-	public function setBrowserFromConfiguration(array $browser)
+	public function setBrowserFromConfiguration(array $browser, array $tests = null)
 	{
-		/* @var $test BrowserTestCase */
-		foreach ( $this->tests() as $test ) {
-			$test->setBrowserFromConfiguration($browser);
+		if ( !isset($tests) ) {
+			$tests = $this->tests();
+		}
+
+		foreach ( $tests as $test ) {
+			if ( $test instanceof \PHPUnit_Framework_TestSuite_DataProvider ) {
+				$this->setBrowserFromConfiguration($browser, $test->tests());
+			}
+			else {
+				/* @var $test BrowserTestCase */
+				$test->setBrowserFromConfiguration($browser);
+			}
 		}
 
 		return $this;
