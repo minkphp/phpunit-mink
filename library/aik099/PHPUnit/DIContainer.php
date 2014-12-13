@@ -25,7 +25,7 @@ use aik099\PHPUnit\Session\SharedSessionStrategy;
 use aik099\PHPUnit\TestSuite\BrowserTestSuite;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use aik099\PHPUnit\TestSuite\TestSuiteFactory;
-use Pimple\Container;
+use aik099\Pimple\Container;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class DIContainer extends Container implements IApplicationAware
