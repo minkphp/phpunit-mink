@@ -19,8 +19,13 @@ Each mentioned above features is described in more detail below.
 
 Service Integrations
 --------------------
-.. image:: assets/images/saucelabs_logo.png
-.. image:: assets/images/browserstack_logo.png
+|SauceLabs|_ |BrowserStack|_
+
+.. |SauceLabs| image:: /assets/images/saucelabs_logo.png
+.. _SauceLabs: https://saucelabs.com/
+
+.. |BrowserStack| image:: /assets/images/browserstack_logo.png
+.. _BrowserStack: http://www.browserstack.com/
 
 .. _`Mink`: https://github.com/Behat/Mink
 
