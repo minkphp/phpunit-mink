@@ -17,6 +17,11 @@ This library allows to perform following things:
 
 Each mentioned above features is described in more detail below.
 
+Service Integrations
+--------------------
+.. image:: assets/images/saucelabs_logo.png
+.. image:: assets/images/browserstack_logo.png
+
 .. _`Mink`: https://github.com/Behat/Mink
 
 .. toctree::

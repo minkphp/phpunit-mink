@@ -15,6 +15,11 @@ This library is an extension for [PHPUnit](sebastianbergmann/phpunit), that allo
 
 * http://phpunit-mink.readthedocs.org
 
+## Service Integrations
+
+[![SauceLabs](docs/assets/images/saucelabs_logo.png)](https://saucelabs.com/)
+[![BrowserStack](docs/assets/images/browserstack_logo.png)](http://www.browserstack.com/)
+
 ## Installation using Composer
 
 Define the dependencies in your ```composer.json```:
