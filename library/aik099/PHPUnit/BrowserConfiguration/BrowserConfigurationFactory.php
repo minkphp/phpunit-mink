@@ -46,7 +46,9 @@ class BrowserConfigurationFactory implements IBrowserConfigurationFactory
 		$type = $browser->getType();
 
 		if ( isset($this->browserConfigurations[$type]) ) {
-			throw new \InvalidArgumentException('Browser configuration with type "' . $type . '" is already registered');
+			throw new \InvalidArgumentException(
+				'Browser configuration with type "' . $type . '" is already registered'
+			);
 		}
 
 		$this->browserConfigurations[$type] = $browser;

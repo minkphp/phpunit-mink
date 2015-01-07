@@ -93,7 +93,9 @@ class SessionStrategyManager
 		$strategy_hash = $browser->getSessionStrategyHash();
 
 		if ( $strategy_hash !== $this->lastUsedSessionStrategyHash ) {
-			$this->sessionStrategiesInUse[$strategy_hash] = $this->_sessionStrategyFactory->createStrategy($strategy_type);
+			$this->sessionStrategiesInUse[$strategy_hash] = $this->_sessionStrategyFactory->createStrategy(
+				$strategy_type
+			);
 		}
 
 		$this->lastUsedSessionStrategyHash = $strategy_hash;

@@ -30,8 +30,7 @@ class BrowserStackBrowserConfiguration extends ApiBrowserConfiguration
 	public function __construct(
 		EventDispatcherInterface $event_dispatcher,
 		IBrowserConfigurationFactory $browser_configuration_factory
-	)
-	{
+	) {
 		$this->defaultParameters['type'] = 'browserstack';
 
 		parent::__construct($event_dispatcher, $browser_configuration_factory);
@@ -51,7 +50,7 @@ class BrowserStackBrowserConfiguration extends ApiBrowserConfiguration
 	 * Returns desired capabilities from browser configuration.
 	 *
 	 * @return array
-	 * @link http://www.browserstack.com/automate/capabilities
+	 * @link   http://www.browserstack.com/automate/capabilities
 	 */
 	public function getDesiredCapabilities()
 	{

@@ -31,8 +31,7 @@ class SauceLabsBrowserConfiguration extends ApiBrowserConfiguration
 	public function __construct(
 		EventDispatcherInterface $event_dispatcher,
 		IBrowserConfigurationFactory $browser_configuration_factory
-	)
-	{
+	) {
 		$this->defaultParameters['type'] = 'saucelabs';
 
 		parent::__construct($event_dispatcher, $browser_configuration_factory);

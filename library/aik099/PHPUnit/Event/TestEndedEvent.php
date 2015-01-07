@@ -35,8 +35,7 @@ class TestEndedEvent extends TestEvent
 		BrowserTestCase $test_case,
 		\PHPUnit_Framework_TestResult $test_result,
 		Session $session = null
-	)
-	{
+	) {
 		parent::__construct($test_case, $session);
 		$this->_testResult = $test_result;
 	}

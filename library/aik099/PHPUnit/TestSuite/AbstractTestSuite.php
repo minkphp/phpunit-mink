@@ -86,8 +86,7 @@ abstract class AbstractTestSuite extends \PHPUnit_Framework_TestSuite implements
 		IBrowserConfigurationFactory $browser_configuration_factory,
 		RemoteCoverageHelper $remote_coverage_helper,
 		array $tests = null
-	)
-	{
+	) {
 		if ( !isset($tests) ) {
 			$tests = $this->tests();
 		}
@@ -141,6 +140,7 @@ abstract class AbstractTestSuite extends \PHPUnit_Framework_TestSuite implements
 	 * Indicates end of the test suite.
 	 *
 	 * @return void
+	 *
 	 * @codeCoverageIgnore
 	 */
 	public function onTestSuiteEnded()

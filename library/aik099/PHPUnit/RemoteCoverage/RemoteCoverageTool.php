@@ -138,8 +138,9 @@ class RemoteCoverageTool
 			unset($data[$file]);
 		}
 
+		$unique_id = md5(uniqid(rand(), true));
 		file_put_contents(
-			$name = $this->getStorageLocationPrefix() . '.' . md5(uniqid(rand(), true)) . '.' . $_COOKIE[self::TEST_ID_VARIABLE],
+			$name = $this->getStorageLocationPrefix() . '.' . $unique_id . '.' . $_COOKIE[self::TEST_ID_VARIABLE],
 			serialize($data)
 		);
 	}
@@ -196,7 +197,9 @@ class RemoteCoverageTool
 				}
 				else {
 					foreach ( $lines as $line => $flag ) {
-						if ( !isset($coverage[$file]['coverage'][$line]) || $flag > $coverage[$file]['coverage'][$line] ) {
+						if ( !isset($coverage[$file]['coverage'][$line])
+							|| $flag > $coverage[$file]['coverage'][$line]
+						) {
 							$coverage[$file]['coverage'][$line] = $flag;
 						}
 					}

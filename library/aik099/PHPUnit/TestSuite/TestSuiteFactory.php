@@ -64,8 +64,7 @@ class TestSuiteFactory implements IApplicationAware
 		SessionStrategyManager $session_strategy_manager,
 		IBrowserConfigurationFactory $browser_configuration_factory,
 		RemoteCoverageHelper $remote_coverage_helper
-	)
-	{
+	) {
 		$this->_sessionStrategyManager = $session_strategy_manager;
 		$this->_browserConfigurationFactory = $browser_configuration_factory;
 		$this->_remoteCoverageHelper = $remote_coverage_helper;

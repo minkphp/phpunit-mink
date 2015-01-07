@@ -363,7 +363,7 @@ class BrowserConfiguration implements EventSubscriberInterface
 	 * @param array $capabilities Desired capabilities.
 	 *
 	 * @return self
-	 * @link http://code.google.com/p/selenium/wiki/JsonWireProtocol
+	 * @link   http://code.google.com/p/selenium/wiki/JsonWireProtocol
 	 */
 	public function setDesiredCapabilities(array $capabilities)
 	{
@@ -568,7 +568,8 @@ class BrowserConfiguration implements EventSubscriberInterface
 	{
 		$test_case = $event->getTestCase();
 
-		return get_class($test_case) === get_class($this->_testCase) && $test_case->getName() === $this->_testCase->getName();
+		return get_class($test_case) === get_class($this->_testCase)
+			&& $test_case->getName() === $this->_testCase->getName();
 	}
 
 }

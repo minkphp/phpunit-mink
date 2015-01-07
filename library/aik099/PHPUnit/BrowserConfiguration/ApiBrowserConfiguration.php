@@ -51,8 +51,7 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 	public function __construct(
 		EventDispatcherInterface $event_dispatcher,
 		IBrowserConfigurationFactory $browser_configuration_factory
-	)
-	{
+	) {
 		$this->browserConfigurationFactory = $browser_configuration_factory;
 		$this->defaultParameters['api_username'] = '';
 		$this->defaultParameters['api_key'] = '';

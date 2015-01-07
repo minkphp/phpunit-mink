@@ -111,6 +111,7 @@ class Application
 	 * Prevents cloning.
 	 *
 	 * @return void
+	 *
 	 * @codeCoverageIgnore
 	 */
 	private function __clone()
