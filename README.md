@@ -1,15 +1,15 @@
 # PHPUnit-Mink
-[![Build Status](https://travis-ci.org/aik099/phpunit-mink.svg?branch=master)](https://travis-ci.org/aik099/phpunit-mink)
+[![Build Status](https://travis-ci.org/minkphp/phpunit-mink.svg?branch=master)](https://travis-ci.org/minkphp/phpunit-mink)
 [![HHVM Status](http://hhvm.h4cc.de/badge/aik099/phpunit-mink.svg)](http://hhvm.h4cc.de/package/aik099/phpunit-mink)
 [![Documentation Status](https://readthedocs.org/projects/phpunit-mink/badge/?version=latest)](https://readthedocs.org/projects/phpunit-mink/?badge=latest)
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/aik099/phpunit-mink/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/aik099/phpunit-mink/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/minkphp/phpunit-mink/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/minkphp/phpunit-mink/?branch=master)
 [![Coverage Status](https://img.shields.io/coveralls/aik099/phpunit-mink.svg)](https://coveralls.io/r/aik099/phpunit-mink?branch=master)
 [![Dependency Status](https://www.versioneye.com/user/projects/52ad65e0ec1375ead3000049/badge.svg?style=flat)](https://www.versioneye.com/user/projects/52ad65e0ec1375ead3000049)
 
 [![Latest Stable Version](https://poser.pugx.org/aik099/phpunit-mink/v/stable.svg)](https://packagist.org/packages/aik099/phpunit-mink) [![Total Downloads](https://poser.pugx.org/aik099/phpunit-mink/downloads.svg)](https://packagist.org/packages/aik099/phpunit-mink) [![Latest Unstable Version](https://poser.pugx.org/aik099/phpunit-mink/v/unstable.svg)](https://packagist.org/packages/aik099/phpunit-mink) [![License](https://poser.pugx.org/aik099/phpunit-mink/license.svg)](https://packagist.org/packages/aik099/phpunit-mink)
 
-This library is an extension for [PHPUnit](sebastianbergmann/phpunit), that allows to write tests with help of [Mink](Behat/Mink).
+This library is an extension for [PHPUnit](https://phpunit.de), that allows to write tests with help of [Mink](https://github.com/minkphp/Mink).
 
 ## Documentation
 
