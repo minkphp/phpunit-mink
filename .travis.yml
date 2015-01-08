@@ -9,8 +9,8 @@ php:
 
 env:
     global:
-        - secure: XTlGGWYR/0OwJLQMHHvTopTj37OL97wiFIMMmiZQtmyf2neNia/Se9ASftgeFHI6WeSxcjC0hYF9LtPNHCHW30Qv8E2/L6PtENxZY8tBGUq0O/4XaCIhGUdc9NxkteZ3M5rgTWkLbs8Sctl31/vqG4bYstNwgLvHnw2Jh4TBHuU=
-        - secure: KIgQ3vADaLcuzlRNNjq3veFp9p4Vq30GYbYyqaEpz7eUI/t7r/THhSmsUc04+tcmc6iXXfMzjQmylUerE8pDNBBtBfBsmUkuVvXDQTeIv8WYgBVMalFR0rfI/v3mzn9gzRHbtEEJMtsRenvfBJPqrrAdI4W4vyEOCSTIKklumck=
+        - secure: HhIy0kN0+UbuLeaVBk7O/utAYo038a9Emr8cdcfU+LQTu6CfGEbifH+LddXs6M/bSLTdNUSwQSnwycbeNYZ6iHCO/JI/vEgKxCTSecPerMXBIVCQjFZaCp3Tev8JJ40hKe78WJ/d0G4bGtIR6atR5V+H8Z29iwJeFtCj6doEt3o=
+        - secure: oLadQTqg8HSEmUC0qEtChKd/R0ZiFNhzoZjIaa8kAJ0fjln/2xfNCBQIg4YstyjFy2kLiP6Lg8xW/RZljzyTHC+MCB9NNqTYjKLqFNRvFOlZUOnrAwc4sl4qjMYu9klWKa+rfyZzsuVWn++g829s2lFopkImqa6EB9DOR2TOT6w=
 
 addons:
     sauce_connect: true
