@@ -32,6 +32,13 @@ class ApiIntegrationFixture extends BrowserTestCase
 	);
 
 	/**
+	 * Record IDs of WebDriver session, that needs to be verified.
+	 *
+	 * @var array
+	 */
+	private $_sessionIds = array();
+
+	/**
 	 * Sets event dispatcher.
 	 *
 	 * @param EventDispatcherInterface $event_dispatcher Event dispatcher.
@@ -42,7 +49,36 @@ class ApiIntegrationFixture extends BrowserTestCase
 	{
 		parent::setEventDispatcher($event_dispatcher);
 
+		// Use priority for this listener to be called before one, that stops the session.
+		$event_dispatcher->addListener(self::TEST_ENDED_EVENT, array($this, 'recordSessionId'), 200);
 		$event_dispatcher->addListener(self::TEST_ENDED_EVENT, array($this, 'verifyRemoteAPICalls'));
+	}
+
+	/**
+	 * Record WebDriver session ID of the test.
+	 *
+	 * @param TestEvent $event Event.
+	 *
+	 * @return void
+	 */
+	public function recordSessionId(TestEvent $event)
+	{
+		$test_case = $event->getTestCase();
+
+		if ( get_class($test_case) !== get_class($this)
+			|| $test_case->getName() !== $this->getName()
+			|| $this->_getTestSkipMessage()
+		) {
+			return;
+		}
+
+		$session = $event->getSession();
+
+		if ( $session === null ) {
+			$this->markTestSkipped('Unable to connect to SauceLabs. Please check Internet connection.');
+		}
+
+		$this->_sessionIds[$test_case->getName(false)] = $session->getDriver()->getWebDriverSessionId();
 	}
 
 	/**
@@ -60,27 +96,39 @@ class ApiIntegrationFixture extends BrowserTestCase
 			return;
 		}
 
+		$test_name = $test_case->getName(false);
+
+		if ( !isset($this->_sessionIds[$test_name]) ) {
+			return;
+		}
+
 		$browser = $this->getBrowser();
 
 		if ( $browser instanceof SauceLabsBrowserConfiguration ) {
-			$session = $event->getSession();
-
-			if ( $session === null ) {
-				$this->markTestSkipped('Unable to connect to SauceLabs. Please check Internet connection.');
-			}
-
 			$sauce_rest = new SauceRest($browser->getApiUsername(), $browser->getApiKey());
-			$job_info = $sauce_rest->getJob($session->getDriver()->getWebDriverSessionId());
+			$job_info = $sauce_rest->getJob($this->_sessionIds[$test_name]);
 
-			$this->assertEquals(get_class($test_case) . '::' . $test_case->getName(), $job_info['name']);
+			$this->assertEquals(get_class($test_case) . '::' . $test_name, $job_info['name']);
 
 			$passed_mapping = array(
 				'testSuccess' => true,
 				'testFailure' => false,
 			);
 
-			$this->assertSame($passed_mapping[$test_case->getName()], $job_info['passed']);
+			$this->assertSame($passed_mapping[$test_name], $job_info['passed']);
 		}
+	}
+
+	/**
+	 * Whatever or not code coverage information should be gathered.
+	 *
+	 * @return boolean
+	 * @throws \RuntimeException When used before test is started.
+	 */
+	public function getCollectCodeCoverageInformation()
+	{
+		// FIXME: Workaround for https://github.com/minkphp/phpunit-mink/issues/35 bug.
+		return false;
 	}
 
 	/**
@@ -90,6 +138,12 @@ class ApiIntegrationFixture extends BrowserTestCase
 	 */
 	public function testSuccess()
 	{
+		$skip_message = $this->_getTestSkipMessage();
+
+		if ( $skip_message ) {
+			$this->markTestSkipped($skip_message);
+		}
+
 		$session = $this->getSession();
 		$session->visit('http://www.google.com');
 
@@ -103,6 +157,12 @@ class ApiIntegrationFixture extends BrowserTestCase
 	 */
 	public function testFailure()
 	{
+		$skip_message = $this->_getTestSkipMessage();
+
+		if ( $skip_message ) {
+			$this->markTestSkipped($skip_message);
+		}
+
 		$session = $this->getSession();
 		$session->visit('http://www.google.com');
 
@@ -132,6 +192,19 @@ class ApiIntegrationFixture extends BrowserTestCase
 				'type' => 'browserstack',
 			),*/
 		);
+	}
+
+	private function _getTestSkipMessage()
+	{
+		$browser = $this->getBrowser();
+
+		if ( $browser->getType() == 'saucelabs' ) {
+			if ( !getenv('SAUCE_USERNAME') || !getenv('SAUCE_ACCESS_KEY') ) {
+				return 'SauceLabs integration is not configured';
+			}
+		}
+
+		return '';
 	}
 
 }
