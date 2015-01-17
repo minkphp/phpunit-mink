@@ -19,3 +19,13 @@ Make sure that you don't break anything with your changes by running:
 ```bash
 $> phpunit
 ```
+
+## Checking coding standard violations
+
+This library uses [Coding Standard](https://github.com/aik099/CodingStandard) to ensure consistent formatting across the code base. Make sure you haven't introduced any Coding Standard violations by running following command in the root folder of the library:
+
+```bash
+$> phpcs --standard="vendor/aik099/coding-standard/CodingStandard" library tests
+```
+
+or by making your IDE ([instructions for PhpStorm](http://www.jetbrains.com/phpstorm/webhelp/using-php-code-sniffer-tool.html)) to check them automatically.
