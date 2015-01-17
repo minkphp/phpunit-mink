@@ -52,7 +52,9 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$this->testsRequireSubscriber[] = 'testTestSetupEvent';
 		$this->testsRequireSubscriber[] = 'testTestEndedEvent';
 		$this->testsRequireSubscriber[] = 'testTestEndedWithoutSession';
-		$this->browserConfigurationFactory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
+		$this->browserConfigurationFactory = m::mock(
+			'aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory'
+		);
 
 		parent::setUp();
 
@@ -172,7 +174,9 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$this->browser->setSessionStrategy($session_strategy);
 
 		$test_case = $this->createTestCase($test_name);
-		$test_case->shouldReceive('toString')->times($this->_isAutomaticTestName($test_name) ? 0 : 1)->andReturn($test_name);
+		$test_case->shouldReceive('toString')
+			->times($this->_isAutomaticTestName($test_name) ? 0 : 1)
+			->andReturn($test_name);
 
 		$event_dispatcher = new EventDispatcher();
 		$event_dispatcher->addSubscriber($this->browser);
@@ -232,7 +236,10 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 				ISessionStrategyFactory::TYPE_ISOLATED, 'TEST_NAME', 'TRAVIS_BUILD_NUMBER', 'TRAVIS ' . $seed,
 			),
 			'shared, no name, travis' => array(
-				ISessionStrategyFactory::TYPE_SHARED, self::AUTOMATIC_TEST_NAME, 'TRAVIS_BUILD_NUMBER', 'TRAVIS ' . $seed,
+				ISessionStrategyFactory::TYPE_SHARED,
+				self::AUTOMATIC_TEST_NAME,
+				'TRAVIS_BUILD_NUMBER',
+				'TRAVIS ' . $seed,
 			),
 			'isolated, name, no build' => array(ISessionStrategyFactory::TYPE_ISOLATED, 'TEST_NAME'),
 			'shared, no name, no build' => array(ISessionStrategyFactory::TYPE_SHARED, self::AUTOMATIC_TEST_NAME),
@@ -252,7 +259,9 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$test_case = $this->createTestCase('TEST_NAME');
 
 		$api_client = m::mock('aik099\\PHPUnit\\APIClient\\IAPIClient');
-		$this->browserConfigurationFactory->shouldReceive('createAPIClient')->with($this->browser)->andReturn($api_client);
+		$this->browserConfigurationFactory->shouldReceive('createAPIClient')
+			->with($this->browser)
+			->andReturn($api_client);
 
 		if ( $driver_type == 'selenium' ) {
 			$driver = m::mock('\\Behat\\Mink\\Driver\\Selenium2Driver');

@@ -82,7 +82,10 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 			'sessionStrategy' => ISessionStrategyFactory::TYPE_SHARED,
 		);
 
-		$this->browser = $this->createBrowserConfiguration(array(), in_array($this->getName(false), $this->testsRequireSubscriber));
+		$this->browser = $this->createBrowserConfiguration(
+			array(),
+			in_array($this->getName(false), $this->testsRequireSubscriber)
+		);
 	}
 
 	/**
@@ -130,7 +133,10 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 				),
 				array('alias' => 'a1'),
 				array(
-					'host' => static::HOST, 'port' => static::PORT, 'browserName' => 'safari', 'baseUrl' => 'http://example_host',
+					'host' => static::HOST,
+					'port' => static::PORT,
+					'browserName' => 'safari',
+					'baseUrl' => 'http://example_host',
 				),
 			),
 			'alias merging' => array(

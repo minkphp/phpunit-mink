@@ -72,7 +72,10 @@ class DIContainerTest extends \PHPUnit_Framework_TestCase
 			array('test_suite_factory', 'aik099\\PHPUnit\\TestSuite\\TestSuiteFactory'),
 			array('regular_test_suite', 'aik099\\PHPUnit\\TestSuite\\RegularTestSuite'),
 			array('browser_test_suite', 'aik099\\PHPUnit\\TestSuite\\BrowserTestSuite'),
-			array('browser_configuration_factory', 'aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfigurationFactory'),
+			array(
+				'browser_configuration_factory',
+				'aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfigurationFactory',
+			),
 		);
 	}
 
