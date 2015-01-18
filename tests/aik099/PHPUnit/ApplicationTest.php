@@ -53,7 +53,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetTestSuiteFactory()
 	{
-		$this->assertInstanceOf('aik099\\PHPUnit\\TestSuite\\TestSuiteFactory', $this->_application->getTestSuiteFactory());
+		$this->assertInstanceOf(
+			'aik099\\PHPUnit\\TestSuite\\TestSuiteFactory',
+			$this->_application->getTestSuiteFactory()
+		);
 	}
 
 	/**

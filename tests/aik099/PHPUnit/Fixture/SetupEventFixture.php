@@ -36,7 +36,10 @@ class SetupEventFixture extends BrowserTestCase
 
 		$browser_config = array('api_username' => 'a', 'api_key' => 'b');
 		$browser = new SauceLabsBrowserConfiguration($this->readAttribute($this, '_eventDispatcher'), $factory);
-		$factory->shouldReceive('createBrowserConfiguration')->with($browser_config, $this)->once()->andReturn($browser);
+		$factory->shouldReceive('createBrowserConfiguration')
+			->with($browser_config, $this)
+			->once()
+			->andReturn($browser);
 		$this->setBrowserConfigurationFactory($factory);
 
 		$this->setBrowserFromConfiguration($browser_config);

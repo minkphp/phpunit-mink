@@ -48,7 +48,9 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	{
 		parent::setUp();
 
-		$this->browserConfigurationFactory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
+		$this->browserConfigurationFactory = m::mock(
+			'aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory'
+		);
 	}
 
 	/**
@@ -455,9 +457,12 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$result = m::mock('\\PHPUnit_Framework_TestResult');
 		$result->shouldReceive('getCollectCodeCoverageInformation')->withNoArgs()->andReturn($collect_coverage);
 
-		$result->shouldReceive('run')->with($test_case)->times($run_count)->andReturnUsing(function () use ($test_case) {
-			$test_case->runBare();
-		});
+		$result->shouldReceive('run')
+			->with($test_case)
+			->times($run_count)
+			->andReturnUsing(function () use ($test_case) {
+				$test_case->runBare();
+			});
 
 		return $result;
 	}
