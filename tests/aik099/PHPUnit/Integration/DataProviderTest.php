@@ -50,6 +50,18 @@ class DataProviderTest extends BrowserTestCase
 		}
 	}
 
+	/**
+	 * Whatever or not code coverage information should be gathered.
+	 *
+	 * @return boolean
+	 * @throws \RuntimeException When used before test is started.
+	 */
+	public function getCollectCodeCoverageInformation()
+	{
+		// FIXME: Workaround for https://github.com/minkphp/phpunit-mink/issues/35 bug.
+		return false;
+	}
+
 	protected function customMethod()
 	{
 		return 5;

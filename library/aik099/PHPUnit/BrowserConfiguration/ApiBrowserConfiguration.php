@@ -208,7 +208,9 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 
 		parent::onTestEnded($event);
 
-		if ( $event->getSession() === null ) {
+		$session = $event->getSession();
+
+		if ( $session === null || !$session->isStarted() ) {
 			// Session wasn't used in particular test.
 			return;
 		}
@@ -216,7 +218,7 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 		$test_case = $event->getTestCase();
 
 		$this->getAPIClient()->updateStatus(
-			$this->getSessionId($event->getSession()),
+			$this->getSessionId($session),
 			$this->getTestStatus($test_case, $event->getTestResult())
 		);
 	}

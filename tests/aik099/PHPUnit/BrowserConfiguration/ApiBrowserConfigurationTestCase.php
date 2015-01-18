@@ -268,6 +268,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 
 		$session = m::mock('Behat\\Mink\\Session');
 		$session->shouldReceive('getDriver')->once()->andReturn($driver);
+		$session->shouldReceive('isStarted')->once()->andReturn(true);
 
 		$event_dispatcher = new EventDispatcher();
 		$event_dispatcher->addSubscriber($this->browser);
@@ -298,11 +299,9 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	}
 
 	/**
-	 * Test description.
-	 *
-	 * @return void
+	 * @dataProvider sessionStateDataProvider
 	 */
-	public function testTestEndedWithoutSession()
+	public function testTestEndedWithoutSession($stopped_or_missing)
 	{
 		$test_case = $this->createTestCase('TEST_NAME');
 
@@ -310,7 +309,16 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$event_dispatcher->addSubscriber($this->browser);
 
 		$event = m::mock('aik099\\PHPUnit\\Event\\TestEndedEvent');
-		$event->shouldReceive('getSession')->once();
+
+		if ( $stopped_or_missing ) {
+			$session = m::mock('Behat\\Mink\\Session');
+			$session->shouldReceive('isStarted')->once()->andReturn(false);
+			$event->shouldReceive('getSession')->once()->andReturn($session);
+		}
+		else {
+			$event->shouldReceive('getSession')->once();
+		}
+
 		$event->shouldReceive('setDispatcher')->once(); // To remove with Symfony 3.0 release.
 		$event->shouldReceive('setName')->once(); // To remove with Symfony 3.0 release.
 		$event->shouldReceive('isPropagationStopped')->once()->andReturn(false);
@@ -320,6 +328,14 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$returned_event = $event_dispatcher->dispatch(BrowserTestCase::TEST_ENDED_EVENT, $event);
 
 		$this->assertInstanceOf('aik099\\PHPUnit\\Event\\TestEndedEvent', $returned_event);
+	}
+
+	public function sessionStateDataProvider()
+	{
+		return array(
+			array(true),
+			array(false),
+		);
 	}
 
 	/**
