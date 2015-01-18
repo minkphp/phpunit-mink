@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c608fcac523a1963334c5daabeaf38ad",
+    "hash": "9677a9d73bf451ae1e4314bfe7e9991e",
     "packages": [
         {
             "name": "behat/mink",
@@ -606,16 +606,16 @@
         },
         {
             "name": "pimple/pimple",
-            "version": "v2.1.1",
+            "version": "v3.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/fabpot/Pimple.git",
-                "reference": "ea22fb2880faf7b7b0e17c9809c6fe25b071fd76"
+                "url": "https://github.com/silexphp/Pimple.git",
+                "reference": "876bf0899d01feacd2a2e83f04641e51350099ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Pimple/zipball/ea22fb2880faf7b7b0e17c9809c6fe25b071fd76",
-                "reference": "ea22fb2880faf7b7b0e17c9809c6fe25b071fd76",
+                "url": "https://api.github.com/repos/silexphp/Pimple/zipball/876bf0899d01feacd2a2e83f04641e51350099ef",
+                "reference": "876bf0899d01feacd2a2e83f04641e51350099ef",
                 "shasum": ""
             },
             "require": {
@@ -624,7 +624,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1.x-dev"
+                    "dev-master": "3.0.x-dev"
                 }
             },
             "autoload": {
@@ -648,7 +648,7 @@
                 "container",
                 "dependency injection"
             ],
-            "time": "2014-07-24 07:10:08"
+            "time": "2014-07-24 09:48:15"
         },
         {
             "name": "sebastian/comparator",
