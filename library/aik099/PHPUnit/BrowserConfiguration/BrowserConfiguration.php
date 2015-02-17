@@ -14,7 +14,6 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\Event\TestEndedEvent;
 use aik099\PHPUnit\Event\TestEvent;
-use aik099\PHPUnit\IEventDispatcherAware;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -42,10 +41,21 @@ class BrowserConfiguration implements EventSubscriberInterface
 		'browserName' => 'firefox',
 		'desiredCapabilities' => array(),
 		'baseUrl' => '',
+		'driver' => 'selenium2',
+		'driverOptions' => array(),
 
 		// Test related.
 		'type' => 'default',
 		'sessionStrategy' => ISessionStrategyFactory::TYPE_ISOLATED,
+	);
+
+	/**
+	 * List of driver aliases. Used for validation in the setDriver() method.
+	 *
+	 * @var array
+	 */
+	protected $driverAliases = array(
+		'selenium2', 'goutte', 'sahi', 'zombie',
 	);
 
 	/**
@@ -212,6 +222,7 @@ class BrowserConfiguration implements EventSubscriberInterface
 		}
 
 		$this->setHost($parameters['host'])->setPort($parameters['port'])->setTimeout($parameters['timeout']);
+		$this->setDriver($parameters['driver']);
 		$this->setBrowserName($parameters['browserName'])->setDesiredCapabilities($parameters['desiredCapabilities']);
 		$this->setBaseUrl($parameters['baseUrl']);
 		$this->setSessionStrategy($parameters['sessionStrategy']);
@@ -353,6 +364,59 @@ class BrowserConfiguration implements EventSubscriberInterface
 	public function getBaseUrl()
 	{
 		return $this->parameters['baseUrl'];
+	}
+
+	/**
+	 * Set the Mink driver to use.
+	 *
+	 * @param string $driver The driver to use.
+	 *
+	 * @return self
+	 * @throws \InvalidArgumentException When Mink driver is not a string.
+	 */
+	public function setDriver($driver)
+	{
+		if ( !is_string($driver) ) {
+			throw new \InvalidArgumentException('The Mink driver must be a string');
+		}
+
+		$this->parameters['driver'] = $driver;
+
+		return $this;
+	}
+
+	/**
+	 * Returns the Mink driver.
+	 *
+	 * @return string
+	 */
+	public function getDriver()
+	{
+		return $this->parameters['driver'];
+	}
+
+	/**
+	 * Sets driver options to be used by the driver factory.
+	 *
+	 * @param array $driver_options Set Mink driver specific options.
+	 *
+	 * @return self
+	 */
+	public function setDriverOptions(array $driver_options)
+	{
+		$this->parameters['driverOptions'] = $driver_options;
+
+		return $this;
+	}
+
+	/**
+	 * Returns Mink driver options.
+	 *
+	 * @return array
+	 */
+	public function getDriverOptions()
+	{
+		return $this->parameters['driverOptions'];
 	}
 
 	/**

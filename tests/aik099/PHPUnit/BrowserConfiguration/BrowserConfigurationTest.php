@@ -80,6 +80,8 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 			'desiredCapabilities' => array('platform' => 'Windows 7', 'version' => 10),
 			'baseUrl' => 'http://other-host',
 			'sessionStrategy' => ISessionStrategyFactory::TYPE_SHARED,
+			'driver' => 'selenium2',
+			'driverOptions' => array(),
 		);
 
 		$this->browser = $this->createBrowserConfiguration(
@@ -220,6 +222,8 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 		$this->assertSame($this->setup['desiredCapabilities'], $this->browser->getDesiredCapabilities());
 		$this->assertSame($this->setup['baseUrl'], $this->browser->getBaseUrl());
 		$this->assertSame($this->setup['sessionStrategy'], $this->browser->getSessionStrategy());
+		$this->assertSame($this->setup['driver'], $this->browser->getDriver());
+		$this->assertSame($this->setup['driverOptions'], $this->browser->getDriverOptions());
 	}
 
 	/**
@@ -459,6 +463,31 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 
 		$this->browser->setSessionStrategy(ISessionStrategyFactory::TYPE_SHARED);
 		$this->assertTrue($this->browser->getTestStatus($test_case, $test_result));
+	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 * @expectedExceptionMessage The Mink driver must be a string
+	 *
+	 * @return void
+	 */
+	public function testSetDriverMustReceiveString()
+	{
+		$this->browser->setDriver(array());
+	}
+
+	public function testDriverClassIsCopiedBySetup()
+	{
+		$driver_name = 'selenium2';
+		$this->browser->setup(array('driver' => $driver_name));
+		$this->assertEquals($driver_name, $this->browser->getDriver());
+	}
+
+	public function testSetDriverOptions()
+	{
+		$driver_options = array('test driver', 'options');
+		$this->browser->setDriverOptions($driver_options);
+		$this->assertSame($driver_options, $this->browser->getDriverOptions());
 	}
 
 	/**
