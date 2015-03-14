@@ -11,6 +11,7 @@
 namespace aik099\PHPUnit\BrowserConfiguration;
 
 
+use aik099\PHPUnit\Event\TestEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -37,6 +38,31 @@ class BrowserStackBrowserConfiguration extends ApiBrowserConfiguration
 	}
 
 	/**
+	 * Hook, called from "BrowserTestCase::setUp" method.
+	 *
+	 * @param TestEvent $event Test event.
+	 *
+	 * @return void
+	 */
+	public function onTestSetup(TestEvent $event)
+	{
+		if ( !$event->validateSubscriber($this->getTestCase()) ) {
+			return;
+		}
+
+		parent::onTestSetup($event);
+
+		$desired_capabilities = $this->getDesiredCapabilities();
+
+		if ( getenv('TRAVIS_JOB_NUMBER') ) {
+			$desired_capabilities['browserstack.local'] = 'true';
+			$desired_capabilities['browserstack.localIdentifier'] = getenv('TRAVIS_JOB_NUMBER');
+		}
+
+		$this->setDesiredCapabilities($desired_capabilities);
+	}
+
+	/**
 	 * Returns hostname from browser configuration.
 	 *
 	 * @return string
@@ -58,7 +84,7 @@ class BrowserStackBrowserConfiguration extends ApiBrowserConfiguration
 
 		if ( !isset($capabilities['os']) ) {
 			$capabilities['os'] = 'Windows';
-			$capabilities['os_version'] = 'XP';
+			$capabilities['os_version'] = '7';
 		}
 
 		if ( !isset($capabilities['acceptSslCerts']) ) {

@@ -11,7 +11,7 @@ method in of test case class and setting it via ``setBrowser`` method.
 
 .. literalinclude:: examples/configuration/config_via_setup_method.php
    :linenos:
-   :emphasize-lines: 11,16,25-29,32
+   :emphasize-lines: 11,16,25,34-38,41
 
 Per Test Case Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -52,7 +52,7 @@ Name                     Description
                          that will be used by Selenium server
 ``baseUrl``              base url of website, that is tested
 ``sessionStrategy``      used session strategy (defaults to ``isolated``)
-``type``                 type of configuration (defaults to ``default``, but can also be ``saucelabs``)
+``type``                 type of configuration (defaults to ``default``, but can also be ``saucelabs`` or ``browserstack``)
 ``api_username``         API username of used service (applicable to any but ``default`` configuration type)
 ``api_key``              API key of used service (applicable to any but ``default`` configuration type)
 =======================  =================================================================================================

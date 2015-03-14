@@ -28,6 +28,8 @@
 		<!--
 			<env name="SAUCE_USERNAME" value=""/>
 			<env name="SAUCE_ACCESS_KEY" value=""/>
+			<env name="BS_USERNAME" value=""/>
+			<env name="BS_ACCESS_KEY" value=""/>
 		-->
 	</php>
 

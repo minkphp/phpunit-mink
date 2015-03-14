@@ -11,12 +11,13 @@
 namespace tests\aik099\PHPUnit\Fixture;
 
 
+use aik099\PHPUnit\BrowserConfiguration\ApiBrowserConfiguration;
+use aik099\PHPUnit\BrowserConfiguration\BrowserStackBrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\Event\TestEvent;
 use Mockery as m;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use WebDriver\SauceLabs\SauceRest;
 
 class ApiIntegrationFixture extends BrowserTestCase
 {
@@ -28,7 +29,7 @@ class ApiIntegrationFixture extends BrowserTestCase
 	 */
 	public static $browsers = array(
 		array('alias' => 'saucelabs'),
-		// array('alias' => 'browserstack'),
+		array('alias' => 'browserstack'),
 	);
 
 	/**
@@ -75,7 +76,7 @@ class ApiIntegrationFixture extends BrowserTestCase
 		$session = $event->getSession();
 
 		if ( $session === null ) {
-			$this->markTestSkipped('Unable to connect to SauceLabs. Please check Internet connection.');
+			$this->markTestSkipped('Unable to connect to SauceLabs/BrowserStack. Please check Internet connection.');
 		}
 
 		$this->_sessionIds[$test_case->getName(false)] = $session->getDriver()->getWebDriverSessionId();
@@ -90,12 +91,11 @@ class ApiIntegrationFixture extends BrowserTestCase
 	 */
 	public function verifyRemoteAPICalls(TestEvent $event)
 	{
-		$test_case = $event->getTestCase();
-
 		if ( !$event->validateSubscriber($this) ) {
 			return;
 		}
 
+		$test_case = $event->getTestCase();
 		$test_name = $test_case->getName(false);
 
 		if ( !isset($this->_sessionIds[$test_name]) ) {
@@ -104,18 +104,28 @@ class ApiIntegrationFixture extends BrowserTestCase
 
 		$browser = $this->getBrowser();
 
-		if ( $browser instanceof SauceLabsBrowserConfiguration ) {
-			$sauce_rest = new SauceRest($browser->getApiUsername(), $browser->getApiKey());
-			$job_info = $sauce_rest->getJob($this->_sessionIds[$test_name]);
+		if ( $browser instanceof ApiBrowserConfiguration ) {
+			$api_client = $browser->getAPIClient();
+			$session_info = $api_client->getInfo($this->_sessionIds[$test_name]);
 
-			$this->assertEquals(get_class($test_case) . '::' . $test_name, $job_info['name']);
+			$this->assertEquals(get_class($test_case) . '::' . $test_name, $session_info['name']);
 
-			$passed_mapping = array(
-				'testSuccess' => true,
-				'testFailure' => false,
-			);
+			if ( $browser instanceof SauceLabsBrowserConfiguration ) {
+				$passed_mapping = array(
+					'testSuccess' => true,
+					'testFailure' => false,
+				);
 
-			$this->assertSame($passed_mapping[$test_name], $job_info['passed']);
+				$this->assertSame($passed_mapping[$test_name], $session_info['passed']);
+			}
+			elseif ( $browser instanceof BrowserStackBrowserConfiguration ) {
+				$passed_mapping = array(
+					'testSuccess' => 'done',
+					'testFailure' => 'error',
+				);
+
+				$this->assertSame($passed_mapping[$test_name], $session_info['status']);
+			}
 		}
 	}
 
@@ -185,12 +195,17 @@ class ApiIntegrationFixture extends BrowserTestCase
 				'api_key' => getenv('SAUCE_ACCESS_KEY'),
 
 				'browserName' => 'chrome',
-				'desiredCapabilities' => array('version' => 28),
+				'desiredCapabilities' => array('version' => 38),
 				'baseUrl' => 'http://www.google.com',
 			),
-			/*'browserstack' => array(
+			'browserstack' => array(
 				'type' => 'browserstack',
-			),*/
+				'api_username' => getenv('BS_USERNAME'),
+				'api_key' => getenv('BS_ACCESS_KEY'),
+
+				'browserName' => 'chrome',
+				'desiredCapabilities' => array('browser_version' => '38.0', 'project' => 'PHPUnit-Mink'),
+			),
 		);
 	}
 
@@ -201,6 +216,11 @@ class ApiIntegrationFixture extends BrowserTestCase
 		if ( $browser->getType() == 'saucelabs' ) {
 			if ( !getenv('SAUCE_USERNAME') || !getenv('SAUCE_ACCESS_KEY') ) {
 				return 'SauceLabs integration is not configured';
+			}
+		}
+		elseif ( $browser->getType() == 'browserstack' ) {
+			if ( !getenv('BS_USERNAME') || !getenv('BS_ACCESS_KEY') ) {
+				return 'BrowserStack integration is not configured';
 			}
 		}
 

@@ -29,67 +29,15 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 	 */
 	protected function setUp()
 	{
-		$this->testsRequireSubscriber[] = 'testTunnelIdentifier';
 		$this->browserConfigurationClass = 'aik099\\PHPUnit\\BrowserConfiguration\\SauceLabsBrowserConfiguration';
+
+		$this->tunnelCapabilities = array(
+			'tunnel-identifier' => 'env:TRAVIS_JOB_NUMBER',
+		);
 
 		parent::setUp();
 
 		$this->setup['host'] = 'UN:AK@ondemand.saucelabs.com';
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @param string|null $travis_job_number Travis Job Number.
-	 *
-	 * @return void
-	 * @dataProvider tunnelIdentifierDataProvider
-	 */
-	public function testTunnelIdentifier($travis_job_number = null)
-	{
-		// Reset any global env vars that might be left from previous tests.
-		$hhvm_hack = defined('HHVM_VERSION') ? '=' : '';
-		putenv('TRAVIS_JOB_NUMBER' . $hhvm_hack);
-
-		if ( isset($travis_job_number) ) {
-			putenv('TRAVIS_JOB_NUMBER=' . $travis_job_number);
-		}
-
-		$this->browser->setSessionStrategy(ISessionStrategyFactory::TYPE_ISOLATED);
-
-		$test_case = $this->createTestCase('TEST_NAME');
-		$test_case->shouldReceive('toString')->andReturn('TEST_NAME');
-
-		$event_dispatcher = new EventDispatcher();
-		$event_dispatcher->addSubscriber($this->browser);
-
-		$event_dispatcher->dispatch(
-			BrowserTestCase::TEST_SETUP_EVENT,
-			new TestEvent($test_case, m::mock('Behat\\Mink\\Session'))
-		);
-
-		$desired_capabilities = $this->browser->getDesiredCapabilities();
-
-		if ( isset($travis_job_number) ) {
-			$this->assertArrayHasKey('tunnel-identifier', $desired_capabilities);
-			$this->assertEquals($travis_job_number, $desired_capabilities['tunnel-identifier']);
-		}
-		else {
-			$this->assertArrayNotHasKey('tunnel-identifier', $desired_capabilities);
-		}
-	}
-
-	/**
-	 * Provides Travis job numbers.
-	 *
-	 * @return array
-	 */
-	public function tunnelIdentifierDataProvider()
-	{
-		return array(
-			array('AAA'),
-			array(null),
-		);
 	}
 
 	/**

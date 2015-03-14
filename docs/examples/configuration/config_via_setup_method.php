@@ -21,6 +21,15 @@ class PerTestBrowserConfigTest extends BrowserTestCase
             // optional options goes here
         ));
 
+        // To create "BrowserStack" browser configuration via BrowserConfigurationFactory.
+        $browser = $this->createBrowserConfiguration(array(
+            // required
+            'type' => 'browserstack',
+            'api_username' => 'bs_username',
+            'api_key' => 'bs_api_key',
+            // optional options goes here
+        ));
+
         // Options can be changed later (optional).
         $browser->setHost('selenium_host')->setPort('selenium_port')->setTimeout(30);
         $browser->setBrowserName('browser name')->setDesiredCapabilities(array(
