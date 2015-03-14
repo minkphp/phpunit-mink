@@ -50,6 +50,20 @@ tests were running locally.
    :linenos:
    :emphasize-lines: 11-13,19-21
 
+Continuous Integration
+^^^^^^^^^^^^^^^^^^^^^^
+When website under test isn't publicly accessible, then:
+
+#. secure tunnel needs to be created from website under test to server, that runs the tests
+#. created tunnel identifier needs to specified in the ``PHPUNIT_MINK_TUNNEL_ID`` environment variable
+
+.. note:: Before v2.1.0 the environment variable was called ``TRAVIS_JOB_NUMBER``.
+
+How to Create a Tunnel
+----------------------
+* SauceLabs: https://docs.saucelabs.com/reference/sauce-connect/
+* BrowserStack: http://www.browserstack.com/automate/php#setting-local-tunnel
+
 .. _`Mink`: https://github.com/Behat/Mink
 .. _`Sauce Labs`: https://saucelabs.com/
 .. _`BrowserStack`: http://www.browserstack.com/

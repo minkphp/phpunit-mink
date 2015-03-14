@@ -54,9 +54,9 @@ class BrowserStackBrowserConfiguration extends ApiBrowserConfiguration
 
 		$desired_capabilities = $this->getDesiredCapabilities();
 
-		if ( getenv('TRAVIS_JOB_NUMBER') ) {
+		if ( getenv('PHPUNIT_MINK_TUNNEL_ID') ) {
 			$desired_capabilities['browserstack.local'] = 'true';
-			$desired_capabilities['browserstack.localIdentifier'] = getenv('TRAVIS_JOB_NUMBER');
+			$desired_capabilities['browserstack.localIdentifier'] = getenv('PHPUNIT_MINK_TUNNEL_ID');
 		}
 
 		$this->setDesiredCapabilities($desired_capabilities);
