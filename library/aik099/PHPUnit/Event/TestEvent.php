@@ -64,4 +64,20 @@ class TestEvent extends Event
 		return $this->_session;
 	}
 
+	/**
+	 * Determines if received event is designed for given test case.
+	 *
+	 * @param BrowserTestCase $test_case Test case for comparison.
+	 *
+	 * @return boolean
+	 */
+	public function validateSubscriber(BrowserTestCase $test_case)
+	{
+		$event_test_case = $this->getTestCase();
+
+		return get_class($event_test_case) === get_class($test_case)
+			&& $event_test_case->getName() === $test_case->getName()
+			&& $event_test_case->getBrowser()->getChecksum() === $test_case->getBrowser()->getChecksum();
+	}
+
 }

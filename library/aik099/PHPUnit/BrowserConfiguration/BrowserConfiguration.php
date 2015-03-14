@@ -455,7 +455,7 @@ class BrowserConfiguration implements EventSubscriberInterface
 	 */
 	public function getSessionStrategyHash()
 	{
-		$ret = $this->getBrowserHash();
+		$ret = $this->getChecksum();
 
 		if ( $this->isShared() ) {
 			$ret .= '::' . get_class($this->getTestCase());
@@ -486,11 +486,11 @@ class BrowserConfiguration implements EventSubscriberInterface
 	}
 
 	/**
-	 * Returns hash from current configuration.
+	 * Returns checksum from current configuration.
 	 *
 	 * @return integer
 	 */
-	protected function getBrowserHash()
+	public function getChecksum()
 	{
 		ksort($this->parameters);
 
@@ -534,7 +534,7 @@ class BrowserConfiguration implements EventSubscriberInterface
 	 */
 	public function onTestSetup(TestEvent $event)
 	{
-		if ( !$this->isEventForMe($event) ) {
+		if ( !$event->validateSubscriber($this->getTestCase()) ) {
 			return;
 		}
 
@@ -550,26 +550,11 @@ class BrowserConfiguration implements EventSubscriberInterface
 	 */
 	public function onTestEnded(TestEndedEvent $event)
 	{
-		if ( !$this->isEventForMe($event) ) {
+		if ( !$event->validateSubscriber($this->getTestCase()) ) {
 			return;
 		}
 
 		$this->detachFromTestCase();
-	}
-
-	/**
-	 * Determines if received event is designed for this recipient.
-	 *
-	 * @param TestEvent $event Event.
-	 *
-	 * @return boolean
-	 */
-	protected function isEventForMe(TestEvent $event)
-	{
-		$test_case = $event->getTestCase();
-
-		return get_class($test_case) === get_class($this->_testCase)
-			&& $test_case->getName() === $this->_testCase->getName();
 	}
 
 }

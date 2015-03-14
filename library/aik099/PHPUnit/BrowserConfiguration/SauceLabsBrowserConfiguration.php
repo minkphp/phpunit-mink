@@ -46,7 +46,7 @@ class SauceLabsBrowserConfiguration extends ApiBrowserConfiguration
 	 */
 	public function onTestSetup(TestEvent $event)
 	{
-		if ( !$this->isEventForMe($event) ) {
+		if ( !$event->validateSubscriber($this->getTestCase()) ) {
 			return;
 		}
 

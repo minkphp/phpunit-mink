@@ -312,7 +312,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 */
 	public function testTestEndedWithoutSession($stopped_or_missing)
 	{
-		$test_case = $this->createTestCase('TEST_NAME');
+		$test_case = $this->createTestCase('TEST_NAME', false);
 
 		$event_dispatcher = new EventDispatcher();
 		$event_dispatcher->addSubscriber($this->browser);
@@ -332,6 +332,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$event->shouldReceive('setName')->once(); // To remove with Symfony 3.0 release.
 		$event->shouldReceive('isPropagationStopped')->once()->andReturn(false);
 		$event->shouldReceive('getTestCase')->andReturn($test_case);
+		$event->shouldReceive('validateSubscriber')->with($test_case)->atLeast()->once()->andReturn(true);
 
 		$this->eventDispatcher->shouldReceive('removeSubscriber')->with($this->browser)->once();
 		$returned_event = $event_dispatcher->dispatch(BrowserTestCase::TEST_ENDED_EVENT, $event);
@@ -350,14 +351,20 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	/**
 	 * Create TestCase with Browser.
 	 *
-	 * @param string $name Test case name.
+	 * @param string  $name        Test case name.
+	 * @param boolean $get_browser Create browser expectation.
 	 *
 	 * @return BrowserTestCase
 	 */
-	protected function createTestCase($name)
+	protected function createTestCase($name, $get_browser = true)
 	{
 		$test_case = m::mock(self::TEST_CASE_CLASS);
 		$test_case->shouldReceive('getName')->andReturn($name);
+
+		if ( $get_browser ) {
+			$test_case->shouldReceive('getBrowser')->atLeast()->once()->andReturn($this->browser);
+		}
+
 		$this->browser->attachToTestCase($test_case);
 
 		return $test_case;

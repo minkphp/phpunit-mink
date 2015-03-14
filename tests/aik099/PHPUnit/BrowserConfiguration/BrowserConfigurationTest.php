@@ -461,6 +461,28 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 		$this->assertTrue($this->browser->getTestStatus($test_case, $test_result));
 	}
 
+	public function testChecksumMatch()
+	{
+		$browser1 = $this->createBrowserConfiguration();
+		$browser1->setBrowserName('opera');
+
+		$browser2 = $this->createBrowserConfiguration();
+		$browser2->setBrowserName('opera');
+
+		$this->assertSame($browser1->getChecksum(), $browser2->getChecksum());
+	}
+
+	public function testChecksumMismatch()
+	{
+		$browser1 = $this->createBrowserConfiguration();
+		$browser1->setBrowserName('opera');
+
+		$browser2 = $this->createBrowserConfiguration();
+		$browser2->setBrowserName('firefox');
+
+		$this->assertNotSame($browser1->getChecksum(), $browser2->getChecksum());
+	}
+
 	/**
 	 * Creates instance of browser configuration.
 	 *

@@ -158,7 +158,7 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 	 */
 	public function onTestSetup(TestEvent $event)
 	{
-		if ( !$this->isEventForMe($event) ) {
+		if ( !$event->validateSubscriber($this->getTestCase()) ) {
 			return;
 		}
 
@@ -202,7 +202,7 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 	 */
 	public function onTestEnded(TestEndedEvent $event)
 	{
-		if ( !$this->isEventForMe($event) ) {
+		if ( !$event->validateSubscriber($this->getTestCase()) ) {
 			return;
 		}
 

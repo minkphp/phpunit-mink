@@ -92,7 +92,7 @@ class ApiIntegrationFixture extends BrowserTestCase
 	{
 		$test_case = $event->getTestCase();
 
-		if ( get_class($test_case) !== get_class($this) || $test_case->getName() !== $this->getName() ) {
+		if ( !$event->validateSubscriber($this) ) {
 			return;
 		}
 
