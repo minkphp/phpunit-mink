@@ -47,6 +47,7 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 	 * @param string $type           Type.
 	 *
 	 * @return void
+	 * @medium
 	 * @dataProvider createBrowserConfigurationDataProvider
 	 */
 	public function testCreateBrowserConfiguration(array $browser_config, $type)
