@@ -2,13 +2,21 @@
 
 use aik099\PHPUnit\BrowserTestCase;
 
-class SauceLabsTest extends BrowserTestCase
+class BrowserConfigExampleTest extends BrowserTestCase
 {
 
     public static $browsers = array(
         // Sauce Labs browser configuration.
         array(
             'type' => 'saucelabs',
+            'api_username' => '...',
+            'api_key' => '...',
+            'browserName' => 'firefox',
+            'baseUrl' => 'http://www.google.com',
+        ),
+        // BrowserStack browser configuration.
+        array(
+            'type' => 'browserstack',
             'api_username' => '...',
             'api_key' => '...',
             'browserName' => 'firefox',

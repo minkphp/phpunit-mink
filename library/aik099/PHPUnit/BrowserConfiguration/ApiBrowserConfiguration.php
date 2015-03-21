@@ -228,7 +228,7 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 	 *
 	 * @return IAPIClient
 	 */
-	protected function getAPIClient()
+	public function getAPIClient()
 	{
 		return $this->browserConfigurationFactory->createAPIClient($this);
 	}

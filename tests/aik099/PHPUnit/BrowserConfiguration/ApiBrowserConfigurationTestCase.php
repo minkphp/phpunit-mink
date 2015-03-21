@@ -43,6 +43,13 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	protected $browserConfigurationFactory;
 
 	/**
+	 * Desired capabilities use to configure the tunnel.
+	 *
+	 * @var array
+	 */
+	protected $tunnelCapabilities = array();
+
+	/**
 	 * Configures all tests.
 	 *
 	 * @return void
@@ -52,6 +59,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$this->testsRequireSubscriber[] = 'testTestSetupEvent';
 		$this->testsRequireSubscriber[] = 'testTestEndedEvent';
 		$this->testsRequireSubscriber[] = 'testTestEndedWithoutSession';
+		$this->testsRequireSubscriber[] = 'testTunnelIdentifier';
 		$this->browserConfigurationFactory = m::mock(
 			'aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory'
 		);
@@ -368,6 +376,70 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$this->browser->attachToTestCase($test_case);
 
 		return $test_case;
+	}
+
+	/**
+	 * Test description.
+	 *
+	 * @param string|null $travis_job_number Travis Job Number.
+	 *
+	 * @return void
+	 * @dataProvider tunnelIdentifierDataProvider
+	 */
+	public function testTunnelIdentifier($travis_job_number = null)
+	{
+		// Reset any global env vars that might be left from previous tests.
+		$hhvm_hack = defined('HHVM_VERSION') ? '=' : '';
+
+		putenv('TRAVIS_JOB_NUMBER' . $hhvm_hack);
+
+		if ( isset($travis_job_number) ) {
+			putenv('TRAVIS_JOB_NUMBER=' . $travis_job_number);
+		}
+
+		$this->browser->setSessionStrategy(ISessionStrategyFactory::TYPE_ISOLATED);
+
+		$test_case = $this->createTestCase('TEST_NAME');
+		$test_case->shouldReceive('toString')->andReturn('TEST_NAME');
+
+		$event_dispatcher = new EventDispatcher();
+		$event_dispatcher->addSubscriber($this->browser);
+
+		$event_dispatcher->dispatch(
+			BrowserTestCase::TEST_SETUP_EVENT,
+			new TestEvent($test_case, m::mock('Behat\\Mink\\Session'))
+		);
+
+		$desired_capabilities = $this->browser->getDesiredCapabilities();
+
+		if ( isset($travis_job_number) ) {
+			foreach ( $this->tunnelCapabilities as $name => $value ) {
+				if ( substr($value, 0, 4) === 'env:' ) {
+					$value = getenv(substr($value, 4));
+				}
+
+				$this->assertArrayHasKey($name, $desired_capabilities);
+				$this->assertEquals($value, $desired_capabilities[$name]);
+			}
+		}
+		else {
+			foreach ( array_keys($this->tunnelCapabilities) as $name ) {
+				$this->assertArrayNotHasKey($name, $desired_capabilities);
+			}
+		}
+	}
+
+	/**
+	 * Provides Travis job numbers.
+	 *
+	 * @return array
+	 */
+	public function tunnelIdentifierDataProvider()
+	{
+		return array(
+			array('AAA'),
+			array(null),
+		);
 	}
 
 	/**

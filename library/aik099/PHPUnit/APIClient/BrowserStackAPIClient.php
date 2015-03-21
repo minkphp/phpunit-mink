@@ -52,18 +52,33 @@ class BrowserStackAPIClient implements IAPIClient
 	}
 
 	/**
+	 * Returns information about session.
+	 *
+	 * @param string $session_id Session ID.
+	 *
+	 * @return array
+	 */
+	public function getInfo($session_id)
+	{
+		$result = $this->execute('GET', 'sessions/' . $session_id . '.json');
+
+		return $result['automation_session'];
+	}
+
+	/**
 	 * Update status of the test, that was executed in the given session.
 	 *
 	 * @param string  $session_id  Session ID.
 	 * @param boolean $test_status Test status.
 	 *
-	 * @return boolean
+	 * @return array
 	 */
 	public function updateStatus($session_id, $test_status)
 	{
 		$data = array('status' => $test_status ? 'completed' : 'error');
+		$result = $this->execute('PUT', 'sessions/' . $session_id . '.json', $data);
 
-		return $this->execute('PUT', 'sessions/' . $session_id . '.json', json_encode($data));
+		return $result['automation_session'];
 	}
 
 	/**

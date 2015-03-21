@@ -27,10 +27,15 @@ class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCa
 	{
 		$this->browserConfigurationClass = 'aik099\\PHPUnit\\BrowserConfiguration\\BrowserStackBrowserConfiguration';
 
+		$this->tunnelCapabilities = array(
+			'browserstack.local' => 'true',
+			'browserstack.localIdentifier' => 'env:TRAVIS_JOB_NUMBER',
+		);
+
 		parent::setUp();
 
 		$this->setup['desiredCapabilities'] = array(
-			'os' => 'Windows', 'os_version' => '7', 'version' => 10,
+			'os' => 'Windows', 'os_version' => 'XP', 'version' => 10,
 			'acceptSslCerts' => 'true',
 		);
 		$this->setup['host'] = 'UN:AK@hub.browserstack.com';
@@ -63,7 +68,7 @@ class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCa
 			),
 			array(
 				array('acceptSslCerts' => 'false'),
-				array('acceptSslCerts' => 'false', 'os' => 'Windows', 'os_version' => 'XP'),
+				array('acceptSslCerts' => 'false', 'os' => 'Windows', 'os_version' => '7'),
 			),
 		);
 	}

@@ -34,20 +34,22 @@ Basic Usage
    :linenos:
    :emphasize-lines: 5,8,20,34
 
-Using "Sauce Labs"
-^^^^^^^^^^^^^^^^^^
-When using `Sauce Labs <https://saucelabs.com/>`_ account to perform Selenium server-based testing you need to
+Selenium in Cloud
+^^^^^^^^^^^^^^^^^
+When using Selenium-based solution for automated testing in the cloud (e.g. `Sauce Labs`_ or `BrowserStack`_) you need to
 specify following settings:
 
-* ``'type' => 'saucelabs'``
+* ``'type' => 'saucelabs'`` or ``'type' => 'browserstack'``
 * ``'api_username' => '...'``
 * ``'api_key' => '...'``
 
 instead of ``host`` and ``port`` settings. In all other aspects everything will work the same as if all
 tests were running locally.
 
-.. literalinclude:: examples/getting-started/sauce_labs.php
+.. literalinclude:: examples/getting-started/cloud_selenium_configs.php
    :linenos:
-   :emphasize-lines: 11-13
+   :emphasize-lines: 11-13,19-21
 
 .. _`Mink`: https://github.com/Behat/Mink
+.. _`Sauce Labs`: https://saucelabs.com/
+.. _`BrowserStack`: http://www.browserstack.com/
