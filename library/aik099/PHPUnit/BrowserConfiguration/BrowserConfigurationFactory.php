@@ -68,6 +68,7 @@ class BrowserConfigurationFactory implements IBrowserConfigurationFactory
 		$config = BrowserConfiguration::resolveAliases($config, $aliases);
 
 		$type = isset($config['type']) ? $config['type'] : 'default';
+		unset($config['type']);
 
 		return $this->create($type)->setAliases($aliases)->setup($config);
 	}

@@ -79,8 +79,8 @@ class DataProviderTest extends BrowserTestCase
 		return array(
 			'saucelabs' => array(
 				'type' => 'saucelabs',
-				'api_username' => getenv('SAUCE_USERNAME'),
-				'api_key' => getenv('SAUCE_ACCESS_KEY'),
+				'apiUsername' => getenv('SAUCE_USERNAME'),
+				'apiKey' => getenv('SAUCE_ACCESS_KEY'),
 
 				'browserName' => 'chrome',
 				'desiredCapabilities' => array('version' => 28),

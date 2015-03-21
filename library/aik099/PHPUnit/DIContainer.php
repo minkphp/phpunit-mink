@@ -15,6 +15,11 @@ use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserConfiguration\BrowserStackBrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
+use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
+use aik099\PHPUnit\MinkDriver\GoutteDriverFactory;
+use aik099\PHPUnit\MinkDriver\SahiDriverFactory;
+use aik099\PHPUnit\MinkDriver\Selenium2DriverFactory;
+use aik099\PHPUnit\MinkDriver\ZombieDriverFactory;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
 use aik099\PHPUnit\Session\IsolatedSessionStrategy;
@@ -120,17 +125,36 @@ class DIContainer extends Container implements IApplicationAware
 			return $test_suite;
 		});
 
+		$this['driver_factory_registry'] = function () {
+			$registry = new DriverFactoryRegistry();
+
+			$registry->add(new Selenium2DriverFactory());
+			$registry->add(new SahiDriverFactory());
+			$registry->add(new GoutteDriverFactory());
+			$registry->add(new ZombieDriverFactory());
+
+			return $registry;
+		};
+
 		$this['browser_configuration_factory'] = function ($c) {
 			$browser_configuration_factory = new BrowserConfigurationFactory();
 
 			$browser_configuration_factory->register(
-				new BrowserConfiguration($c['event_dispatcher'])
+				new BrowserConfiguration($c['event_dispatcher'], $c['driver_factory_registry'])
 			);
 			$browser_configuration_factory->register(
-				new SauceLabsBrowserConfiguration($c['event_dispatcher'], $browser_configuration_factory)
+				new SauceLabsBrowserConfiguration(
+					$c['event_dispatcher'],
+					$c['driver_factory_registry'],
+					$browser_configuration_factory
+				)
 			);
 			$browser_configuration_factory->register(
-				new BrowserStackBrowserConfiguration($c['event_dispatcher'], $browser_configuration_factory)
+				new BrowserStackBrowserConfiguration(
+					$c['event_dispatcher'],
+					$c['driver_factory_registry'],
+					$browser_configuration_factory
+				)
 			);
 
 			return $browser_configuration_factory;

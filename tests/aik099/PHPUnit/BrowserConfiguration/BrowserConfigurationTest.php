@@ -11,8 +11,10 @@
 namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 
+use aik099\PHPUnit\BrowserConfiguration\ApiBrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
+use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use Mockery as m;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
@@ -52,9 +54,16 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	/**
 	 * Browser configuration.
 	 *
-	 * @var BrowserConfiguration
+	 * @var BrowserConfiguration|ApiBrowserConfiguration
 	 */
 	protected $browser;
+
+	/**
+	 * Driver factory registry.
+	 *
+	 * @var DriverFactoryRegistry|m\MockInterface
+	 */
+	protected $driverFactoryRegistry;
 
 	/**
 	 * Tests names, that require subscriber.
@@ -80,14 +89,47 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 			'desiredCapabilities' => array('platform' => 'Windows 7', 'version' => 10),
 			'baseUrl' => 'http://other-host',
 			'sessionStrategy' => ISessionStrategyFactory::TYPE_SHARED,
-			'driver' => 'selenium2',
-			'driverOptions' => array(),
+			'driver' => 'zombie',
+			'driverOptions' => array('customSetting' => 'customValue'),
 		);
+
+		$this->driverFactoryRegistry = $this->createDriverFactoryRegistry();
 
 		$this->browser = $this->createBrowserConfiguration(
 			array(),
 			in_array($this->getName(false), $this->testsRequireSubscriber)
 		);
+	}
+
+	/**
+	 * Creates driver factory registry.
+	 *
+	 * @return DriverFactoryRegistry
+	 */
+	protected function createDriverFactoryRegistry()
+	{
+		$registry = m::mock('\\aik099\\PHPUnit\\MinkDriver\\DriverFactoryRegistry');
+
+		$selenium2_driver_factory = m::mock('\\aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$selenium2_driver_factory->shouldReceive('getDriverDefaults')->andReturn(array(
+			'baseUrl' => 'http://www.super-url.com',
+			'driverOptions' => array(
+				'driverParam1' => 'driverParamValue1',
+			),
+		));
+		$registry
+			->shouldReceive('get')
+			->with('selenium2')
+			->andReturn($selenium2_driver_factory);
+
+		$zombie_driver_factory = m::mock('\\aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$zombie_driver_factory->shouldReceive('getDriverDefaults')->andReturn(array());
+		$registry
+			->shouldReceive('get')
+			->with('zombie')
+			->andReturn($zombie_driver_factory);
+
+		return $registry;
 	}
 
 	/**
@@ -125,7 +167,8 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 				),
 				array('alias' => 'a1'),
 				array(
-					'host' => static::HOST, 'port' => static::PORT, 'browserName' => 'firefox', 'baseUrl' => '',
+					'host' => static::HOST, 'port' => static::PORT, 'browserName' => 'firefox',
+					'baseUrl' => 'http://www.super-url.com', // Comes from driver defaults.
 				),
 			),
 			'recursive alias' => array(
@@ -147,7 +190,8 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 				),
 				array('alias' => 'a1', 'browserName' => 'firefox'),
 				array(
-					'host' => static::HOST, 'port' => static::PORT, 'browserName' => 'firefox', 'baseUrl' => '',
+					'host' => static::HOST, 'port' => static::PORT, 'browserName' => 'firefox',
+					'baseUrl' => 'http://www.super-url.com', // Comes from driver defaults.
 				),
 			),
 			'with overwrite' => array(
@@ -156,14 +200,16 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 				),
 				array('alias' => 'a1', 'host' => static::HOST),
 				array(
-					'host' => static::HOST, 'port' => static::PORT, 'browserName' => 'firefox', 'baseUrl' => '',
+					'host' => static::HOST, 'port' => static::PORT, 'browserName' => 'firefox',
+					'baseUrl' => 'http://www.super-url.com', // Comes from driver defaults.
 				),
 			),
 			'without alias given' => array(
 				array(),
 				array('host' => static::HOST, 'port' => static::PORT, 'browserName' => 'safari'),
 				array(
-					'host' => static::HOST, 'port' => static::PORT, 'browserName' => 'safari', 'baseUrl' => '',
+					'host' => static::HOST, 'port' => static::PORT, 'browserName' => 'safari',
+					'baseUrl' => 'http://www.super-url.com', // Comes from driver defaults.
 				),
 			),
 		);
@@ -235,6 +281,43 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	public function testSetupScreamsAboutUnknownParameters()
 	{
 		$this->browser->setup(array('unknown-parameter' => 'value'));
+	}
+
+	public function testGetType()
+	{
+		$this->assertEquals('default', $this->browser->getType());
+	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 * @expectedExceptionMessage The Mink driver name must be a string
+	 */
+	public function testSetDriverIncorrect()
+	{
+		$this->browser->setDriver(array());
+	}
+
+	public function testSetDriverCorrect()
+	{
+		$expected = 'zombie';
+		$this->assertEquals($this->browser, $this->browser->setDriver($expected));
+		$this->assertSame($expected, $this->browser->getDriver());
+	}
+
+	public function testSetDriverOptionsCorrect()
+	{
+		$user_driver_options = array('o1' => 'v1', 'o2' => 'v2');
+		$expected_driver_options = array('driverParam1' => 'driverParamValue1') + $user_driver_options;
+
+		$this->assertSame($this->browser, $this->browser->setDriverOptions($user_driver_options));
+		$this->assertSame($expected_driver_options, $this->browser->getDriverOptions());
+	}
+
+	public function testDriverFactoryDefaultsApplied()
+	{
+		$this->browser->setup(array('driver' => 'selenium2'));
+
+		$this->assertEquals('http://www.super-url.com', $this->browser->getBaseUrl());
 	}
 
 	/**
@@ -383,6 +466,34 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	}
 
 	/**
+	 * @expectedException \InvalidArgumentException
+	 * @expectedExceptionMessage Unable to get unknown parameter "nonExisting"
+	 */
+	public function testGetParameterIncorrect()
+	{
+		$this->browser->getNonExisting();
+	}
+
+	public function testCreateDriver()
+	{
+		/** @var m\MockInterface $driver_factory */
+		$driver_factory = $this->driverFactoryRegistry->get('selenium2');
+		$driver_factory->shouldReceive('createDriver')->with($this->browser)->once()->andReturn('OK');
+
+		$this->assertEquals('OK', $this->browser->createDriver());
+	}
+
+	public function testNonExistingMethod()
+	{
+		$this->setExpectedException(
+			'\BadMethodCallException',
+			'Method "nonExistingMethod" does not exist on ' . get_class($this->browser) . ' class'
+		);
+
+		$this->browser->nonExistingMethod();
+	}
+
+	/**
 	 * Test description.
 	 *
 	 * @param string $session_strategy Session strategy name.
@@ -488,31 +599,6 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	}
 
 	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The Mink driver must be a string
-	 *
-	 * @return void
-	 */
-	public function testSetDriverMustReceiveString()
-	{
-		$this->browser->setDriver(array());
-	}
-
-	public function testDriverClassIsCopiedBySetup()
-	{
-		$driver_name = 'selenium2';
-		$this->browser->setup(array('driver' => $driver_name));
-		$this->assertEquals($driver_name, $this->browser->getDriver());
-	}
-
-	public function testSetDriverOptions()
-	{
-		$driver_options = array('test driver', 'options');
-		$this->browser->setDriverOptions($driver_options);
-		$this->assertSame($driver_options, $this->browser->getDriverOptions());
-	}
-
-	/**
 	 * Creates instance of browser configuration.
 	 *
 	 * @param array   $aliases        Aliases.
@@ -522,7 +608,7 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	 */
 	protected function createBrowserConfiguration(array $aliases = array(), $add_subscriber = false)
 	{
-		$browser = new BrowserConfiguration($this->eventDispatcher);
+		$browser = new BrowserConfiguration($this->eventDispatcher, $this->driverFactoryRegistry);
 		$browser->setAliases($aliases);
 
 		$this->eventDispatcher->shouldReceive('addSubscriber')->with($browser)->times($add_subscriber ? 1 : 0);

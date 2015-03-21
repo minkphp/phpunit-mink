@@ -13,28 +13,57 @@ namespace aik099\PHPUnit\MinkDriver;
 
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
-use Behat\Mink\Driver\Selenium2Driver;
+use Behat\Mink\Driver\DriverInterface;
 
 class Selenium2DriverFactory implements IMinkDriverFactory
 {
 
 	/**
-	 * Instantiate and return the selenium 2 driver instance.
+	 * Returns driver name, that can be used in browser configuration.
+	 *
+	 * @return string
+	 */
+	public function getDriverName()
+	{
+		return 'selenium2';
+	}
+
+	/**
+	 * Returns default values for browser configuration.
+	 *
+	 * @return array
+	 */
+	public function getDriverDefaults()
+	{
+		return array(
+			'port' => 4444,
+			'driverOptions' => array(),
+		);
+	}
+
+	/**
+	 * Returns a new driver instance according to the browser configuration.
 	 *
 	 * @param BrowserConfiguration $browser The browser configuration.
 	 *
-	 * @return Selenium2Driver
+	 * @return DriverInterface
 	 */
-	public function getInstance(BrowserConfiguration $browser)
+	public function createDriver(BrowserConfiguration $browser)
 	{
+		if ( !class_exists('Behat\Mink\Driver\Selenium2Driver') ) {
+			throw new \RuntimeException(
+				'Install MinkSelenium2Driver in order to use selenium2 driver.'
+			);
+		}
+
 		$browser_name = $browser->getBrowserName();
 		$capabilities = $browser->getDesiredCapabilities();
 		$capabilities['browserName'] = $browser_name;
 
-		// TODO: maybe doesn't work!
+		// TODO: Maybe doesn't work!
 		ini_set('default_socket_timeout', $browser->getTimeout());
 
-		$driver = new Selenium2Driver(
+		$driver = new \Behat\Mink\Driver\Selenium2Driver(
 			$browser_name,
 			$capabilities,
 			'http://' . $browser->getHost() . ':' . $browser->getPort() . '/wd/hub'

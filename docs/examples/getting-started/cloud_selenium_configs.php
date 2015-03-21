@@ -9,8 +9,8 @@ class BrowserConfigExampleTest extends BrowserTestCase
         // Sauce Labs browser configuration.
         array(
             'type' => 'saucelabs',
-            'api_username' => '...',
-            'api_key' => '...',
+            'apiUsername' => '...',
+            'apiKey' => '...',
             'browserName' => 'firefox',
             'baseUrl' => 'http://www.google.com',
         ),
@@ -24,6 +24,7 @@ class BrowserConfigExampleTest extends BrowserTestCase
         ),
         // Regular browser configuration.
         array(
+            'driver' => 'selenium2',
             'host' => 'localhost',
             'port' => 4444,
             'browserName' => 'chrome',

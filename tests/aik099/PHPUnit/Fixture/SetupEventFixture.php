@@ -14,6 +14,7 @@ namespace tests\aik099\PHPUnit\Fixture;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
+use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use Behat\Mink\Session;
 use Mockery as m;
 
@@ -34,8 +35,12 @@ class SetupEventFixture extends BrowserTestCase
 		$factory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
 		$factory->shouldReceive('createAPIClient')->once()->andReturn($api_client);
 
-		$browser_config = array('api_username' => 'a', 'api_key' => 'b');
-		$browser = new SauceLabsBrowserConfiguration($this->readAttribute($this, '_eventDispatcher'), $factory);
+		$browser_config = array('apiUsername' => 'a', 'apiKey' => 'b');
+		$browser = new SauceLabsBrowserConfiguration(
+			$this->readAttribute($this, '_eventDispatcher'),
+			$this->createDriverFactoryRegistry(),
+			$factory
+		);
 		$factory->shouldReceive('createBrowserConfiguration')
 			->with($browser_config, $this)
 			->once()
@@ -45,6 +50,26 @@ class SetupEventFixture extends BrowserTestCase
 		$this->setBrowserFromConfiguration($browser_config);
 
 		parent::setUp();
+	}
+
+	/**
+	 * Creates driver factory registry.
+	 *
+	 * @return DriverFactoryRegistry
+	 */
+	protected function createDriverFactoryRegistry()
+	{
+		$registry = m::mock('\\aik099\\PHPUnit\\MinkDriver\\DriverFactoryRegistry');
+
+		$driver_factory = m::mock('\\aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$driver_factory->shouldReceive('getDriverDefaults')->andReturn(array());
+
+		$registry
+			->shouldReceive('get')
+			->with('selenium2')
+			->andReturn($driver_factory);
+
+		return $registry;
 	}
 
 	/**

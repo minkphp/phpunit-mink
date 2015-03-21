@@ -32,7 +32,7 @@ Basic Usage
 
 .. literalinclude:: examples/getting-started/general_test.php
    :linenos:
-   :emphasize-lines: 5,8,20,34
+   :emphasize-lines: 5,8,21,35
 
 Selenium in Cloud
 ^^^^^^^^^^^^^^^^^
@@ -40,8 +40,8 @@ When using Selenium-based solution for automated testing in the cloud (e.g. `Sau
 specify following settings:
 
 * ``'type' => 'saucelabs'`` or ``'type' => 'browserstack'``
-* ``'api_username' => '...'``
-* ``'api_key' => '...'``
+* ``'apiUsername' => '...'``
+* ``'apiKey' => '...'``
 
 instead of ``host`` and ``port`` settings. In all other aspects everything will work the same as if all
 tests were running locally.

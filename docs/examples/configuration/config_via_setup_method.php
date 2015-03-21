@@ -16,8 +16,8 @@ class PerTestBrowserConfigTest extends BrowserTestCase
         $browser = $this->createBrowserConfiguration(array(
             // required
             'type' => 'saucelabs',
-            'api_username' => 'sauce_username',
-            'api_key' => 'sauce_api_key',
+            'apiUsername' => 'sauce_username',
+            'apiKey' => 'sauce_api_key',
             // optional options goes here
         ));
 

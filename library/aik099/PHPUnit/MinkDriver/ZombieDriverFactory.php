@@ -13,26 +13,65 @@ namespace aik099\PHPUnit\MinkDriver;
 
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
-use Behat\Mink\Driver\NodeJS\Server\ZombieServer;
-use Behat\Mink\Driver\ZombieDriver;
+use Behat\Mink\Driver\DriverInterface;
 
 class ZombieDriverFactory implements IMinkDriverFactory
 {
 
 	/**
-	 * Return a new instance of the Zombie driver.
+	 * Returns driver name, that can be used in browser configuration.
+	 *
+	 * @return string
+	 */
+	public function getDriverName()
+	{
+		return 'zombie';
+	}
+
+	/**
+	 * Returns default values for browser configuration.
+	 *
+	 * @return array
+	 */
+	public function getDriverDefaults()
+	{
+		return array(
+			'port' => 8124,
+			'driverOptions' => array(
+				'node_bin' => 'node',
+				'server_path' => null,
+				'threshold' => 2000000,
+				'node_modules_path' => '',
+			),
+		);
+	}
+
+	/**
+	 * Returns a new driver instance according to the browser configuration.
 	 *
 	 * @param BrowserConfiguration $browser The browser configuration.
 	 *
-	 * @return ZombieDriver
+	 * @return DriverInterface
 	 */
-	public function getInstance(BrowserConfiguration $browser)
+	public function createDriver(BrowserConfiguration $browser)
 	{
-		$options = $browser->getDriverOptions();
-		$node_bin = isset($options['node_binary']) ? $options['node_binary'] : null;
+		if ( !class_exists('Behat\Mink\Driver\ZombieDriver') ) {
+			throw new \RuntimeException(
+				'Install MinkZombieDriver in order to use zombie driver.'
+			);
+		}
 
-		return new ZombieDriver(
-			new ZombieServer($browser->getHost(), $browser->getPort(), $node_bin)
+		$driver_options = $browser->getDriverOptions();
+
+		return new \Behat\Mink\Driver\ZombieDriver(
+			new \Behat\Mink\Driver\NodeJS\Server\ZombieServer(
+				$browser->getHost(),
+				$browser->getPort(),
+				$driver_options['node_bin'],
+				$driver_options['server_path'],
+				$driver_options['threshold'],
+				$driver_options['node_modules_path']
+			)
 		);
 	}
 

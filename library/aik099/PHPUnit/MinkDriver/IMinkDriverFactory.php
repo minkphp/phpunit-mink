@@ -19,13 +19,26 @@ interface IMinkDriverFactory
 {
 
 	/**
-	 * Return a new driver instance according to the
-	 * browser configuration.
+	 * Returns driver name, that can be used in browser configuration.
+	 *
+	 * @return string
+	 */
+	public function getDriverName();
+
+	/**
+	 * Returns default values for browser configuration.
+	 *
+	 * @return array
+	 */
+	public function getDriverDefaults();
+
+	/**
+	 * Returns a new driver instance according to the browser configuration.
 	 *
 	 * @param BrowserConfiguration $browser The browser configuration.
 	 *
 	 * @return DriverInterface
 	 */
-	public function getInstance(BrowserConfiguration $browser);
+	public function createDriver(BrowserConfiguration $browser);
 
 }

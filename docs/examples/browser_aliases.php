@@ -9,6 +9,7 @@ abstract class BrowserAliasTestCase extends BrowserTestCase
     {
         return array(
             'example_alias' => array(
+                'driver' => 'selenium2',
                 'host' => 'localhost',
                 'port' => 4444,
                 'browserName' => 'firefox',

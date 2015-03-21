@@ -76,6 +76,7 @@ class DIContainerTest extends \PHPUnit_Framework_TestCase
 				'browser_configuration_factory',
 				'aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfigurationFactory',
 			),
+			array('driver_factory_registry', 'aik099\\PHPUnit\\MinkDriver\\DriverFactoryRegistry'),
 		);
 	}
 

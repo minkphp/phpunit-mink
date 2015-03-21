@@ -7,6 +7,7 @@ class GeneralTest extends BrowserTestCase
 
     public static $browsers = array(
         array(
+            'driver' => 'selenium2',
             'host' => 'localhost',
             'port' => 4444,
             'browserName' => 'firefox',

@@ -41,6 +41,11 @@ class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCa
 		$this->setup['host'] = 'UN:AK@hub.browserstack.com';
 	}
 
+	public function testGetType()
+	{
+		$this->assertEquals('browserstack', $this->browser->getType());
+	}
+
 	/**
 	 * Test description.
 	 *

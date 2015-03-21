@@ -14,7 +14,10 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\Event\TestEndedEvent;
 use aik099\PHPUnit\Event\TestEvent;
+use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
+use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
+use Behat\Mink\Driver\DriverInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -22,48 +25,56 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * Browser configuration for browser.
  *
  * @method \Mockery\Expectation shouldReceive(string $name)
+ * @method string getDriver() Returns Mink driver name.
+ * @method array getDriverOptions() Returns Mink driver options.
+ * @method string getHost() Returns hostname from browser configuration.
+ * @method integer getPort() Returns port from browser configuration.
+ * @method string getBrowserName() Returns browser name from browser configuration.
+ * @method string getBaseUrl() Returns default browser url from browser configuration.
+ * @method array getDesiredCapabilities() Returns desired capabilities from browser configuration.
+ * @method integer getTimeout() Returns server timeout.
+ * @method string getSessionStrategy() Returns session strategy name.
  */
 class BrowserConfiguration implements EventSubscriberInterface
 {
+	const TYPE = 'default';
 
 	/**
-	 * Default browser configuration.
+	 * User defaults.
 	 *
 	 * @var array
 	 */
-	protected $defaultParameters = array(
-		// Server related.
+	protected $defaults = array(
+		// Driver related.
 		'host' => 'localhost',
-		'port' => 4444,
-		'timeout' => 60,
-
-		// Browser related.
-		'browserName' => 'firefox',
-		'desiredCapabilities' => array(),
-		'baseUrl' => '',
 		'driver' => 'selenium2',
 		'driverOptions' => array(),
 
+		// TODO: Move under 'driverOptions' of 'selenium2' driver (BC break).
+		'desiredCapabilities' => array(),
+		'timeout' => 60,
+
+		// Browser related.
+		'browserName' => 'firefox', // Have no effect on headless drivers.
+		'baseUrl' => '',
+
 		// Test related.
-		'type' => 'default',
 		'sessionStrategy' => ISessionStrategyFactory::TYPE_ISOLATED,
 	);
 
 	/**
-	 * List of driver aliases. Used for validation in the setDriver() method.
+	 * User defaults merged with driver defaults.
 	 *
 	 * @var array
 	 */
-	protected $driverAliases = array(
-		'selenium2', 'goutte', 'sahi', 'zombie',
-	);
+	private $_mergedDefaults = array();
 
 	/**
-	 * Browser configuration.
+	 * Manually set browser configuration parameters.
 	 *
 	 * @var array
 	 */
-	protected $parameters;
+	private $_parameters = array();
 
 	/**
 	 * Browser configuration aliases.
@@ -85,6 +96,20 @@ class BrowserConfiguration implements EventSubscriberInterface
 	 * @var EventDispatcherInterface
 	 */
 	private $_eventDispatcher;
+
+	/**
+	 * Driver factory registry.
+	 *
+	 * @var DriverFactoryRegistry
+	 */
+	private $_driverFactoryRegistry;
+
+	/**
+	 * Driver factory.
+	 *
+	 * @var IMinkDriverFactory
+	 */
+	private $_driverFactory;
 
 	/**
 	 * Resolves browser alias into corresponding browser configuration.
@@ -116,12 +141,19 @@ class BrowserConfiguration implements EventSubscriberInterface
 	/**
 	 * Creates browser configuration.
 	 *
-	 * @param EventDispatcherInterface $event_dispatcher Event dispatcher.
+	 * @param EventDispatcherInterface $event_dispatcher        Event dispatcher.
+	 * @param DriverFactoryRegistry    $driver_factory_registry Driver factory registry.
 	 */
-	public function __construct(EventDispatcherInterface $event_dispatcher)
-	{
-		$this->parameters = $this->defaultParameters;
+	public function __construct(
+		EventDispatcherInterface $event_dispatcher,
+		DriverFactoryRegistry $driver_factory_registry
+	) {
 		$this->_eventDispatcher = $event_dispatcher;
+		$this->_driverFactoryRegistry = $driver_factory_registry;
+
+		if ( $this->defaults['driver'] ) {
+			$this->setDriver($this->defaults['driver']);
+		}
 	}
 
 	/**
@@ -131,7 +163,7 @@ class BrowserConfiguration implements EventSubscriberInterface
 	 */
 	public function getType()
 	{
-		return $this->parameters['type'];
+		return static::TYPE;
 	}
 
 	/**
@@ -213,19 +245,22 @@ class BrowserConfiguration implements EventSubscriberInterface
 	public function setup(array $parameters)
 	{
 		$parameters = $this->prepareParameters($parameters);
-		$unknown_parameters = array_diff(array_keys($parameters), array_keys($this->defaultParameters));
 
-		if ( $unknown_parameters ) {
-			throw new \InvalidArgumentException(
-				'Following parameter(-s) are unknown: "' . implode('", "', $unknown_parameters) . '"'
-			);
+		// Make sure, that 'driver' parameter is handled first.
+		if ( isset($parameters['driver']) ) {
+			$this->setDriver($parameters['driver']);
+			unset($parameters['driver']);
 		}
 
-		$this->setHost($parameters['host'])->setPort($parameters['port'])->setTimeout($parameters['timeout']);
-		$this->setDriver($parameters['driver']);
-		$this->setBrowserName($parameters['browserName'])->setDesiredCapabilities($parameters['desiredCapabilities']);
-		$this->setBaseUrl($parameters['baseUrl']);
-		$this->setSessionStrategy($parameters['sessionStrategy']);
+		foreach ( $parameters as $name => $value ) {
+			$method = 'set' . ucfirst($name);
+
+			if ( !method_exists($this, $method) ) {
+				throw new \InvalidArgumentException('Unable to set unknown parameter "' . $name . '"');
+			}
+
+			$this->$method($value);
+		}
 
 		return $this;
 	}
@@ -239,7 +274,39 @@ class BrowserConfiguration implements EventSubscriberInterface
 	 */
 	protected function prepareParameters(array $parameters)
 	{
-		return array_merge($this->parameters, self::resolveAliases($parameters, $this->aliases));
+		return array_merge($this->_parameters, self::resolveAliases($parameters, $this->aliases));
+	}
+
+	/**
+	 * Sets Mink driver to browser configuration.
+	 *
+	 * @param string $driver_name Mink driver name.
+	 *
+	 * @return self
+	 * @throws \InvalidArgumentException When Mink driver name is not a string.
+	 */
+	public function setDriver($driver_name)
+	{
+		if ( !is_string($driver_name) ) {
+			throw new \InvalidArgumentException('The Mink driver name must be a string');
+		}
+
+		$this->_driverFactory = $this->_driverFactoryRegistry->get($driver_name);
+		$this->_mergedDefaults = self::arrayMergeRecursive($this->defaults, $this->_driverFactory->getDriverDefaults());
+
+		return $this->setParameter('driver', $driver_name);
+	}
+
+	/**
+	 * Sets Mink driver options to browser configuration.
+	 *
+	 * @param array $driver_options Mink driver options.
+	 *
+	 * @return self
+	 */
+	public function setDriverOptions(array $driver_options)
+	{
+		return $this->setParameter('driverOptions', $driver_options);
 	}
 
 	/**
@@ -258,19 +325,7 @@ class BrowserConfiguration implements EventSubscriberInterface
 			throw new \InvalidArgumentException('Host must be a string');
 		}
 
-		$this->parameters['host'] = $host;
-
-		return $this;
-	}
-
-	/**
-	 * Returns hostname from browser configuration.
-	 *
-	 * @return string
-	 */
-	public function getHost()
-	{
-		return $this->parameters['host'];
+		return $this->setParameter('host', $host);
 	}
 
 	/**
@@ -289,19 +344,7 @@ class BrowserConfiguration implements EventSubscriberInterface
 			throw new \InvalidArgumentException('Port must be an integer');
 		}
 
-		$this->parameters['port'] = $port;
-
-		return $this;
-	}
-
-	/**
-	 * Returns port from browser configuration.
-	 *
-	 * @return integer
-	 */
-	public function getPort()
-	{
-		return $this->parameters['port'];
+		return $this->setParameter('port', $port);
 	}
 
 	/**
@@ -320,19 +363,7 @@ class BrowserConfiguration implements EventSubscriberInterface
 			throw new \InvalidArgumentException('Browser must be a string');
 		}
 
-		$this->parameters['browserName'] = $browser_name;
-
-		return $this;
-	}
-
-	/**
-	 * Returns browser name from browser configuration.
-	 *
-	 * @return string
-	 */
-	public function getBrowserName()
-	{
-		return $this->parameters['browserName'];
+		return $this->setParameter('browserName', $browser_name);
 	}
 
 	/**
@@ -351,72 +382,7 @@ class BrowserConfiguration implements EventSubscriberInterface
 			throw new \InvalidArgumentException('Base url must be a string');
 		}
 
-		$this->parameters['baseUrl'] = $base_url;
-
-		return $this;
-	}
-
-	/**
-	 * Returns default browser url from browser configuration.
-	 *
-	 * @return string
-	 */
-	public function getBaseUrl()
-	{
-		return $this->parameters['baseUrl'];
-	}
-
-	/**
-	 * Set the Mink driver to use.
-	 *
-	 * @param string $driver The driver to use.
-	 *
-	 * @return self
-	 * @throws \InvalidArgumentException When Mink driver is not a string.
-	 */
-	public function setDriver($driver)
-	{
-		if ( !is_string($driver) ) {
-			throw new \InvalidArgumentException('The Mink driver must be a string');
-		}
-
-		$this->parameters['driver'] = $driver;
-
-		return $this;
-	}
-
-	/**
-	 * Returns the Mink driver.
-	 *
-	 * @return string
-	 */
-	public function getDriver()
-	{
-		return $this->parameters['driver'];
-	}
-
-	/**
-	 * Sets driver options to be used by the driver factory.
-	 *
-	 * @param array $driver_options Set Mink driver specific options.
-	 *
-	 * @return self
-	 */
-	public function setDriverOptions(array $driver_options)
-	{
-		$this->parameters['driverOptions'] = $driver_options;
-
-		return $this;
-	}
-
-	/**
-	 * Returns Mink driver options.
-	 *
-	 * @return array
-	 */
-	public function getDriverOptions()
-	{
-		return $this->parameters['driverOptions'];
+		return $this->setParameter('baseUrl', $base_url);
 	}
 
 	/**
@@ -431,24 +397,11 @@ class BrowserConfiguration implements EventSubscriberInterface
 	 */
 	public function setDesiredCapabilities(array $capabilities)
 	{
-		$this->parameters['desiredCapabilities'] = $capabilities;
-
-		return $this;
-	}
-
-	/**
-	 * Returns desired capabilities from browser configuration.
-	 *
-	 * @return array
-	 */
-	public function getDesiredCapabilities()
-	{
-		return $this->parameters['desiredCapabilities'];
+		return $this->setParameter('desiredCapabilities', $capabilities);
 	}
 
 	/**
 	 * Sets server timeout.
-	 *
 	 * To be called from TestCase::setUp().
 	 *
 	 * @param integer $timeout Server timeout in seconds.
@@ -462,19 +415,7 @@ class BrowserConfiguration implements EventSubscriberInterface
 			throw new \InvalidArgumentException('Timeout must be an integer');
 		}
 
-		$this->parameters['timeout'] = $timeout;
-
-		return $this;
-	}
-
-	/**
-	 * Returns server timeout.
-	 *
-	 * @return integer
-	 */
-	public function getTimeout()
-	{
-		return $this->parameters['timeout'];
+		return $this->setParameter('timeout', $timeout);
 	}
 
 	/**
@@ -483,23 +424,10 @@ class BrowserConfiguration implements EventSubscriberInterface
 	 * @param string $session_strategy Session strategy name.
 	 *
 	 * @return self
-	 * @throws \InvalidArgumentException When unknown session strategy name given.
 	 */
 	public function setSessionStrategy($session_strategy)
 	{
-		$this->parameters['sessionStrategy'] = $session_strategy;
-
-		return $this;
-	}
-
-	/**
-	 * Returns session strategy name.
-	 *
-	 * @return string
-	 */
-	public function getSessionStrategy()
-	{
-		return $this->parameters['sessionStrategy'];
+		return $this->setParameter('sessionStrategy', $session_strategy);
 	}
 
 	/**
@@ -510,6 +438,57 @@ class BrowserConfiguration implements EventSubscriberInterface
 	public function isShared()
 	{
 		return $this->getSessionStrategy() == ISessionStrategyFactory::TYPE_SHARED;
+	}
+
+	/**
+	 * Sets parameter.
+	 *
+	 * @param string $name  Parameter name.
+	 * @param mixed  $value Parameter value.
+	 *
+	 * @return self
+	 * @throws \LogicException When driver wasn't set upfront.
+	 */
+	protected function setParameter($name, $value)
+	{
+		if ( !isset($this->_driverFactory) ) {
+			throw new \LogicException('Please set "driver" parameter first.');
+		}
+
+		$this->_parameters[$name] = $value;
+
+		return $this;
+	}
+
+	/**
+	 * Returns parameter value.
+	 *
+	 * @param string $name Name.
+	 *
+	 * @return mixed
+	 * @throws \InvalidArgumentException When unknown parameter was requested.
+	 */
+	protected function getParameter($name)
+	{
+		$merged = self::arrayMergeRecursive($this->_mergedDefaults, $this->_parameters);
+
+		if ( array_key_exists($name, $merged) ) {
+			return $merged[$name];
+		}
+
+		throw new \InvalidArgumentException('Unable to get unknown parameter "' . $name . '"');
+	}
+
+	/**
+	 * Creates driver based on browser configuration.
+	 *
+	 * @return DriverInterface
+	 */
+	public function createDriver()
+	{
+		$factory = $this->_driverFactoryRegistry->get($this->getDriver());
+
+		return $factory->createDriver($this);
 	}
 
 	/**
@@ -556,9 +535,9 @@ class BrowserConfiguration implements EventSubscriberInterface
 	 */
 	public function getChecksum()
 	{
-		ksort($this->parameters);
+		ksort($this->_parameters);
 
-		return crc32(serialize($this->parameters));
+		return crc32(serialize($this->_parameters));
 	}
 
 	/**
@@ -587,6 +566,26 @@ class BrowserConfiguration implements EventSubscriberInterface
 		}
 
 		return $array1;
+	}
+
+	/**
+	 * Allows to retrieve a parameter by name.
+	 *
+	 * @param string $method Method name.
+	 * @param array  $args   Arguments.
+	 *
+	 * @return mixed
+	 * @throws \BadMethodCallException When non-parameter getter method is invoked.
+	 */
+	public function __call($method, array $args)
+	{
+		if ( substr($method, 0, 3) === 'get' ) {
+			return $this->getParameter(lcfirst(substr($method, 3)));
+		}
+
+		throw new \BadMethodCallException(
+			'Method "' . $method . '" does not exist on ' . get_class($this) . ' class'
+		);
 	}
 
 	/**
