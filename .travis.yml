@@ -32,9 +32,6 @@ env:
         - secure: Tsh/Vvb9auy672eRf0xbN8fKDr8OYzjRkZDHiaYc5yH49UkoromwPaC74mJtM5KxFOYalrC+GzwOSuvzT8RYO/XwTuk6IGw9P/0v0qMCaSLkjaRzerwVH1L3RPgDokqDnCHAgSzkAlg8d5o0MWBlbxaYiaKL4LmEKGwxQjrW590=
         - secure: HQQ1FY27tpn0Idy+NDYXdbnMjHKIOsZoE59qYfs18euS0zM559gcuMk4OQ/J2lcDFmdb6vjSFlznwH+6iVyoLuC5WAP3JGQ3UXSJ+7huRV/eDI6WepmEymjEOSWvTT+RYpmQu1lQWC2Y3zBCVbVT7sbVsqXvmuR2daBL11dpU+g=
 
-addons:
-    sauce_connect: true
-
 install:
     - composer require satooshi/php-coveralls:dev-master --dev
 

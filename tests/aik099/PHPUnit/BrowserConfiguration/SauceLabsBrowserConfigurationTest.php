@@ -32,7 +32,7 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 		$this->browserConfigurationClass = 'aik099\\PHPUnit\\BrowserConfiguration\\SauceLabsBrowserConfiguration';
 
 		$this->tunnelCapabilities = array(
-			'tunnel-identifier' => 'env:TRAVIS_JOB_NUMBER',
+			'tunnel-identifier' => 'env:PHPUNIT_MINK_TUNNEL_ID',
 		);
 
 		parent::setUp();

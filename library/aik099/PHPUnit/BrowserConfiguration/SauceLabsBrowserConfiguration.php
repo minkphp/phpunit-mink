@@ -54,8 +54,8 @@ class SauceLabsBrowserConfiguration extends ApiBrowserConfiguration
 
 		$desired_capabilities = $this->getDesiredCapabilities();
 
-		if ( getenv('TRAVIS_JOB_NUMBER') ) {
-			$desired_capabilities['tunnel-identifier'] = getenv('TRAVIS_JOB_NUMBER');
+		if ( getenv('PHPUNIT_MINK_TUNNEL_ID') ) {
+			$desired_capabilities['tunnel-identifier'] = getenv('PHPUNIT_MINK_TUNNEL_ID');
 		}
 
 		$this->setDesiredCapabilities($desired_capabilities);

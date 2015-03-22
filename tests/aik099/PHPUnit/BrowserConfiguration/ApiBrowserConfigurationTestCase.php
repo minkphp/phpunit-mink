@@ -381,20 +381,20 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	/**
 	 * Test description.
 	 *
-	 * @param string|null $travis_job_number Travis Job Number.
+	 * @param string|null $tunnel_id Tunnel ID.
 	 *
 	 * @return void
 	 * @dataProvider tunnelIdentifierDataProvider
 	 */
-	public function testTunnelIdentifier($travis_job_number = null)
+	public function testTunnelIdentifier($tunnel_id = null)
 	{
 		// Reset any global env vars that might be left from previous tests.
 		$hhvm_hack = defined('HHVM_VERSION') ? '=' : '';
 
-		putenv('TRAVIS_JOB_NUMBER' . $hhvm_hack);
+		putenv('PHPUNIT_MINK_TUNNEL_ID' . $hhvm_hack);
 
-		if ( isset($travis_job_number) ) {
-			putenv('TRAVIS_JOB_NUMBER=' . $travis_job_number);
+		if ( isset($tunnel_id) ) {
+			putenv('PHPUNIT_MINK_TUNNEL_ID=' . $tunnel_id);
 		}
 
 		$this->browser->setSessionStrategy(ISessionStrategyFactory::TYPE_ISOLATED);
@@ -412,7 +412,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 
 		$desired_capabilities = $this->browser->getDesiredCapabilities();
 
-		if ( isset($travis_job_number) ) {
+		if ( isset($tunnel_id) ) {
 			foreach ( $this->tunnelCapabilities as $name => $value ) {
 				if ( substr($value, 0, 4) === 'env:' ) {
 					$value = getenv(substr($value, 4));

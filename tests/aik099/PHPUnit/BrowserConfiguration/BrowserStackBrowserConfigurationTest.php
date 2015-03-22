@@ -29,7 +29,7 @@ class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCa
 
 		$this->tunnelCapabilities = array(
 			'browserstack.local' => 'true',
-			'browserstack.localIdentifier' => 'env:TRAVIS_JOB_NUMBER',
+			'browserstack.localIdentifier' => 'env:PHPUNIT_MINK_TUNNEL_ID',
 		);
 
 		parent::setUp();
