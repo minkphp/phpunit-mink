@@ -11,11 +11,7 @@
 namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 
-use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\Event\TestEvent;
-use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use Mockery as m;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 {
@@ -52,7 +48,9 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 	 */
 	public function testSetHostCorrect()
 	{
-		$browser = $this->createBrowserConfiguration(array(), false, true);
+		$browser = $this->createBrowserConfiguration();
+		$browser->setApiUsername('A');
+		$browser->setApiKey('B');
 
 		$this->assertSame($browser, $browser->setHost('EXAMPLE_HOST'));
 		$this->assertSame('A:B@ondemand.saucelabs.com', $browser->getHost());
@@ -75,6 +73,11 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 				array('version' => 'ver1', 'platform' => 'Windows 7'),
 			),
 		);
+	}
+
+	public function testGetAPIClient()
+	{
+		$this->assertInstanceOf('aik099\\PHPUnit\\APIClient\\SauceLabsAPIClient', $this->browser->getAPIClient());
 	}
 
 }

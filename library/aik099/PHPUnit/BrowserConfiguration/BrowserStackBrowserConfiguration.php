@@ -11,7 +11,10 @@
 namespace aik099\PHPUnit\BrowserConfiguration;
 
 
+use aik099\PHPUnit\APIClient\BrowserStackAPIClient;
+use aik099\PHPUnit\APIClient\IAPIClient;
 use aik099\PHPUnit\Event\TestEvent;
+use WebDriver\ServiceFactory;
 
 /**
  * Browser configuration tailored to use with "BrowserStack" service.
@@ -21,6 +24,20 @@ use aik099\PHPUnit\Event\TestEvent;
 class BrowserStackBrowserConfiguration extends ApiBrowserConfiguration
 {
 	const TYPE = 'browserstack';
+
+	/**
+	 * Returns API class for service interaction.
+	 *
+	 * @return IAPIClient
+	 */
+	public function getAPIClient()
+	{
+		return new BrowserStackAPIClient(
+			$this->getApiUsername(),
+			$this->getApiKey(),
+			ServiceFactory::getInstance()->getService('service.curl')
+		);
+	}
 
 	/**
 	 * Hook, called from "BrowserTestCase::setUp" method.

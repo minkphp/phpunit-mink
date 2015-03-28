@@ -13,8 +13,6 @@ namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfigurationFactory;
-use aik099\PHPUnit\BrowserConfiguration\BrowserStackBrowserConfiguration;
-use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use Mockery as m;
 use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
@@ -147,42 +145,6 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 		$browser_configuration = $this->_createBrowserConfiguration('new-one');
 		$this->_factory->register($browser_configuration);
 		$this->_factory->register($browser_configuration);
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testCreateAPIClientSuccess()
-	{
-		$browser = new SauceLabsBrowserConfiguration(
-			$this->eventDispatcher,
-			$this->_driverFactoryRegistry,
-			$this->_factory
-		);
-		$api_client = $this->_factory->createAPIClient($browser);
-		$this->assertInstanceOf('aik099\\PHPUnit\\APIClient\\SauceLabsAPIClient', $api_client);
-
-		$browser = new BrowserStackBrowserConfiguration(
-			$this->eventDispatcher,
-			$this->_driverFactoryRegistry,
-			$this->_factory
-		);
-		$api_client = $this->_factory->createAPIClient($browser);
-		$this->assertInstanceOf('aik099\\PHPUnit\\APIClient\\BrowserStackAPIClient', $api_client);
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 * @expectedException \LogicException
-	 */
-	public function testCreateAPIClientFailure()
-	{
-		$browser = new BrowserConfiguration($this->eventDispatcher, $this->_driverFactoryRegistry);
-		$this->_factory->createAPIClient($browser);
 	}
 
 	/**

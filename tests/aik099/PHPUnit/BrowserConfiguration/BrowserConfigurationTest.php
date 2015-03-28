@@ -17,6 +17,7 @@ use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use Mockery as m;
+use Mockery\Generator\MockConfigurationBuilder;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
@@ -29,6 +30,13 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	const HOST = 'example_host';
 
 	const PORT = 1234;
+
+	/**
+	 * Browser configuration class.
+	 *
+	 * @var string
+	 */
+	protected $browserConfigurationClass = '';
 
 	/**
 	 * Hostname.
@@ -59,6 +67,13 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	protected $browser;
 
 	/**
+	 * Browser methods, that needs to be mocked.
+	 *
+	 * @var array
+	 */
+	protected $mockBrowserMethods = array();
+
+	/**
 	 * Driver factory registry.
 	 *
 	 * @var DriverFactoryRegistry|m\MockInterface
@@ -81,6 +96,10 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	{
 		parent::setUp();
 
+		if ( !$this->browserConfigurationClass ) {
+			$this->browserConfigurationClass = 'aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
+		}
+
 		$this->setup = array(
 			'host' => self::HOST,
 			'port' => self::PORT,
@@ -97,7 +116,8 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 
 		$this->browser = $this->createBrowserConfiguration(
 			array(),
-			in_array($this->getName(false), $this->testsRequireSubscriber)
+			in_array($this->getName(false), $this->testsRequireSubscriber),
+			$this->mockBrowserMethods
 		);
 	}
 
@@ -603,12 +623,28 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	 *
 	 * @param array   $aliases        Aliases.
 	 * @param boolean $add_subscriber Expect addition of subscriber to event dispatcher.
+	 * @param array   $mock_methods   Mock methods.
 	 *
 	 * @return BrowserConfiguration
 	 */
-	protected function createBrowserConfiguration(array $aliases = array(), $add_subscriber = false)
-	{
-		$browser = new BrowserConfiguration($this->eventDispatcher, $this->driverFactoryRegistry);
+	protected function createBrowserConfiguration(
+		array $aliases = array(),
+		$add_subscriber = false,
+		$mock_methods = array()
+	) {
+		if ( $mock_methods ) {
+			/** @var BrowserConfiguration $browser */
+			$browser = m::mock(
+				$this->browserConfigurationClass . '[' . implode(',', $mock_methods) . ']',
+				array($this->eventDispatcher, $this->driverFactoryRegistry),
+				array('getSessionStrategy' => 'isolated')
+			);
+		}
+		else {
+			/** @var BrowserConfiguration $browser */
+			$browser = new $this->browserConfigurationClass($this->eventDispatcher, $this->driverFactoryRegistry);
+		}
+
 		$browser->setAliases($aliases);
 
 		$this->eventDispatcher->shouldReceive('addSubscriber')->with($browser)->times($add_subscriber ? 1 : 0);

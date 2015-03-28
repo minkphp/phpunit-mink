@@ -33,14 +33,22 @@ class SetupEventFixture extends BrowserTestCase
 
 		/** @var IBrowserConfigurationFactory $factory */
 		$factory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
-		$factory->shouldReceive('createAPIClient')->once()->andReturn($api_client);
 
 		$browser_config = array('apiUsername' => 'a', 'apiKey' => 'b');
-		$browser = new SauceLabsBrowserConfiguration(
-			$this->readAttribute($this, '_eventDispatcher'),
-			$this->createDriverFactoryRegistry(),
-			$factory
+
+		$browser = m::mock(
+			'aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration[getAPIClient]',
+			array($this->readAttribute($this, '_eventDispatcher'), $this->createDriverFactoryRegistry())
 		);
+
+		// These magic methods can't be properly passed through to mocked object otherwise.
+		$browser->shouldReceive('getSessionStrategy')->andReturn('isolated');
+		$browser->shouldReceive('getDesiredCapabilities')->andReturn(array(
+			SauceLabsBrowserConfiguration::NAME_CAPABILITY => 'something',
+		));
+
+		$browser->shouldReceive('getAPIClient')->once()->andReturn($api_client);
+
 		$factory->shouldReceive('createBrowserConfiguration')
 			->with($browser_config, $this)
 			->once()

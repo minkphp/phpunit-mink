@@ -11,12 +11,7 @@
 namespace aik099\PHPUnit\BrowserConfiguration;
 
 
-use aik099\PHPUnit\APIClient\BrowserStackAPIClient;
-use aik099\PHPUnit\APIClient\IAPIClient;
-use aik099\PHPUnit\APIClient\SauceLabsAPIClient;
 use aik099\PHPUnit\BrowserTestCase;
-use WebDriver\SauceLabs\SauceRest;
-use WebDriver\ServiceFactory;
 
 /**
  * Browser configuration factory.
@@ -88,32 +83,6 @@ class BrowserConfigurationFactory implements IBrowserConfigurationFactory
 		}
 
 		return clone $this->browserConfigurations[$type];
-	}
-
-	/**
-	 * Creates API client.
-	 *
-	 * @param BrowserConfiguration $browser Browser configuration.
-	 *
-	 * @return IAPIClient
-	 * @throws \LogicException When unsupported browser configuration given.
-	 */
-	public function createAPIClient(BrowserConfiguration $browser)
-	{
-		if ( $browser instanceof SauceLabsBrowserConfiguration ) {
-			$sauce_rest = new SauceRest($browser->getApiUsername(), $browser->getApiKey());
-
-			return new SauceLabsAPIClient($sauce_rest);
-		}
-		elseif ( $browser instanceof BrowserStackBrowserConfiguration ) {
-			return new BrowserStackAPIClient(
-				$browser->getApiUsername(),
-				$browser->getApiKey(),
-				ServiceFactory::getInstance()->getService('service.curl')
-			);
-		}
-
-		throw new \LogicException('Unsupported browser configuration given');
 	}
 
 }

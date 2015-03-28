@@ -11,12 +11,11 @@
 namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 
+use aik099\PHPUnit\APIClient\IAPIClient;
 use aik099\PHPUnit\BrowserConfiguration\ApiBrowserConfiguration;
-use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\Event\TestEndedEvent;
 use aik099\PHPUnit\Event\TestEvent;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
-use Mockery\MockInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use aik099\PHPUnit\BrowserTestCase;
 use Mockery as m;
@@ -29,25 +28,18 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	const AUTOMATIC_TEST_NAME = 'AUTOMATIC';
 
 	/**
-	 * Browser configuration class.
-	 *
-	 * @var string
-	 */
-	protected $browserConfigurationClass = '';
-
-	/**
-	 * Browser configuration factory.
-	 *
-	 * @var IBrowserConfigurationFactory|MockInterface
-	 */
-	protected $browserConfigurationFactory;
-
-	/**
 	 * Desired capabilities use to configure the tunnel.
 	 *
 	 * @var array
 	 */
 	protected $tunnelCapabilities = array();
+
+	/**
+	 * API client.
+	 *
+	 * @var IAPIClient
+	 */
+	protected $apiClient;
 
 	/**
 	 * Configures all tests.
@@ -60,9 +52,10 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$this->testsRequireSubscriber[] = 'testTestEndedEvent';
 		$this->testsRequireSubscriber[] = 'testTestEndedWithoutSession';
 		$this->testsRequireSubscriber[] = 'testTunnelIdentifier';
-		$this->browserConfigurationFactory = m::mock(
-			'aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory'
-		);
+
+		if ( $this->getName(false) === 'testTestEndedEvent' ) {
+			$this->mockBrowserMethods[] = 'getAPIClient';
+		}
 
 		parent::setUp();
 
@@ -133,7 +126,9 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 */
 	public function testSetHostCorrect()
 	{
-		$browser = $this->createBrowserConfiguration(array(), false, true);
+		$browser = $this->createBrowserConfiguration();
+		$browser->setApiUsername('A');
+		$browser->setApiKey('B');
 
 		$this->assertSame($browser, $browser->setHost('EXAMPLE_HOST'));
 		$this->assertSame('A:B@ondemand.saucelabs.com', $browser->getHost());
@@ -146,7 +141,10 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 */
 	public function testSetPortCorrect()
 	{
-		$browser = $this->createBrowserConfiguration(array(), false, true);
+		$browser = $this->createBrowserConfiguration();
+		$browser->setApiUsername('A');
+		$browser->setApiKey('B');
+
 		$this->assertSame($browser, $browser->setPort(5555));
 		$this->assertSame(80, $browser->getPort());
 	}
@@ -158,7 +156,10 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 */
 	public function testSetBrowserNameCorrect()
 	{
-		$browser = $this->createBrowserConfiguration(array(), false, true);
+		$browser = $this->createBrowserConfiguration();
+		$browser->setApiUsername('A');
+		$browser->setApiKey('B');
+
 		$this->assertSame($browser, $browser->setBrowserName(''));
 		$this->assertSame('chrome', $browser->getBrowserName());
 	}
@@ -174,7 +175,10 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 */
 	public function testSetDesiredCapabilitiesCorrect(array $desired_capabilities = null, array $expected = null)
 	{
-		$browser = $this->createBrowserConfiguration(array(), false, true);
+		$browser = $this->createBrowserConfiguration();
+		$browser->setApiUsername('A');
+		$browser->setApiKey('B');
+
 		$this->assertSame($browser, $browser->setDesiredCapabilities($desired_capabilities));
 		$this->assertSame($expected, $browser->getDesiredCapabilities());
 	}
@@ -296,9 +300,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$test_case = $this->createTestCase('TEST_NAME');
 
 		$api_client = m::mock('aik099\\PHPUnit\\APIClient\\IAPIClient');
-		$this->browserConfigurationFactory->shouldReceive('createAPIClient')
-			->with($this->browser)
-			->andReturn($api_client);
+		$this->browser->shouldReceive('getAPIClient')->andReturn($api_client);
 
 		if ( $driver_type == 'selenium' ) {
 			$driver = m::mock('\\Behat\\Mink\\Driver\\Selenium2Driver');
@@ -469,35 +471,6 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 			array('AAA'),
 			array(null),
 		);
-	}
-
-	/**
-	 * Creates instance of browser configuration.
-	 *
-	 * @param array   $aliases        Aliases.
-	 * @param boolean $add_subscriber Expect addition of subscriber to event dispatcher.
-	 * @param boolean $with_api       Include test API configuration.
-	 *
-	 * @return ApiBrowserConfiguration
-	 */
-	protected function createBrowserConfiguration(array $aliases = array(), $add_subscriber = false, $with_api = false)
-	{
-		/** @var ApiBrowserConfiguration $browser */
-		$browser = new $this->browserConfigurationClass(
-			$this->eventDispatcher,
-			$this->driverFactoryRegistry,
-			$this->browserConfigurationFactory
-		);
-		$browser->setAliases($aliases);
-
-		$this->eventDispatcher->shouldReceive('addSubscriber')->with($browser)->times($add_subscriber ? 1 : 0);
-
-		if ( $with_api ) {
-			$browser->setApiUsername('A');
-			$browser->setApiKey('B');
-		}
-
-		return $browser;
 	}
 
 }

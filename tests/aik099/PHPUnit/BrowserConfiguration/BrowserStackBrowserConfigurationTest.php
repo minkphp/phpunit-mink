@@ -53,7 +53,9 @@ class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCa
 	 */
 	public function testSetHostCorrect()
 	{
-		$browser = $this->createBrowserConfiguration(array(), false, true);
+		$browser = $this->createBrowserConfiguration();
+		$browser->setApiUsername('A');
+		$browser->setApiKey('B');
 
 		$this->assertSame($browser, $browser->setHost('EXAMPLE_HOST'));
 		$this->assertSame('A:B@hub.browserstack.com', $browser->getHost());
@@ -76,6 +78,11 @@ class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCa
 				array('acceptSslCerts' => 'false', 'os' => 'Windows', 'os_version' => '7'),
 			),
 		);
+	}
+
+	public function testGetAPIClient()
+	{
+		$this->assertInstanceOf('aik099\\PHPUnit\\APIClient\\BrowserStackAPIClient', $this->browser->getAPIClient());
 	}
 
 }
