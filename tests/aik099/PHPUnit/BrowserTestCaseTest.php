@@ -14,6 +14,7 @@ namespace tests\aik099\PHPUnit;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserTestCase;
+use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageTool;
 use aik099\PHPUnit\Session\ISessionStrategy;
 use aik099\PHPUnit\Session\SessionStrategyManager;
@@ -84,12 +85,32 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 
 		$test_case = $this->getFixture($session_strategy);
 
-		$browser = new BrowserConfiguration($this->eventDispatcher);
+		$browser = new BrowserConfiguration($this->eventDispatcher, $this->createDriverFactoryRegistry());
 		$this->eventDispatcher->shouldReceive('addSubscriber')->with($browser)->once();
 
 		$this->assertSame($test_case, $test_case->setBrowser($browser));
 		$this->assertSame($browser, $test_case->getBrowser());
 		$this->assertSame($session_strategy, $test_case->getSessionStrategy());
+	}
+
+	/**
+	 * Creates driver factory registry.
+	 *
+	 * @return DriverFactoryRegistry
+	 */
+	protected function createDriverFactoryRegistry()
+	{
+		$registry = m::mock('\\aik099\\PHPUnit\\MinkDriver\\DriverFactoryRegistry');
+
+		$driver_factory = m::mock('\\aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$driver_factory->shouldReceive('getDriverDefaults')->andReturn(array());
+
+		$registry
+			->shouldReceive('get')
+			->with('selenium2')
+			->andReturn($driver_factory);
+
+		return $registry;
 	}
 
 	/**

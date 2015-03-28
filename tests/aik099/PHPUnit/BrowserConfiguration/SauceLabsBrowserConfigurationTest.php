@@ -40,6 +40,11 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 		$this->setup['host'] = 'UN:AK@ondemand.saucelabs.com';
 	}
 
+	public function testGetType()
+	{
+		$this->assertEquals('saucelabs', $this->browser->getType());
+	}
+
 	/**
 	 * Test description.
 	 *

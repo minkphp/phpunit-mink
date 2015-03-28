@@ -12,7 +12,6 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 
 
 use aik099\PHPUnit\Event\TestEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Browser configuration tailored to use with "BrowserStack" service.
@@ -21,21 +20,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class BrowserStackBrowserConfiguration extends ApiBrowserConfiguration
 {
-
-	/**
-	 * Creates browser configuration.
-	 *
-	 * @param EventDispatcherInterface     $event_dispatcher              Event dispatcher.
-	 * @param IBrowserConfigurationFactory $browser_configuration_factory Browser configuration factory.
-	 */
-	public function __construct(
-		EventDispatcherInterface $event_dispatcher,
-		IBrowserConfigurationFactory $browser_configuration_factory
-	) {
-		$this->defaultParameters['type'] = 'browserstack';
-
-		parent::__construct($event_dispatcher, $browser_configuration_factory);
-	}
+	const TYPE = 'browserstack';
 
 	/**
 	 * Hook, called from "BrowserTestCase::setUp" method.

@@ -15,6 +15,7 @@ use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserConfiguration\BrowserStackBrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
+use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use Mockery as m;
 use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
 
@@ -29,6 +30,13 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 	private $_factory;
 
 	/**
+	 * Driver factory registry.
+	 *
+	 * @var DriverFactoryRegistry|m\MockInterface
+	 */
+	private $_driverFactoryRegistry;
+
+	/**
 	 * Configures the tests.
 	 *
 	 * @return void
@@ -38,6 +46,27 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 		parent::setUp();
 
 		$this->_factory = new BrowserConfigurationFactory();
+		$this->_driverFactoryRegistry = $this->createDriverFactoryRegistry();
+	}
+
+	/**
+	 * Creates driver factory registry.
+	 *
+	 * @return DriverFactoryRegistry
+	 */
+	protected function createDriverFactoryRegistry()
+	{
+		$registry = m::mock('\\aik099\\PHPUnit\\MinkDriver\\DriverFactoryRegistry');
+
+		$driver_factory = m::mock('\\aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$driver_factory->shouldReceive('getDriverDefaults')->andReturn(array());
+
+		$registry
+			->shouldReceive('get')
+			->with('selenium2')
+			->andReturn($driver_factory);
+
+		return $registry;
 	}
 
 	/**
@@ -57,6 +86,9 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 		$test_case = m::mock('aik099\\PHPUnit\\BrowserTestCase');
 		$test_case->shouldReceive('getBrowserAliases')->once()->andReturn($browser_aliases);
 
+		$cleaned_browser_config = $browser_config;
+		unset($cleaned_browser_config['type']);
+
 		$browser_configuration = $this->_createBrowserConfiguration($type);
 		$browser_configuration
 			->shouldReceive('setAliases')
@@ -65,7 +97,7 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 			->andReturn($browser_configuration);
 		$browser_configuration
 			->shouldReceive('setup')
-			->with($browser_config)
+			->with($cleaned_browser_config)
 			->once()
 			->andReturn($browser_configuration);
 		$this->_factory->register($browser_configuration);
@@ -124,11 +156,19 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 	 */
 	public function testCreateAPIClientSuccess()
 	{
-		$browser = new SauceLabsBrowserConfiguration($this->eventDispatcher, $this->_factory);
+		$browser = new SauceLabsBrowserConfiguration(
+			$this->eventDispatcher,
+			$this->_driverFactoryRegistry,
+			$this->_factory
+		);
 		$api_client = $this->_factory->createAPIClient($browser);
 		$this->assertInstanceOf('aik099\\PHPUnit\\APIClient\\SauceLabsAPIClient', $api_client);
 
-		$browser = new BrowserStackBrowserConfiguration($this->eventDispatcher, $this->_factory);
+		$browser = new BrowserStackBrowserConfiguration(
+			$this->eventDispatcher,
+			$this->_driverFactoryRegistry,
+			$this->_factory
+		);
 		$api_client = $this->_factory->createAPIClient($browser);
 		$this->assertInstanceOf('aik099\\PHPUnit\\APIClient\\BrowserStackAPIClient', $api_client);
 	}
@@ -141,7 +181,7 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 	 */
 	public function testCreateAPIClientFailure()
 	{
-		$browser = new BrowserConfiguration($this->eventDispatcher);
+		$browser = new BrowserConfiguration($this->eventDispatcher, $this->_driverFactoryRegistry);
 		$this->_factory->createAPIClient($browser);
 	}
 

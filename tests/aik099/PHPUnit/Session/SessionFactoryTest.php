@@ -43,17 +43,16 @@ class SessionFactoryTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testCreateSession()
 	{
+		$driver = m::mock('Behat\\Mink\\Driver\\DriverInterface');
+		$driver->shouldReceive('setSession')->with(m::any())->once();
+
 		$browser = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration');
-		$browser->shouldReceive('getDesiredCapabilities')->once()->andReturn(array());
-		$browser->shouldReceive('getBrowserName')->once()->andReturn('');
-		$browser->shouldReceive('getTimeout')->once()->andReturn(0);
-		$browser->shouldReceive('getHost')->once()->andReturn('');
-		$browser->shouldReceive('getPort')->once()->andReturn(0);
+		$browser->shouldReceive('createDriver')->once()->andReturn($driver);
 
 		$session = $this->_factory->createSession($browser);
 
 		$this->assertInstanceOf('Behat\\Mink\\Session', $session);
-		$this->assertInstanceOf('Behat\\Mink\\Driver\\Selenium2Driver', $session->getDriver());
+		$this->assertSame($driver, $session->getDriver());
 	}
 
 }

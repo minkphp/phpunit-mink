@@ -67,8 +67,8 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		parent::setUp();
 
 		$this->setup['port'] = 80;
-		$this->setup['api_username'] = 'UN';
-		$this->setup['api_key'] = 'AK';
+		$this->setup['apiUsername'] = 'UN';
+		$this->setup['apiKey'] = 'AK';
 	}
 
 	/**
@@ -80,8 +80,37 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	{
 		parent::testSetup();
 
-		$this->assertSame($this->setup['api_username'], $this->browser->getApiUsername());
-		$this->assertSame($this->setup['api_key'], $this->browser->getApiKey());
+		$this->assertSame($this->setup['apiUsername'], $this->browser->getApiUsername());
+		$this->assertSame($this->setup['apiKey'], $this->browser->getApiKey());
+	}
+
+	public function testSnakeCaseParameters()
+	{
+		$this->browser->setup(array(
+			'api_username' => 'old-user',
+			'api_key' => 'old-key',
+		));
+
+		$this->assertEquals('old-user', $this->browser->getApiUsername());
+		$this->assertEquals('old-key', $this->browser->getApiKey());
+
+		$this->browser->setup(array(
+			'api_username' => 'old-user',
+			'api_key' => 'old-key',
+			'apiUsername' => 'new-user',
+			'apiKey' => 'new-key',
+		));
+
+		$this->assertEquals('old-user', $this->browser->getApiUsername());
+		$this->assertEquals('old-key', $this->browser->getApiKey());
+
+		$this->browser->setup(array(
+			'apiUsername' => 'new-user',
+			'apiKey' => 'new-key',
+		));
+
+		$this->assertEquals('new-user', $this->browser->getApiUsername());
+		$this->assertEquals('new-key', $this->browser->getApiKey());
 	}
 
 	/**
@@ -454,7 +483,11 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	protected function createBrowserConfiguration(array $aliases = array(), $add_subscriber = false, $with_api = false)
 	{
 		/** @var ApiBrowserConfiguration $browser */
-		$browser = new $this->browserConfigurationClass($this->eventDispatcher, $this->browserConfigurationFactory);
+		$browser = new $this->browserConfigurationClass(
+			$this->eventDispatcher,
+			$this->driverFactoryRegistry,
+			$this->browserConfigurationFactory
+		);
 		$browser->setAliases($aliases);
 
 		$this->eventDispatcher->shouldReceive('addSubscriber')->with($browser)->times($add_subscriber ? 1 : 0);

@@ -21,7 +21,7 @@ configuration) in that test case class.
 
 .. literalinclude:: examples/configuration/config_via_browsers_property.php
    :linenos:
-   :emphasize-lines: 8,9,15
+   :emphasize-lines: 8,9,16
 
 .. note:: When several browser configurations are specified in ``$browsers`` array, then each test
           in a test case will be executed against each of browser configurations.
@@ -35,27 +35,38 @@ option (line 14) to the browser configuration.
 
 .. literalinclude:: examples/configuration/per_test_case_browser_config.php
        :linenos:
-       :emphasize-lines: 14
+       :emphasize-lines: 15
+
+Selecting the Mink Driver
+^^^^^^^^^^^^^^^^^^^^^^^^^
+With the help of ``driver`` and ``driverOptions`` browser configuration settings (since v2.1.0) it's possible to
+specify which `Mink`_ driver to use. This file demonstrates how to use each driver:
+
+.. literalinclude:: examples/configuration/driver_showcase.php
+       :linenos:
+       :emphasize-lines: 10,20,32,40
 
 Configuration Options
 ^^^^^^^^^^^^^^^^^^^^^
 Each browser configuration consists of the following settings (all optional):
 
-=======================  =================================================================================================
+=======================  ==================================================================================================
 Name                     Description
-=======================  =================================================================================================
-``host``                 host, where Selenium Server is located (defaults to ``localhost``)
-``port``                 port, on which Selenium Server is listening for incoming connections (defaults to ``4444``)
-``timeout``              connection timeout of the server in seconds (defaults to ``60``)
+=======================  ==================================================================================================
+``driver``               Mink driver name (defaults to ``selenium2``, since v2.1.0)
+``driverOptions``        Mink driver specific options (since v2.1.0)
+``host``                 host, where driver's server is located (defaults to ``localhost``)
+``port``                 port, on which driver's server is listening for incoming connections (determined by driver)
+``timeout``              connection timeout of the server in seconds ('selenium2' driver only, defaults to ``60``)
 ``browserName``          name of browser to use (e.g. ``firefox``, ``chrome``, etc., defaults to ``firefox``)
-``desiredCapabilities``  parameters, that specify additional browser configuration (e.g. browser version, platform, etc.),
-                         that will be used by Selenium server
+``desiredCapabilities``  parameters, that allow to fine-tune browser and other 'selenium2' driver options (e.g. 'tags',
+                         'project', 'os', 'version')
 ``baseUrl``              base url of website, that is tested
 ``sessionStrategy``      used session strategy (defaults to ``isolated``)
 ``type``                 type of configuration (defaults to ``default``, but can also be ``saucelabs`` or ``browserstack``)
-``api_username``         API username of used service (applicable to any but ``default`` configuration type)
-``api_key``              API key of used service (applicable to any but ``default`` configuration type)
-=======================  =================================================================================================
+``apiUsername``          API username of used service (applicable to 'saucelabs' and 'browserstack' browser configurations)
+``apiKey``               API key of used service (applicable to 'saucelabs' and 'browserstack' browser configurations)
+=======================  ==================================================================================================
 
 There are also corresponding setters (e.g. ``setHost``) and getters (e.g. ``getHost``) for each of mentioned
 above settings, that allow to individually change them from ``setUp`` method before test has started.

@@ -15,12 +15,16 @@ use aik099\PHPUnit\APIClient\IAPIClient;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\Event\TestEndedEvent;
 use aik099\PHPUnit\Event\TestEvent;
+use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Session;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Browser configuration tailored to use with API-based service.
+ *
+ * @method string getApiUsername() Returns API username.
+ * @method string getApiKey() Returns API key.
  */
 abstract class ApiBrowserConfiguration extends BrowserConfiguration
 {
@@ -46,33 +50,20 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 	 * Creates browser configuration.
 	 *
 	 * @param EventDispatcherInterface     $event_dispatcher              Event dispatcher.
+	 * @param DriverFactoryRegistry        $driver_factory_registry       Driver factory registry.
 	 * @param IBrowserConfigurationFactory $browser_configuration_factory Browser configuration factory.
 	 */
 	public function __construct(
 		EventDispatcherInterface $event_dispatcher,
+		DriverFactoryRegistry $driver_factory_registry,
 		IBrowserConfigurationFactory $browser_configuration_factory
 	) {
 		$this->browserConfigurationFactory = $browser_configuration_factory;
-		$this->defaultParameters['api_username'] = '';
-		$this->defaultParameters['api_key'] = '';
+		$this->defaults['driver'] = 'selenium2';
+		$this->defaults['apiUsername'] = '';
+		$this->defaults['apiKey'] = '';
 
-		parent::__construct($event_dispatcher);
-	}
-
-	/**
-	 * Initializes a browser with given configuration.
-	 *
-	 * @param array $parameters Browser configuration parameters.
-	 *
-	 * @return self
-	 */
-	public function setup(array $parameters)
-	{
-		$prepared_parameters = $this->prepareParameters($parameters);
-		$this->setApiUsername($prepared_parameters['api_username']);
-		$this->setApiKey($prepared_parameters['api_key']);
-
-		return parent::setup($parameters);
+		parent::__construct($event_dispatcher, $driver_factory_registry);
 	}
 
 	/**
@@ -86,19 +77,7 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 	 */
 	public function setApiUsername($api_username)
 	{
-		$this->parameters['api_username'] = $api_username;
-
-		return $this;
-	}
-
-	/**
-	 * Returns API username.
-	 *
-	 * @return string
-	 */
-	public function getApiUsername()
-	{
-		return $this->parameters['api_username'];
+		return $this->setParameter('apiUsername', $api_username);
 	}
 
 	/**
@@ -112,19 +91,37 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 	 */
 	public function setApiKey($api_key)
 	{
-		$this->parameters['api_key'] = $api_key;
-
-		return $this;
+		return $this->setParameter('apiKey', $api_key);
 	}
 
 	/**
-	 * Returns API key.
+	 * Sets API username.
 	 *
-	 * @return string
+	 * Used internally to to allow using "api_username" parameter and avoid BC break.
+	 *
+	 * @param string $api_username API username.
+	 *
+	 * @return     self
+	 * @deprecated
 	 */
-	public function getApiKey()
+	protected function setApi_username($api_username)
 	{
-		return $this->parameters['api_key'];
+		return $this->setApiUsername($api_username);
+	}
+
+	/**
+	 * Sets API key.
+	 *
+	 * Used internally to to allow using "api_key" parameter and avoid BC break.
+	 *
+	 * @param string $api_key API key.
+	 *
+	 * @return     self
+	 * @deprecated
+	 */
+	protected function setApi_key($api_key)
+	{
+		return $this->setApiKey($api_key);
 	}
 
 	/**
