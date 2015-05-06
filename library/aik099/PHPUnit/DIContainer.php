@@ -143,18 +143,10 @@ class DIContainer extends Container implements IApplicationAware
 				new BrowserConfiguration($c['event_dispatcher'], $c['driver_factory_registry'])
 			);
 			$browser_configuration_factory->register(
-				new SauceLabsBrowserConfiguration(
-					$c['event_dispatcher'],
-					$c['driver_factory_registry'],
-					$browser_configuration_factory
-				)
+				new SauceLabsBrowserConfiguration($c['event_dispatcher'], $c['driver_factory_registry'])
 			);
 			$browser_configuration_factory->register(
-				new BrowserStackBrowserConfiguration(
-					$c['event_dispatcher'],
-					$c['driver_factory_registry'],
-					$browser_configuration_factory
-				)
+				new BrowserStackBrowserConfiguration($c['event_dispatcher'], $c['driver_factory_registry'])
 			);
 
 			return $browser_configuration_factory;

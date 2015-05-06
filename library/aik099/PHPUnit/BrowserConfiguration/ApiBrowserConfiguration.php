@@ -40,25 +40,15 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 	const NAME_CAPABILITY = 'name';
 
 	/**
-	 * Browser configuration factory.
-	 *
-	 * @var IBrowserConfigurationFactory
-	 */
-	protected $browserConfigurationFactory;
-
-	/**
 	 * Creates browser configuration.
 	 *
-	 * @param EventDispatcherInterface     $event_dispatcher              Event dispatcher.
-	 * @param DriverFactoryRegistry        $driver_factory_registry       Driver factory registry.
-	 * @param IBrowserConfigurationFactory $browser_configuration_factory Browser configuration factory.
+	 * @param EventDispatcherInterface $event_dispatcher        Event dispatcher.
+	 * @param DriverFactoryRegistry    $driver_factory_registry Driver factory registry.
 	 */
 	public function __construct(
 		EventDispatcherInterface $event_dispatcher,
-		DriverFactoryRegistry $driver_factory_registry,
-		IBrowserConfigurationFactory $browser_configuration_factory
+		DriverFactoryRegistry $driver_factory_registry
 	) {
-		$this->browserConfigurationFactory = $browser_configuration_factory;
 		$this->defaults['driver'] = 'selenium2';
 		$this->defaults['apiUsername'] = '';
 		$this->defaults['apiKey'] = '';
@@ -225,10 +215,7 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 	 *
 	 * @return IAPIClient
 	 */
-	public function getAPIClient()
-	{
-		return $this->browserConfigurationFactory->createAPIClient($this);
-	}
+	public abstract function getAPIClient();
 
 	/**
 	 * Get Selenium2 current session id.

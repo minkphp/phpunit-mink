@@ -11,7 +11,6 @@
 namespace aik099\PHPUnit\BrowserConfiguration;
 
 
-use aik099\PHPUnit\APIClient\IAPIClient;
 use aik099\PHPUnit\BrowserTestCase;
 
 /**
@@ -41,15 +40,5 @@ interface IBrowserConfigurationFactory
 	 * @throws \InvalidArgumentException When browser configuration is already registered.
 	 */
 	public function register(BrowserConfiguration $browser);
-
-	/**
-	 * Creates API client.
-	 *
-	 * @param BrowserConfiguration $browser Browser configuration.
-	 *
-	 * @return IAPIClient
-	 * @throws \LogicException When unsupported browser configuration given.
-	 */
-	public function createAPIClient(BrowserConfiguration $browser);
 
 }
