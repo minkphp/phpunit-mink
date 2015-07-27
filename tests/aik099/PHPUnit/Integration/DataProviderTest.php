@@ -11,21 +11,8 @@
 namespace tests\aik099\PHPUnit\Integration;
 
 
-use aik099\PHPUnit\BrowserTestCase;
-use Mockery as m;
-
-class DataProviderTest extends BrowserTestCase
+class DataProviderTest extends SauceLabsAwareTestCase
 {
-
-	/**
-	 * Browser list to be used in tests.
-	 *
-	 * @var array
-	 */
-	public static $browsers = array(
-		array('alias' => 'saucelabs'),
-		// array('alias' => 'browserstack'),
-	);
 
 	public function sampleDataProvider()
 	{
@@ -50,46 +37,9 @@ class DataProviderTest extends BrowserTestCase
 		}
 	}
 
-	/**
-	 * Whatever or not code coverage information should be gathered.
-	 *
-	 * @return boolean
-	 * @throws \RuntimeException When used before test is started.
-	 */
-	public function getCollectCodeCoverageInformation()
-	{
-		// FIXME: Workaround for https://github.com/minkphp/phpunit-mink/issues/35 bug.
-		return false;
-	}
-
 	protected function customMethod()
 	{
 		return 5;
-	}
-
-	/**
-	 * Gets browser configuration aliases.
-	 *
-	 * Allows to decouple actual test server connection details from test cases.
-	 *
-	 * @return array
-	 */
-	public function getBrowserAliases()
-	{
-		return array(
-			'saucelabs' => array(
-				'type' => 'saucelabs',
-				'apiUsername' => getenv('SAUCE_USERNAME'),
-				'apiKey' => getenv('SAUCE_ACCESS_KEY'),
-
-				'browserName' => 'chrome',
-				'desiredCapabilities' => array('version' => 28),
-				'baseUrl' => 'http://www.google.com',
-			),
-			/*'browserstack' => array(
-				'type' => 'browserstack',
-			),*/
-		);
 	}
 
 }
