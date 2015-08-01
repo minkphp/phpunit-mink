@@ -39,9 +39,10 @@ before_script:
     - mkdir -p build/logs
 
 script:
-    - phpunit -v --coverage-clover build/logs/clover.xml
+    - if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then phpunit --coverage-clover build/logs/clover.xml; fi;
+    - if [ "$TRAVIS_PHP_VERSION" = "hhvm" ]; then phpunit; fi;
 
 after_script:
-    - php vendor/bin/coveralls -v
-    - wget https://scrutinizer-ci.com/ocular.phar -t 3
-    - php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
+    - if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php vendor/bin/coveralls -v; fi;
+    - if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then wget https://scrutinizer-ci.com/ocular.phar -t 3; fi;
+    - if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml; fi;
