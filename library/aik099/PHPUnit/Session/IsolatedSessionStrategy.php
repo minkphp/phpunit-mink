@@ -90,11 +90,27 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	 */
 	public function onTestEnd(TestEvent $event)
 	{
+		if ( !$this->_isEventForMe($event) ) {
+			return;
+		}
+
 		$session = $event->getSession();
 
 		if ( $session !== null && $session->isStarted() ) {
 			$session->stop();
 		}
+	}
+
+	/**
+	 * Checks, that event can be handled by this class.
+	 *
+	 * @param TestEvent $event Test event.
+	 *
+	 * @return boolean
+	 */
+	private function _isEventForMe(TestEvent $event)
+	{
+		return $event->getTestCase()->getSessionStrategy() instanceof self;
 	}
 
 }

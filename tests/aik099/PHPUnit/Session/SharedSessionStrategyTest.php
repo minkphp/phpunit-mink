@@ -169,9 +169,12 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 		$session->shouldReceive('stop')->withNoArgs()->once();
 		$session->shouldReceive('isStarted')->once()->andReturn(true);
 
+		$test_case = m::mock(self::TEST_CASE_CLASS);
+		$test_case->shouldReceive('getSessionStrategy')->once()->andReturn($this->strategy);
+
 		$event = $this->eventDispatcher->dispatch(
 			BrowserTestCase::TEST_SUITE_ENDED_EVENT,
-			new TestEvent(m::mock(self::TEST_CASE_CLASS), $session)
+			new TestEvent($test_case, $session)
 		);
 
 		$this->assertInstanceOf('aik099\\PHPUnit\\Event\\TestEvent', $event);
