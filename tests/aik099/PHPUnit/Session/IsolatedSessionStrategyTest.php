@@ -51,10 +51,7 @@ class IsolatedSessionStrategyTest extends SessionStrategyTestCase
 		$browser = m::mock(self::BROWSER_CLASS);
 
 		$session1 = m::mock(self::SESSION_CLASS);
-		$session1->shouldReceive('start')->once();
-
 		$session2 = m::mock(self::SESSION_CLASS);
-		$session2->shouldReceive('start')->once();
 
 		$this->_factory
 			->shouldReceive('createSession')

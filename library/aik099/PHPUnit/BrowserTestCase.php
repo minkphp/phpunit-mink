@@ -279,7 +279,7 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 	 */
 	public function getSession()
 	{
-		if ( $this->_session && $this->_session->isStarted() ) {
+		if ( $this->_session ) {
 			return $this->_session;
 		}
 

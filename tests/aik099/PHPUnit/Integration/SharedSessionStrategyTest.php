@@ -26,6 +26,9 @@ class SharedSessionStrategyTest extends SauceLabsAwareTestCase
 		),
 	);
 
+	/**
+	 * @medium
+	 */
 	public function testOne()
 	{
 		$session = $this->getSession();
@@ -35,6 +38,7 @@ class SharedSessionStrategyTest extends SauceLabsAwareTestCase
 	}
 
 	/**
+	 * @medium
 	 * @depends testOne
 	 */
 	public function testTwo()

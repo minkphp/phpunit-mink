@@ -194,10 +194,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$browser = $this->getBrowser(0);
 
 		$expected_session1 = m::mock('\\Behat\\Mink\\Session');
-		$expected_session1->shouldReceive('isStarted')->withNoArgs()->once()->andReturn(false);
-
 		$expected_session2 = m::mock('\\Behat\\Mink\\Session');
-		$expected_session2->shouldReceive('isStarted')->withNoArgs()->once()->andReturn(true);
 
 		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
@@ -211,13 +208,9 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$session1 = $test_case->getSession();
 		$this->assertSame($expected_session1, $session1);
 
-		// Create session when present, but stopped.
+		// Always reuse created session.
 		$session2 = $test_case->getSession();
-		$this->assertSame($expected_session2, $session2);
-
-		// Reuse created session, when started.
-		$session3 = $test_case->getSession();
-		$this->assertSame($session2, $session3);
+		$this->assertSame($session1, $session2);
 	}
 
 	/**
