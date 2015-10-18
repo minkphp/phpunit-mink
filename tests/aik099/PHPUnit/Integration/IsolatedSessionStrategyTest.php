@@ -40,7 +40,7 @@ class IsolatedSessionStrategyTest extends SauceLabsAwareTestCase
 	public function testTwo()
 	{
 		$session = $this->getSession();
-		$url = $session->getCurrentUrl();
+		$url = $session->isStarted() ? $session->getCurrentUrl() : null;
 
 		$this->assertNotContains('https://www.google.com', $url);
 	}

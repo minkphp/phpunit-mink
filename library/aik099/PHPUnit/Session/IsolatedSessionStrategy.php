@@ -75,10 +75,7 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	 */
 	public function session(BrowserConfiguration $browser)
 	{
-		$session = $this->_sessionFactory->createSession($browser);
-		$session->start();
-
-		return $session;
+		return $this->_sessionFactory->createSession($browser);
 	}
 
 	/**
