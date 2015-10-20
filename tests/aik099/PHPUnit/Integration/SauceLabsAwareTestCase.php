@@ -13,7 +13,7 @@ namespace tests\aik099\PHPUnit\Integration;
 
 use aik099\PHPUnit\BrowserTestCase;
 
-abstract class BrowserStackAwareTestCase extends BrowserTestCase
+abstract class SauceLabsAwareTestCase extends BrowserTestCase
 {
 
 	/**
@@ -22,7 +22,7 @@ abstract class BrowserStackAwareTestCase extends BrowserTestCase
 	 * @var array
 	 */
 	public static $browsers = array(
-		array('alias' => 'browserstack'),
+		array('alias' => 'saucelabs'),
 	);
 
 	/**
@@ -32,8 +32,8 @@ abstract class BrowserStackAwareTestCase extends BrowserTestCase
 	 */
 	protected function setUp()
 	{
-		if ( !getenv('BS_USERNAME') || !getenv('BS_ACCESS_KEY') ) {
-			$this->markTestSkipped('BrowserStack integration is not configured');
+		if ( !getenv('SAUCE_USERNAME') || !getenv('SAUCE_ACCESS_KEY') ) {
+			$this->markTestSkipped('SauceLabs integration is not configured');
 		}
 
 		parent::setUp();
@@ -61,17 +61,13 @@ abstract class BrowserStackAwareTestCase extends BrowserTestCase
 	public function getBrowserAliases()
 	{
 		return array(
-			'browserstack' => array(
-				'type' => 'browserstack',
-				'api_username' => getenv('BS_USERNAME'),
-				'api_key' => getenv('BS_ACCESS_KEY'),
-				'browserName' => 'Firefox',
-				'desiredCapabilities' => array(
-					'browser_version' => '41.0',
-					'os' => 'Windows',
-					'os_version' => '7',
-					'project' => 'PHPUnit-Mink',
-				),
+			'saucelabs' => array(
+				'type' => 'saucelabs',
+				'apiUsername' => getenv('SAUCE_USERNAME'),
+				'apiKey' => getenv('SAUCE_ACCESS_KEY'),
+
+				'browserName' => 'chrome',
+				'desiredCapabilities' => array('version' => 28),
 				'baseUrl' => 'http://www.google.com',
 			),
 		);

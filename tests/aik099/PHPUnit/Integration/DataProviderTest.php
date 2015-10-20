@@ -11,7 +11,7 @@
 namespace tests\aik099\PHPUnit\Integration;
 
 
-class DataProviderTest extends BrowserStackAwareTestCase
+class DataProviderTest extends SauceLabsAwareTestCase
 {
 
 	public function sampleDataProvider()

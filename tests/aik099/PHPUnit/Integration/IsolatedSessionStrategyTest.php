@@ -11,7 +11,7 @@
 namespace tests\aik099\PHPUnit\Integration;
 
 
-class IsolatedSessionStrategyTest extends BrowserStackAwareTestCase
+class IsolatedSessionStrategyTest extends SauceLabsAwareTestCase
 {
 
 	/**
@@ -21,7 +21,7 @@ class IsolatedSessionStrategyTest extends BrowserStackAwareTestCase
 	 */
 	public static $browsers = array(
 		array(
-			'alias' => 'browserstack',
+			'alias' => 'saucelabs',
 			'sessionStrategy' => 'isolated',
 		),
 	);
@@ -44,7 +44,7 @@ class IsolatedSessionStrategyTest extends BrowserStackAwareTestCase
 	public function testTwo()
 	{
 		$session = $this->getSession();
-		$url = $session->isStarted() ? $session->getCurrentUrl() : '';
+		$url = $session->isStarted() ? $session->getCurrentUrl() : null;
 
 		$this->assertNotContains('https://www.google.com', $url);
 	}
