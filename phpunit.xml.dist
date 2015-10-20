@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit backupGlobals="true"
-	backupStaticAttributes="false"
+<phpunit
 	bootstrap="vendor/autoload.php"
 	colors="true"
-	convertErrorsToExceptions="true"
-	convertNoticesToExceptions="true"
-	convertWarningsToExceptions="true"
-	processIsolation="false"
-	stopOnFailure="false"
-	strict="true"
-	verbose="true">
+	verbose="true"
+	beStrictAboutChangesToGlobalState="true"
+	beStrictAboutOutputDuringTests="true"
+	beStrictAboutTestSize="true">
 
 	<testsuites>
 		<testsuite name="PHPUnit">
