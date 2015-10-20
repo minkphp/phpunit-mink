@@ -11,7 +11,7 @@
 namespace tests\aik099\PHPUnit\Integration;
 
 
-class SharedSessionStrategyTest extends SauceLabsAwareTestCase
+class SharedSessionStrategyTest extends BrowserStackAwareTestCase
 {
 
 	/**
@@ -21,7 +21,7 @@ class SharedSessionStrategyTest extends SauceLabsAwareTestCase
 	 */
 	public static $browsers = array(
 		array(
-			'alias' => 'saucelabs',
+			'alias' => 'browserstack',
 			'sessionStrategy' => 'shared',
 		),
 	);
