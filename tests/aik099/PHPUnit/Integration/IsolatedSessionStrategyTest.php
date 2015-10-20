@@ -27,7 +27,7 @@ class IsolatedSessionStrategyTest extends SauceLabsAwareTestCase
 	);
 
 	/**
-	 * @medium
+	 * @large
 	 */
 	public function testOne()
 	{
@@ -38,7 +38,7 @@ class IsolatedSessionStrategyTest extends SauceLabsAwareTestCase
 	}
 
 	/**
-	 * @medium
+	 * @large
 	 * @depends testOne
 	 */
 	public function testTwo()

@@ -4,7 +4,8 @@
 	colors="true"
 	verbose="true"
 	beStrictAboutChangesToGlobalState="true"
-	beStrictAboutOutputDuringTests="true">
+	beStrictAboutOutputDuringTests="true"
+	beStrictAboutTestSize="true">
 
 	<testsuites>
 		<testsuite name="PHPUnit">
