@@ -65,9 +65,13 @@ abstract class BrowserStackAwareTestCase extends BrowserTestCase
 				'type' => 'browserstack',
 				'api_username' => getenv('BS_USERNAME'),
 				'api_key' => getenv('BS_ACCESS_KEY'),
-
-				'browserName' => 'chrome',
-				'desiredCapabilities' => array('browser_version' => '38.0', 'project' => 'PHPUnit-Mink'),
+				'browserName' => 'Firefox',
+				'desiredCapabilities' => array(
+					'browser_version' => '41.0',
+					'os' => 'Windows',
+					'os_version' => '7',
+					'project' => 'PHPUnit-Mink',
+				),
 				'baseUrl' => 'http://www.google.com',
 			),
 		);
