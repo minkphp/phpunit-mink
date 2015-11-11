@@ -17,7 +17,6 @@
 		"behat/mink": "~1.6@dev",
 		"behat/mink-selenium2-driver": "~1.2",
 		"symfony/event-dispatcher": "~2.4|~3.0",
-		"pimple/pimple": "~2.0|~3.0",
 		"phpunit/phpunit": "~4|~5"
 	},
 
@@ -27,14 +26,16 @@
 	},
 
 	"autoload": {
-		"psr-0": {
-			"aik099\\": "./library/"
+		"psr-4": {
+			"aik099\\PHPUnit\\": "library/aik099/PHPUnit",
+			"PimpleCopy\\Pimple\\": "library/PimpleCopy/Pimple"
 		}
 	},
 
 	"autoload-dev": {
-		"psr-0": {
-			"tests\\aik099\\": "./"
+		"psr-4": {
+			"tests\\aik099\\PHPUnit\\": "tests/aik099/PHPUnit",
+			"tests\\PimpleCopy\\Pimple\\": "tests/PimpleCopy/Pimple"
 		}
 	},
 
