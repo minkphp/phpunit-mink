@@ -98,6 +98,7 @@ class SuiteBuildingTest extends \PHPUnit_Framework_TestCase
 		$suite = m::mock($class_name);
 
 		$suite->shouldReceive('getGroups')->once()->andReturn(array());
+		$suite->shouldReceive('setDisallowChangesToGlobalState'); // Since PHPUnit 4.6.0.
 		$suite->shouldReceive('setBackupGlobals');
 		$suite->shouldReceive('setBackupStaticAttributes');
 		$suite->shouldReceive('setRunTestInSeparateProcess');
