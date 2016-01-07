@@ -33,7 +33,7 @@ env:
         - secure: HQQ1FY27tpn0Idy+NDYXdbnMjHKIOsZoE59qYfs18euS0zM559gcuMk4OQ/J2lcDFmdb6vjSFlznwH+6iVyoLuC5WAP3JGQ3UXSJ+7huRV/eDI6WepmEymjEOSWvTT+RYpmQu1lQWC2Y3zBCVbVT7sbVsqXvmuR2daBL11dpU+g=
 
 install:
-    - composer require satooshi/php-coveralls:dev-master --dev
+    - composer require satooshi/php-coveralls:^1.0 --dev
 
 before_script:
     - mkdir -p build/logs
