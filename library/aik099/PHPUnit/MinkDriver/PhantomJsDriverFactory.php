@@ -57,7 +57,7 @@ class PhantomJsDriverFactory implements IMinkDriverFactory
 	{
 		if ( !class_exists('Zumba\Mink\Driver\PhantomJSDriver') ) {
 			throw new \RuntimeException(
-				'Install PhantomJSDriver in order to use phantomjs driver.'
+				'Install MinkPhantomJSDriver in order to use phantomjs driver.'
 			);
 		}
 
