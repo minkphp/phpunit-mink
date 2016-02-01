@@ -92,6 +92,10 @@ class DriverFactoryTest extends \PHPUnit_Framework_TestCase
 				'Behat\\Mink\\Driver\\ZombieDriver',
 				'aik099\PHPUnit\MinkDriver\ZombieDriverFactory',
 			),
+			'phantomjs' => array(
+				'Zumba\Mink\Driver\PhantomJSDriver',
+				'aik099\PHPUnit\MinkDriver\PhantomJsDriverFactory',
+			),
 		);
 	}
 
