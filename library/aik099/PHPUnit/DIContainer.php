@@ -17,6 +17,7 @@ use aik099\PHPUnit\BrowserConfiguration\BrowserStackBrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use aik099\PHPUnit\MinkDriver\GoutteDriverFactory;
+use aik099\PHPUnit\MinkDriver\PhantomJsDriverFactory;
 use aik099\PHPUnit\MinkDriver\SahiDriverFactory;
 use aik099\PHPUnit\MinkDriver\Selenium2DriverFactory;
 use aik099\PHPUnit\MinkDriver\ZombieDriverFactory;
@@ -132,6 +133,7 @@ class DIContainer extends Container implements IApplicationAware
 			$registry->add(new SahiDriverFactory());
 			$registry->add(new GoutteDriverFactory());
 			$registry->add(new ZombieDriverFactory());
+			$registry->add(new PhantomJsDriverFactory());
 
 			return $registry;
 		};
