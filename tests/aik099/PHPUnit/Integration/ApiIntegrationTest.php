@@ -17,10 +17,22 @@ use tests\aik099\PHPUnit\Fixture\ApiIntegrationFixture;
 class ApiIntegrationTest extends \PHPUnit_Framework_TestCase
 {
 
+	protected function setUp()
+	{
+		parent::setUp();
+
+		// Define the constant because this test is running PHPUnit testcases manually.
+		if ( $this->isInIsolation() ) {
+			define('PHPUNIT_TESTSUITE', true);
+		}
+	}
+
 	/**
 	 * Test description.
 	 *
 	 * @return void
+	 * @large
+	 * @runInSeparateProcess
 	 */
 	public function testAPICalls()
 	{

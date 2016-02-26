@@ -49,6 +49,11 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	{
 		parent::setUp();
 
+		// Define the constant because this test is running PHPUnit testcases manually.
+		if ( $this->isInIsolation() ) {
+			define('PHPUNIT_TESTSUITE', true);
+		}
+
 		$this->browserConfigurationFactory = m::mock(
 			'aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory'
 		);
@@ -270,6 +275,8 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
+	 * @large
+	 * @runInSeparateProcess
 	 */
 	public function testRun()
 	{
@@ -284,6 +291,8 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
+	 * @large
+	 * @runInSeparateProcess
 	 */
 	public function testRunCreateResult()
 	{
@@ -297,6 +306,8 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
+	 * @large
+	 * @runInSeparateProcess
 	 */
 	public function testRunWithCoverageWithoutRemoteUrl()
 	{
@@ -333,6 +344,8 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
+	 * @large
+	 * @runInSeparateProcess
 	 */
 	public function testRunWithCoverage()
 	{
