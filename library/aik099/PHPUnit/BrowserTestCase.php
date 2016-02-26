@@ -308,7 +308,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 	 * @param \PHPUnit_Framework_TestResult $result Test result.
 	 *
 	 * @return \PHPUnit_Framework_TestResult
-	 * @throws \PHPUnit_Framework_Exception When exception was thrown during a test.
 	 */
 	public function run(\PHPUnit_Framework_TestResult $result = null)
 	{
@@ -356,7 +355,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 	 * Override to tell remote website, that code coverage information needs to be collected.
 	 *
 	 * @return mixed
-	 * @throws \Exception When exception was thrown inside the test.
 	 */
 	protected function runTest()
 	{
