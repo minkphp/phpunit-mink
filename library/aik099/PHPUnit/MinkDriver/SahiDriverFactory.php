@@ -51,6 +51,7 @@ class SahiDriverFactory implements IMinkDriverFactory
 	 * @param BrowserConfiguration $browser The browser configuration.
 	 *
 	 * @return DriverInterface
+	 * @throws \RuntimeException When driver isn't installed.
 	 */
 	public function createDriver(BrowserConfiguration $browser)
 	{

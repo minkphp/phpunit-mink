@@ -28,6 +28,7 @@ class DriverFactoryRegistry
 	 * @param IMinkDriverFactory $driver_factory Driver factory.
 	 *
 	 * @return void
+	 * @throws \LogicException When driver factory is already registered.
 	 */
 	public function add(IMinkDriverFactory $driver_factory)
 	{

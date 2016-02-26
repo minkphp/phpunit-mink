@@ -100,7 +100,7 @@ class BrowserStackAPIClient implements IAPIClient
 
 		$url = 'https://www.browserstack.com/automate/' . $url;
 
-		list($raw_results, ) = $this->_curlService->execute($request_method, $url, $parameters, $extra_options);
+		list($raw_results,) = $this->_curlService->execute($request_method, $url, $parameters, $extra_options);
 
 		return json_decode($raw_results, true);
 	}
