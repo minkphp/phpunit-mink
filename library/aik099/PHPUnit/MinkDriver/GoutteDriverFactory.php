@@ -64,6 +64,9 @@ class GoutteDriverFactory implements IMinkDriverFactory
 		if ( $this->_isGoutte1() ) {
 			$guzzle_client = $this->_buildGuzzle3Client($driver_options['guzzle_parameters']);
 		}
+		elseif ( $this->_isGuzzle6() ) {
+			$guzzle_client = $this->_buildGuzzle6Client($driver_options['guzzle_parameters']);
+		}
 		else {
 			$guzzle_client = $this->_buildGuzzle4Client($driver_options['guzzle_parameters']);
 		}
@@ -72,6 +75,23 @@ class GoutteDriverFactory implements IMinkDriverFactory
 		$goutte_client->setClient($guzzle_client);
 
 		return new \Behat\Mink\Driver\GoutteDriver($goutte_client);
+	}
+
+	/**
+	 * Builds Guzzle 6 client.
+	 *
+	 * @param array $parameters Parameters.
+	 *
+	 * @return \GuzzleHttp\Client
+	 */
+	private function _buildGuzzle6Client(array $parameters)
+	{
+		// Force the parameters set by default in Goutte to reproduce its behavior.
+		$parameters['allow_redirects'] = false;
+		$parameters['cookies'] = true;
+
+		return new \GuzzleHttp\Client($parameters);
+
 	}
 
 	/**
@@ -120,6 +140,17 @@ class GoutteDriverFactory implements IMinkDriverFactory
 		}
 
 		return false;
+	}
+	
+	/**
+	 * Determines Guzzle version.
+	 *
+	 * @return boolean
+	 */
+	private function _isGuzzle6()
+	{
+		return interface_exists('GuzzleHttp\ClientInterface') && 
+		version_compare(\GuzzleHttp\ClientInterface::VERSION, '6.0.0', '>=');
 	}
 
 }
