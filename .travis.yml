@@ -11,11 +11,13 @@ php:
     - 5.4
     - 5.5
     - 5.6
+    - 7.0
     - hhvm
 
 matrix:
     include:
         - env: BUILD_TYPE=doc # marker environment variable to make the build matrix more readable in the UI
+          php: none # unused by the python language but allows to clean the display of the matrix
           # Override the different steps of the build config
           language: python
           before_install: []
@@ -23,6 +25,8 @@ matrix:
           before_script: []
           script: sphinx-build -nW -b html -d docs/build/doctrees docs docs/build/html
           after_script: []
+    allow_failures:
+        - php: 7.0
 
 env:
     global:
