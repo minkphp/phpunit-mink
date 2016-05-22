@@ -11,6 +11,9 @@
 		<testsuite name="PHPUnit">
 			<directory>tests/aik099/PHPUnit</directory>
 		</testsuite>
+		<testsuite name="PimpleCopy">
+			<directory>tests/PimpleCopy/Pimple</directory>
+		</testsuite>
 	</testsuites>
 
 	<!--<logging>
@@ -36,6 +39,7 @@
 	<filter>
 		<whitelist>
 			<directory>library/aik099/PHPUnit</directory>
+			<directory>library/PimpleCopy/Pimple</directory>
 		</whitelist>
 	</filter>
 </phpunit>
