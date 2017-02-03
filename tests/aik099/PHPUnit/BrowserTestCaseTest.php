@@ -20,6 +20,7 @@ use aik099\PHPUnit\Session\ISessionStrategy;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use Mockery as m;
 use Mockery\MockInterface;
+use Prophecy\Prophecy\ObjectProphecy;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
@@ -207,7 +208,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 
 		$test_case = $this->getFixture($session_strategy);
 		$test_case->setBrowser($browser);
-		$test_case->setTestResultObject($this->getTestResult($test_case, 0));
+		$test_case->setTestResultObject($this->getTestResult($test_case, 0)->reveal());
 
 		// Create session when missing.
 		$session1 = $test_case->getSession();
@@ -265,7 +266,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	public function testGetCollectCodeCoverageInformationSuccess()
 	{
 		$test_case = $this->getFixture();
-		$test_result = $this->getTestResult($test_case, 0, true);
+		$test_result = $this->getTestResult($test_case, 0, true)->reveal();
 		$test_case->setTestResultObject($test_result);
 
 		$this->assertTrue($test_case->getCollectCodeCoverageInformation());
@@ -282,7 +283,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	{
 		/* @var $test_case BrowserTestCase */
 		list($test_case,) = $this->prepareForRun();
-		$result = $this->getTestResult($test_case, 1);
+		$result = $this->getTestResult($test_case, 1)->reveal();
 
 		$this->assertSame($result, $test_case->run($result));
 	}
@@ -320,7 +321,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$code_coverage->shouldReceive('append')->with(m::mustBe(array()), $test_case)->once();
 
 		$result = $this->getTestResult($test_case, 1, true);
-		$result->shouldReceive('getCodeCoverage')->once()->andReturn($code_coverage);
+		$result->getCodeCoverage()->willReturn($code_coverage)->shouldBeCalledTimes(1);
 
 		$test_id = $test_case->getTestId();
 		$this->assertEmpty($test_id);
@@ -335,7 +336,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 
 		$session_strategy->shouldReceive('session')->once()->andReturn($session);
 
-		$test_case->run($result);
+		$test_case->run($result->reveal());
 
 		$this->assertNotEmpty($test_case->getTestId());
 	}
@@ -368,7 +369,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$code_coverage->shouldReceive('append')->with($expected_coverage, $test_case)->once();
 
 		$result = $this->getTestResult($test_case, 1, true);
-		$result->shouldReceive('getCodeCoverage')->once()->andReturn($code_coverage);
+		$result->getCodeCoverage()->willReturn($code_coverage)->shouldBeCalledTimes(1);
 
 		$test_id = $test_case->getTestId();
 		$this->assertEmpty($test_id);
@@ -383,7 +384,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 
 		$session_strategy->shouldReceive('session')->once()->andReturn($session);
 
-		$test_case->run($result);
+		$test_case->run($result->reveal());
 
 		$this->assertNotEmpty($test_case->getTestId());
 	}
@@ -477,19 +478,19 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 * @param integer         $run_count        Test run count.
 	 * @param boolean         $collect_coverage Should collect coverage information.
 	 *
-	 * @return \PHPUnit_Framework_TestResult|MockInterface
+	 * @return ObjectProphecy
 	 */
 	protected function getTestResult(BrowserTestCase $test_case, $run_count, $collect_coverage = false)
 	{
-		$result = m::mock('\\PHPUnit_Framework_TestResult');
-		$result->shouldReceive('getCollectCodeCoverageInformation')->withNoArgs()->andReturn($collect_coverage);
+		$result = $this->prophesize('PHPUnit_Framework_TestResult');
+		$result->getCollectCodeCoverageInformation()->willReturn($collect_coverage)->shouldBeCalled();
 
-		$result->shouldReceive('run')
-			->with($test_case)
-			->times($run_count)
-			->andReturnUsing(function () use ($test_case) {
+		$result
+			->run($test_case)
+			->will(function () use ($test_case) {
 				$test_case->runBare();
-			});
+			})
+			->shouldBeCalledTimes($run_count);
 
 		return $result;
 	}
