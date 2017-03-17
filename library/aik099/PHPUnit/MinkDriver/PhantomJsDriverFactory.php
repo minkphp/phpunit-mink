@@ -59,8 +59,6 @@ class PhantomJsDriverFactory implements IMinkDriverFactory
 			);
 		}
 
-		$driver_options = $browser->getDriverOptions();
-
 		return new \Zumba\Mink\Driver\PhantomJSDriver(sprintf(
 			'http://%s:%s%s',
 			$browser->getHost(),
