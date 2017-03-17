@@ -38,9 +38,7 @@ class PhantomJsDriverFactory implements IMinkDriverFactory
 		return array(
 			'host' => 'localhost',
 			'driver' => 'phantomjs',
-			'driverOptions' => array(
-				'api_endpoint' => '/api',
-			),
+			'driverOptions' => array(),
 			'browserName' => 'phantomjs',
 			'port' => 8510,
 		);
@@ -50,7 +48,7 @@ class PhantomJsDriverFactory implements IMinkDriverFactory
 	 * Returns a new driver instance according to the browser configuration.
 	 *
 	 * @param BrowserConfiguration $browser The browser configuration.
-	 * @throws \RuntimeException
+	 *
 	 * @return DriverInterface
 	 */
 	public function createDriver(BrowserConfiguration $browser)
@@ -63,11 +61,12 @@ class PhantomJsDriverFactory implements IMinkDriverFactory
 
 		$driver_options = $browser->getDriverOptions();
 
-		return new \Zumba\Mink\Driver\PhantomJSDriver(sprintf('http://%s:%s%s',
+		return new \Zumba\Mink\Driver\PhantomJSDriver(sprintf(
+			'http://%s:%s%s',
 			$browser->getHost(),
 			$browser->getPort(),
-			$driver_options['api_endpoint'])
-		);
+			'/api'
+		));
 	}
 
 }
