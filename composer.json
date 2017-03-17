@@ -22,7 +22,8 @@
 
 	"require-dev": {
 		"aik099/coding-standard": "dev-master",
-		"mockery/mockery": "~0.9"
+		"mockery/mockery": "~0.9",
+		"jcalderonzumba/mink-phantomjs-driver": "^0.3.3"
 	},
 
 	"autoload": {
