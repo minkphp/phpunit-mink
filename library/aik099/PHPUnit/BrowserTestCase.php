@@ -30,7 +30,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @method \Mockery\Expectation shouldReceive(string $name)
  */
-abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IEventDispatcherAware
+abstract class BrowserTestCase extends SkippingUnsupportedTestCase implements IEventDispatcherAware
 {
 
 	const TEST_ENDED_EVENT = 'test.ended';
@@ -410,23 +410,6 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 		$application = Application::getInstance();
 
 		return $application->getTestSuiteFactory()->createSuiteFromTestCase($class_name);
-	}
-
-	/**
-	 * This method is called when a test method did not execute successfully.
-	 *
-	 * @param \Exception $e Exception.
-	 *
-	 * @return void
-	 */
-	protected function onNotSuccessfulTest(\Exception $e)
-	{
-		$this->_eventDispatcher->dispatch(
-			self::TEST_FAILED_EVENT,
-			new TestFailedEvent($e, $this, $this->_session)
-		);
-
-		parent::onNotSuccessfulTest($e);
 	}
 
 	/**
