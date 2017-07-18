@@ -30,7 +30,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @method \Mockery\Expectation shouldReceive(string $name)
  */
-abstract class BrowserTestCase extends PHPUnitCompatibilityTestCase implements IEventDispatcherAware
+abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase implements IEventDispatcherAware
 {
 
 	const TEST_ENDED_EVENT = 'test.ended';

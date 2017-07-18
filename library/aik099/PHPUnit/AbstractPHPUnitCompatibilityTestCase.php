@@ -20,7 +20,7 @@ if ( version_compare(\PHPUnit_Runner_Version::id(), '5.0.0', '>=') ) {
 	 *
 	 * @internal
 	 */
-	abstract class PHPUnitCompatibilityTestCase extends \PHPUnit_Framework_TestCase
+	abstract class AbstractPHPUnitCompatibilityTestCase extends \PHPUnit_Framework_TestCase
 	{
 
 		/**
@@ -47,7 +47,7 @@ else {
 	 *
 	 * @internal
 	 */
-	abstract class PHPUnitCompatibilityTestCase extends \PHPUnit_Framework_TestCase
+	abstract class AbstractPHPUnitCompatibilityTestCase extends \PHPUnit_Framework_TestCase
 	{
 
 		/**
