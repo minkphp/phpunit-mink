@@ -12,7 +12,6 @@ php:
     - 5.5
     - 5.6
     - 7.0
-    - hhvm
 
 matrix:
     include:
@@ -25,6 +24,8 @@ matrix:
           before_script: []
           script: sphinx-build -nW -b html -d docs/build/doctrees docs docs/build/html
           after_script: []
+        - php: hhvm
+          dist: trusty
     allow_failures:
         - php: 7.0
 
