@@ -30,7 +30,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @method \Mockery\Expectation shouldReceive(string $name)
  */
-abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IEventDispatcherAware
+abstract class BrowserTestCase extends PHPUnitCompatibilityTestCase implements IEventDispatcherAware
 {
 
 	const TEST_ENDED_EVENT = 'test.ended';
@@ -419,14 +419,12 @@ abstract class BrowserTestCase extends \PHPUnit_Framework_TestCase implements IE
 	 *
 	 * @return void
 	 */
-	protected function onNotSuccessfulTest(\Exception $e)
+	protected function onNotSuccessfulTestCompatibilized($e)
 	{
 		$this->_eventDispatcher->dispatch(
 			self::TEST_FAILED_EVENT,
 			new TestFailedEvent($e, $this, $this->_session)
 		);
-
-		parent::onNotSuccessfulTest($e);
 	}
 
 	/**
