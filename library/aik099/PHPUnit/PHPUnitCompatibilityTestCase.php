@@ -10,55 +10,61 @@
 
 namespace aik099\PHPUnit;
 
-if (version_compare(\PHPUnit_Runner_Version::id(), '5.0.0', '>=')) {
-    /**
-     * Implementation for PHPUnit 5+
-     *
-     * This code should be moved back to aik099\PHPUnit\BrowserTestCase when dropping support for
-     * PHP 5.5 and older, as PHPUnit 4 won't be needed anymore.
-     *
-     * @internal
-     */
-    abstract class PHPUnitCompatibilityTestCase extends \PHPUnit_Framework_TestCase
-    {
-        /**
-         * This method is called when a test method did not execute successfully.
-         *
-         * @param \Exception $e Exception.
-         *
-         * @return void
-         */
-        protected function onNotSuccessfulTest($e)
-        {
-            $this->onNotSuccessfulTestCompatibilized($e);
 
-            parent::onNotSuccessfulTest($e);
-        }
+if ( version_compare(\PHPUnit_Runner_Version::id(), '5.0.0', '>=') ) {
+	/**
+	 * Implementation for PHPUnit 5+
+	 *
+	 * This code should be moved back to aik099\PHPUnit\BrowserTestCase when dropping support for
+	 * PHP 5.5 and older, as PHPUnit 4 won't be needed anymore.
+	 *
+	 * @internal
+	 */
+	abstract class PHPUnitCompatibilityTestCase extends \PHPUnit_Framework_TestCase
+	{
 
-        abstract protected function onNotSuccessfulTestCompatibilized($e);
-    }
-} else {
-    /**
-     * Implementation for PHPUnit 4
-     *
-     * @internal
-     */
-    abstract class PHPUnitCompatibilityTestCase extends \PHPUnit_Framework_TestCase
-    {
-        /**
-         * This method is called when a test method did not execute successfully.
-         *
-         * @param \Exception $e Exception.
-         *
-         * @return void
-         */
-        protected function onNotSuccessfulTest(\Exception $e)
-        {
-            $this->onNotSuccessfulTestCompatibilized($e);
+		/**
+		 * This method is called when a test method did not execute successfully.
+		 *
+		 * @param \Exception $e Exception.
+		 *
+		 * @return void
+		 */
+		protected function onNotSuccessfulTest($e)
+		{
+			$this->onNotSuccessfulTestCompatibilized($e);
 
-            parent::onNotSuccessfulTest($e);
-        }
+			parent::onNotSuccessfulTest($e);
+		}
 
-        abstract protected function onNotSuccessfulTestCompatibilized($e);
-    }
+		abstract protected function onNotSuccessfulTestCompatibilized($e);
+
+	}
+}
+else {
+	/**
+	 * Implementation for PHPUnit 4
+	 *
+	 * @internal
+	 */
+	abstract class PHPUnitCompatibilityTestCase extends \PHPUnit_Framework_TestCase
+	{
+
+		/**
+		 * This method is called when a test method did not execute successfully.
+		 *
+		 * @param \Exception $e Exception.
+		 *
+		 * @return void
+		 */
+		protected function onNotSuccessfulTest(\Exception $e)
+		{
+			$this->onNotSuccessfulTestCompatibilized($e);
+
+			parent::onNotSuccessfulTest($e);
+		}
+
+		abstract protected function onNotSuccessfulTestCompatibilized($e);
+
+	}
 }
