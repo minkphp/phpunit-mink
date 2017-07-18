@@ -40,7 +40,7 @@ if ( version_compare(\PHPUnit_Runner_Version::id(), '5.0.0', '>=') ) {
 		/**
 		 * This method is called when a test method did not execute successfully.
 		 *
-		 * @param \Exception $e
+		 * @param \Exception $e Exception.
 		 *
 		 * @return void
 		 */
@@ -74,7 +74,7 @@ else {
 		/**
 		 * This method is called when a test method did not execute successfully.
 		 *
-		 * @param \Exception $e
+		 * @param \Exception $e Exception.
 		 *
 		 * @return void
 		 */
