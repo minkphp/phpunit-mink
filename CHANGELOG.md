@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ...
 
 ### Fixed
-...
+- Fixed "PHP Strict standards" notice when used with PHPUnit 5+.
 
 ## [2.2.0] - 2016-06-26
 ### Added
