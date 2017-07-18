@@ -37,7 +37,14 @@ if ( version_compare(\PHPUnit_Runner_Version::id(), '5.0.0', '>=') ) {
 			parent::onNotSuccessfulTest($e);
 		}
 
-		abstract protected function onNotSuccessfulTestCompatibilized($e);
+		/**
+		 * This method is called when a test method did not execute successfully.
+		 *
+		 * @param \Exception $e
+		 *
+		 * @return void
+		 */
+		abstract protected function onNotSuccessfulTestCompatibilized(\Exception $e);
 
 	}
 }
@@ -64,7 +71,14 @@ else {
 			parent::onNotSuccessfulTest($e);
 		}
 
-		abstract protected function onNotSuccessfulTestCompatibilized($e);
+		/**
+		 * This method is called when a test method did not execute successfully.
+		 *
+		 * @param \Exception $e
+		 *
+		 * @return void
+		 */
+		abstract protected function onNotSuccessfulTestCompatibilized(\Exception $e);
 
 	}
 }

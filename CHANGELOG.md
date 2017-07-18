@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ...
 
 ### Fixed
-...
+- Compatibility with PHPUnit 5+ was not given cause of declaration of `aik099\PHPUnit\BrowserTestCase::onNotSuccessfulTest()`
 
 ## [2.2.0] - 2016-06-26
 ### Added
