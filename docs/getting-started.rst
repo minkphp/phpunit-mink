@@ -61,7 +61,7 @@ When website under test isn't publicly accessible, then:
 
 How to Create a Tunnel
 ----------------------
-* SauceLabs: https://docs.saucelabs.com/reference/sauce-connect/
+* SauceLabs: https://wiki.saucelabs.com/display/DOCS/Sauce+Connect+Proxy
 * BrowserStack: http://www.browserstack.com/automate/php#setting-local-tunnel
 
 .. _`Mink`: https://github.com/Behat/Mink
