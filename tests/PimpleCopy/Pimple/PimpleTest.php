@@ -189,7 +189,13 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
 	public function testFluentRegister()
 	{
 		$pimple = new Container();
-		$this->assertSame($pimple, $pimple->register($this->getMock('PimpleCopy\Pimple\ServiceProviderInterface')));
+		if ( version_compare(\PHPUnit_Runner_Version::id(), '5.4.0', '>=') ) {
+			$serviceProviderMock = $this->createMock('PimpleCopy\Pimple\ServiceProviderInterface');
+		} else {
+			$serviceProviderMock = $this->getMock('PimpleCopy\Pimple\ServiceProviderInterface');
+		}
+
+		$this->assertSame($pimple, $pimple->register($serviceProviderMock));
 	}
 
 	/**
