@@ -111,7 +111,7 @@ class SuiteBuildingTest extends \PHPUnit_Framework_TestCase
 		}
 
 		if ( version_compare(\PHPUnit_Runner_Version::id(), '5.0.0', '>=') ) {
-			$suite->shouldReceive('setBeStrictAboutChangesToGlobalState');
+			$suite->shouldReceive('setbeStrictAboutChangesToGlobalState');
 		}
 
 		return $suite;
