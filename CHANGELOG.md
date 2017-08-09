@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Bumped PHPUnit version to 4.8.35+ or 5.4.3+
+- use namespace classes of PHPUnit
 
 ### Fixed
 - Fixed "PHP Strict standards" notice when used with PHPUnit 5+.
