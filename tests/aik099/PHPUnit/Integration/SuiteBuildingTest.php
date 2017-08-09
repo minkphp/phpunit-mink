@@ -111,6 +111,10 @@ class SuiteBuildingTest extends TestCase
 			$suite->shouldReceive('count')->once()->andReturn(1);
 		}
 
+		if ( version_compare(\PHPUnit_Runner_Version::id(), '5.0.0', '>=') ) {
+			$suite->shouldReceive('setbeStrictAboutChangesToGlobalState');
+		}
+
 		return $suite;
 	}
 

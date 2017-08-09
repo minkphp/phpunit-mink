@@ -26,6 +26,7 @@
 
 namespace tests\PimpleCopy\Pimple;
 
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use PimpleCopy\Pimple\Container;
 
@@ -190,7 +191,10 @@ class PimpleTest extends TestCase
 	public function testFluentRegister()
 	{
 		$pimple = new Container();
-		$this->assertSame($pimple, $pimple->register($this->getMock('PimpleCopy\Pimple\ServiceProviderInterface')));
+		$serviceProviderMock = m::mock('PimpleCopy\Pimple\ServiceProviderInterface');
+		$serviceProviderMock->shouldReceive('register');
+
+		$this->assertSame($pimple, $pimple->register($serviceProviderMock));
 	}
 
 	/**
