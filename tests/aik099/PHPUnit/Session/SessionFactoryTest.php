@@ -13,8 +13,9 @@ namespace tests\aik099\PHPUnit\Session;
 
 use aik099\PHPUnit\Session\SessionFactory;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
-class SessionFactoryTest extends \PHPUnit_Framework_TestCase
+class SessionFactoryTest extends TestCase
 {
 
 	/**

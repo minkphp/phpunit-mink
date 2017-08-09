@@ -27,12 +27,13 @@
 namespace tests\PimpleCopy\Pimple;
 
 
+use PHPUnit\Framework\TestCase;
 use PimpleCopy\Pimple\Container;
 
 /**
  * @author  Dominik Zogg <dominik.zogg@gmail.com>
  */
-class PimpleServiceProviderInterfaceTest extends \PHPUnit_Framework_TestCase
+class PimpleServiceProviderInterfaceTest extends TestCase
 {
 	public function testProvider()
 	{

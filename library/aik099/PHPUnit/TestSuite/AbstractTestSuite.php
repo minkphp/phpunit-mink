@@ -16,7 +16,7 @@ use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\IEventDispatcherAware;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\Session\SessionStrategyManager;
-use ReflectionClass;
+use PHPUnit\Framework\TestSuite;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -24,7 +24,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @method \Mockery\Expectation shouldReceive(string $name)
  */
-abstract class AbstractTestSuite extends \PHPUnit_Framework_TestSuite implements IEventDispatcherAware
+abstract class AbstractTestSuite extends TestSuite implements IEventDispatcherAware
 {
 
 	/**

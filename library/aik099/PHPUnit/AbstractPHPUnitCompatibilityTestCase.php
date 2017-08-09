@@ -11,6 +11,8 @@
 namespace aik099\PHPUnit;
 
 
+use PHPUnit\Framework\TestCase;
+
 if ( version_compare(\PHPUnit_Runner_Version::id(), '5.0.0', '>=') ) {
 	/**
 	 * Implementation for PHPUnit 5+
@@ -20,7 +22,7 @@ if ( version_compare(\PHPUnit_Runner_Version::id(), '5.0.0', '>=') ) {
 	 *
 	 * @internal
 	 */
-	abstract class AbstractPHPUnitCompatibilityTestCase extends \PHPUnit_Framework_TestCase
+	abstract class AbstractPHPUnitCompatibilityTestCase extends TestCase
 	{
 
 		/**
@@ -54,7 +56,7 @@ else {
 	 *
 	 * @internal
 	 */
-	abstract class AbstractPHPUnitCompatibilityTestCase extends \PHPUnit_Framework_TestCase
+	abstract class AbstractPHPUnitCompatibilityTestCase extends TestCase
 	{
 
 		/**

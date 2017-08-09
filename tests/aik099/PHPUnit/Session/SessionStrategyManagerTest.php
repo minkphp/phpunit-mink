@@ -16,8 +16,9 @@ use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use aik099\PHPUnit\Session\SessionStrategyFactory;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
-class SessionStrategyManagerTest extends \PHPUnit_Framework_TestCase
+class SessionStrategyManagerTest extends TestCase
 {
 
 	/**

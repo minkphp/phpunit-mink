@@ -15,8 +15,9 @@ use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\Event\TestEvent;
 use Behat\Mink\Session;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
-class TestEventTest extends \PHPUnit_Framework_TestCase
+class TestEventTest extends TestCase
 {
 
 	/**
