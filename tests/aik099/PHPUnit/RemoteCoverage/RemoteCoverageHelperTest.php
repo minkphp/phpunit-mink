@@ -15,8 +15,9 @@ use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
 use Mockery as m;
 use Mockery\MockInterface;
+use PHPUnit\Framework\TestCase;
 
-class RemoteCoverageHelperTest extends \PHPUnit_Framework_TestCase
+class RemoteCoverageHelperTest extends TestCase
 {
 
 	/**

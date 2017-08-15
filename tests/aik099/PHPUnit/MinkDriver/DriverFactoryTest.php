@@ -16,8 +16,9 @@ use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\DIContainer;
 use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
-class DriverFactoryTest extends \PHPUnit_Framework_TestCase
+class DriverFactoryTest extends TestCase
 {
 
 	/**

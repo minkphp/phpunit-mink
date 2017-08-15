@@ -27,12 +27,13 @@
 namespace tests\PimpleCopy\Pimple;
 
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use PimpleCopy\Pimple\Container;
 
 /**
  * @author  Igor Wiedler <igor@wiedler.ch>
  */
-class PimpleTest extends \PHPUnit_Framework_TestCase
+class PimpleTest extends TestCase
 {
 	public function testWithString()
 	{

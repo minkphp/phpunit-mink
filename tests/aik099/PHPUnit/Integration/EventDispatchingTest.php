@@ -11,10 +11,10 @@
 namespace tests\aik099\PHPUnit\Integration;
 
 
-use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use tests\aik099\PHPUnit\Fixture\SetupEventFixture;
 
-class EventDispatchingTest extends \PHPUnit_Framework_TestCase
+class EventDispatchingTest extends TestCase
 {
 
 	protected function setUp()

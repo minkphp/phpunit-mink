@@ -12,8 +12,9 @@ namespace tests\aik099\PHPUnit\RemoteCoverage;
 
 
 use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
+use PHPUnit\Framework\TestCase;
 
-class RemoteUrlTest extends \PHPUnit_Framework_TestCase
+class RemoteUrlTest extends TestCase
 {
 
 	/**

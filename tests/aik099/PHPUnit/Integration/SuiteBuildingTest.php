@@ -13,11 +13,12 @@ namespace tests\aik099\PHPUnit\Integration;
 
 use aik099\PHPUnit\TestSuite\BrowserTestSuite;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
+use PHPUnit\Framework\TestCase;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use Mockery as m;
 
-class SuiteBuildingTest extends \PHPUnit_Framework_TestCase
+class SuiteBuildingTest extends TestCase
 {
 
 	const SUITE_CLASS = '\\aik099\\PHPUnit\\TestSuite\\RegularTestSuite';

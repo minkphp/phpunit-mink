@@ -13,9 +13,10 @@ namespace tests\aik099\PHPUnit\TestCase;
 
 use Mockery\MockInterface;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class EventDispatcherAwareTestCase extends \PHPUnit_Framework_TestCase
+class EventDispatcherAwareTestCase extends TestCase
 {
 
 	/**
