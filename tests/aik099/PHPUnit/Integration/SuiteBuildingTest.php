@@ -11,6 +11,7 @@
 namespace tests\aik099\PHPUnit\Integration;
 
 
+use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\TestSuite\BrowserTestSuite;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use PHPUnit\Framework\TestCase;
@@ -40,13 +41,17 @@ class SuiteBuildingTest extends TestCase
 
 		$this->assertInstanceOf(self::SUITE_CLASS, $suite);
 
-		$tests = $suite->tests();
-		/* @var $tests BrowserTestSuite[] */
+		/** @var BrowserTestSuite[] $test_suites */
+		$test_suites = $suite->tests();
 
-		$this->checkArray($tests, 2, self::BROWSER_SUITE_CLASS);
+		$this->checkArray($test_suites, 2, self::BROWSER_SUITE_CLASS);
 
-		foreach ( $tests as $test ) {
-			$this->checkArray($test->tests(), 2, self::TEST_CASE_WITH_CONFIG);
+		foreach ( $test_suites as $test_suite ) {
+			/** @var BrowserTestCase[] $suite_tests */
+			$suite_tests = $test_suite->tests();
+			$this->checkArray($suite_tests, 2, self::TEST_CASE_WITH_CONFIG);
+
+			$this->assertInstanceOf('aik099\PHPUnit\Session\ISessionStrategy', $suite_tests[0]->getSessionStrategy());
 		}
 	}
 
