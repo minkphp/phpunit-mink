@@ -415,11 +415,11 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 	/**
 	 * This method is called when a test method did not execute successfully.
 	 *
-	 * @param \Exception $e Exception.
+	 * @param \Throwable $e Exception or error.
 	 *
 	 * @return void
 	 */
-	protected function onNotSuccessfulTestCompatibilized(\Exception $e)
+	protected function onNotSuccessfulTestCompatibilized($e)
 	{
 		$this->_eventDispatcher->dispatch(
 			self::TEST_FAILED_EVENT,

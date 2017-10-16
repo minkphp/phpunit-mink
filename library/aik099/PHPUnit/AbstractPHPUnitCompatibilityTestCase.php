@@ -28,7 +28,7 @@ if ( version_compare(\PHPUnit_Runner_Version::id(), '5.0.0', '>=') ) {
 		/**
 		 * This method is called when a test method did not execute successfully.
 		 *
-		 * @param \Exception $e Exception.
+		 * @param \Throwable $e Exception or error.
 		 *
 		 * @return void
 		 */
@@ -42,11 +42,11 @@ if ( version_compare(\PHPUnit_Runner_Version::id(), '5.0.0', '>=') ) {
 		/**
 		 * This method is called when a test method did not execute successfully.
 		 *
-		 * @param \Exception $e Exception.
+		 * @param \Throwable $e Exception or error.
 		 *
 		 * @return void
 		 */
-		abstract protected function onNotSuccessfulTestCompatibilized(\Exception $e);
+		abstract protected function onNotSuccessfulTestCompatibilized($e);
 
 	}
 }
@@ -76,11 +76,11 @@ else {
 		/**
 		 * This method is called when a test method did not execute successfully.
 		 *
-		 * @param \Exception $e Exception.
+		 * @param \Throwable $e Exception or error.
 		 *
 		 * @return void
 		 */
-		abstract protected function onNotSuccessfulTestCompatibilized(\Exception $e);
+		abstract protected function onNotSuccessfulTestCompatibilized($e);
 
 	}
 }
