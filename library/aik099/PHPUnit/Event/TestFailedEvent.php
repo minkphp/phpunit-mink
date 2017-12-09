@@ -20,18 +20,18 @@ class TestFailedEvent extends TestEvent
 	/**
 	 * Exception.
 	 *
-	 * @var \Exception
+	 * @var \Throwable
 	 */
 	private $_exception;
 
 	/**
 	 * Remembers the exception which caused test to fail.
 	 *
-	 * @param \Exception      $e         Exception.
+	 * @param \Throwable      $e         Exception.
 	 * @param BrowserTestCase $test_case Test case.
 	 * @param Session         $session   Session.
 	 */
-	public function __construct(\Exception $e, BrowserTestCase $test_case, Session $session = null)
+	public function __construct(\Throwable $e, BrowserTestCase $test_case, Session $session = null)
 	{
 		parent::__construct($test_case, $session);
 		$this->_exception = $e;
@@ -40,7 +40,7 @@ class TestFailedEvent extends TestEvent
 	/**
 	 * Returns exception, that caused test to fail.
 	 *
-	 * @return \Exception
+	 * @return \Throwable
 	 */
 	public function getException()
 	{

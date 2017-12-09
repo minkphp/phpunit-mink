@@ -135,11 +135,7 @@ class GoutteDriverFactory implements IMinkDriverFactory
 	{
 		$reflection = new \ReflectionParameter(array('Goutte\Client', 'setClient'), 0);
 
-		if ( $reflection->getClass() && 'Guzzle\Http\ClientInterface' === $reflection->getClass()->name ) {
-			return true;
-		}
-
-		return false;
+		return $reflection->getClass() && 'Guzzle\Http\ClientInterface' === $reflection->getClass()->name;
 	}
 	
 	/**
