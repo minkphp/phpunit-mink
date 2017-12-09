@@ -12,6 +12,7 @@ namespace tests\aik099\PHPUnit\Event;
 
 
 use aik099\PHPUnit\Event\TestEndedEvent;
+use PHPUnit\Framework\TestResult;
 
 class TestEndedEventTest extends TestEventTest
 {
@@ -19,7 +20,7 @@ class TestEndedEventTest extends TestEventTest
 	/**
 	 * Test result.
 	 *
-	 * @var \PHPUnit_Framework_TestResult
+	 * @var TestResult
 	 */
 	private $_testResult;
 
@@ -30,7 +31,7 @@ class TestEndedEventTest extends TestEventTest
 	 */
 	protected function setUp()
 	{
-		$this->_testResult = new \PHPUnit_Framework_TestResult();
+		$this->_testResult = new TestResult();
 
 		parent::setUp();
 	}

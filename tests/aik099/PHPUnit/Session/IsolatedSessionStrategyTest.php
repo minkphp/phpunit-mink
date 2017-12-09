@@ -81,7 +81,7 @@ class IsolatedSessionStrategyTest extends SessionStrategyTestCase
 			BrowserTestCase::TEST_ENDED_EVENT,
 			new TestEndedEvent(
 				$test_case,
-				m::mock('PHPUnit_Framework_TestResult'),
+				m::mock('\\PHPUnit\\Framework\\TestResult'),
 				$session
 			)
 		);

@@ -311,7 +311,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		}
 		else {
 			$driver = m::mock('\\Behat\\Mink\\Driver\\DriverInterface');
-			$this->setExpectedException('RuntimeException');
+			$this->expectException("\\RuntimeException");
 		}
 
 		$session = m::mock('Behat\\Mink\\Session');
@@ -321,7 +321,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$event_dispatcher = new EventDispatcher();
 		$event_dispatcher->addSubscriber($this->browser);
 
-		$test_result = m::mock('PHPUnit_Framework_TestResult');
+		$test_result = m::mock('\\PHPUnit\\Framework\\TestResult');
 
 		$this->eventDispatcher->shouldReceive('removeSubscriber')->with($this->browser)->once();
 
@@ -367,8 +367,8 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 			$event->shouldReceive('getSession')->once();
 		}
 
-		$event->shouldReceive('setDispatcher')->once(); // To remove with Symfony 3.0 release.
-		$event->shouldReceive('setName')->once(); // To remove with Symfony 3.0 release.
+//		$event->shouldReceive('setDispatcher')->once(); // To remove with Symfony 3.0 release.
+//		$event->shouldReceive('setName')->once(); // To remove with Symfony 3.0 release.
 		$event->shouldReceive('isPropagationStopped')->once()->andReturn(false);
 		$event->shouldReceive('getTestCase')->andReturn($test_case);
 		$event->shouldReceive('validateSubscriber')->with($test_case)->atLeast()->once()->andReturn(true);

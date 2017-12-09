@@ -15,6 +15,8 @@ namespace aik099\PHPUnit\RemoteCoverage;
 require_once 'File/Iterator/Autoload.php';
 require_once 'PHP/CodeCoverage/Autoload.php';*/
 
+use SebastianBergmann\CodeCoverage\Filter;
+
 class RemoteCoverageTool
 {
 
@@ -182,7 +184,7 @@ class RemoteCoverageTool
 		}
 
 		$coverage = array();
-		$filter = new \PHP_CodeCoverage_Filter();
+		$filter = new Filter();
 
 		foreach ( $this->getDataDirectoryFiles() as $data_directory_file ) {
 			$raw_coverage_data = unserialize(file_get_contents($data_directory_file));

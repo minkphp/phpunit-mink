@@ -12,9 +12,9 @@ namespace tests\aik099\PHPUnit\RemoteCoverage;
 
 
 use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class RemoteUrlTest extends TestCase
+class RemoteUrlTest extends MockeryTestCase
 {
 
 	/**

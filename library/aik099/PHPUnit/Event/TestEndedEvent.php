@@ -13,6 +13,7 @@ namespace aik099\PHPUnit\Event;
 
 use aik099\PHPUnit\BrowserTestCase;
 use Behat\Mink\Session;
+use PHPUnit\Framework\TestResult;
 
 class TestEndedEvent extends TestEvent
 {
@@ -20,20 +21,20 @@ class TestEndedEvent extends TestEvent
 	/**
 	 * Test result.
 	 *
-	 * @var \PHPUnit_Framework_TestResult
+	 * @var TestResult
 	 */
 	private $_testResult;
 
 	/**
 	 * Remembers the exception which caused test to fail.
 	 *
-	 * @param BrowserTestCase               $test_case   Test case.
-	 * @param \PHPUnit_Framework_TestResult $test_result Test result.
-	 * @param Session                       $session     Session.
+	 * @param BrowserTestCase $test_case   Test case.
+	 * @param TestResult      $test_result Test result.
+	 * @param Session         $session     Session.
 	 */
 	public function __construct(
 		BrowserTestCase $test_case,
-		\PHPUnit_Framework_TestResult $test_result,
+		TestResult $test_result,
 		Session $session = null
 	) {
 		parent::__construct($test_case, $session);
@@ -43,7 +44,7 @@ class TestEndedEvent extends TestEvent
 	/**
 	 * Returns test result.
 	 *
-	 * @return \PHPUnit_Framework_TestResult
+	 * @return TestResult
 	 */
 	public function getTestResult()
 	{

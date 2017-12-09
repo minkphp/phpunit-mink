@@ -505,10 +505,11 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 
 	public function testNonExistingMethod()
 	{
-		$this->setExpectedException(
-			'\BadMethodCallException',
-			'Method "nonExistingMethod" does not exist on ' . get_class($this->browser) . ' class'
-		);
+	    $this->expectException("\\BadMethodCallException");
+//		$this->setExpectedException(
+//			'\BadMethodCallException',
+//			'Method "nonExistingMethod" does not exist on ' . get_class($this->browser) . ' class'
+//		);
 
 		$this->browser->nonExistingMethod();
 	}
@@ -575,7 +576,7 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	{
 		$test_case = m::mock(self::TEST_CASE_CLASS);
 		$test_case->shouldReceive('hasFailed')->once()->andReturn(false);
-		$test_result = m::mock('\\PHPUnit_Framework_TestResult');
+		$test_result = m::mock('\\PHPUnit\\Framework\\TestResult');
 
 		$this->browser->setSessionStrategy(ISessionStrategyFactory::TYPE_ISOLATED);
 		$this->assertTrue($this->browser->getTestStatus($test_case, $test_result));
@@ -589,7 +590,7 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	public function testGetTestStatusShared()
 	{
 		$test_case = m::mock(self::TEST_CASE_CLASS);
-		$test_result = m::mock('\\PHPUnit_Framework_TestResult');
+		$test_result = m::mock('\\PHPUnit\\Framework\\TestResult');
 		$test_result->shouldReceive('wasSuccessful')->once()->andReturn(true);
 
 		$this->browser->setSessionStrategy(ISessionStrategyFactory::TYPE_SHARED);

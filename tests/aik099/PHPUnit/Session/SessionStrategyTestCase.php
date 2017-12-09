@@ -12,10 +12,10 @@ namespace tests\aik099\PHPUnit\Session;
 
 
 use aik099\PHPUnit\Session\ISessionStrategy;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class SessionStrategyTestCase extends TestCase
+class SessionStrategyTestCase extends MockeryTestCase
 {
 
 	const BROWSER_CLASS = '\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';

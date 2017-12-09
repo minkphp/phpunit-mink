@@ -14,9 +14,9 @@ namespace tests\aik099\PHPUnit\TestCase;
 use aik099\PHPUnit\Application;
 use Mockery\MockInterface;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class ApplicationAwareTestCase extends TestCase
+class ApplicationAwareTestCase extends MockeryTestCase
 {
 
 	/**

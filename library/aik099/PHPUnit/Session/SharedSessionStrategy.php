@@ -16,6 +16,8 @@ use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\Event\TestEvent;
 use aik099\PHPUnit\Event\TestFailedEvent;
 use Behat\Mink\Session;
+use PHPUnit\Framework\IncompleteTestError;
+use PHPUnit\Framework\SkippedTestError;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -140,10 +142,10 @@ class SharedSessionStrategy implements ISessionStrategy
 	 */
 	public function onTestFailed(TestFailedEvent $event)
 	{
-		if ( $event->getException() instanceof \PHPUnit_Framework_IncompleteTestError ) {
+		if ( $event->getException() instanceof IncompleteTestError ) {
 			return;
 		}
-		elseif ( $event->getException() instanceof \PHPUnit_Framework_SkippedTestError ) {
+		elseif ( $event->getException() instanceof SkippedTestError ) {
 			return;
 		}
 

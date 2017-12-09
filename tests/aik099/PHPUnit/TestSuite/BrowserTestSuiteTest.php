@@ -77,7 +77,7 @@ class BrowserTestSuiteTest extends EventDispatcherAwareTestCase
 	public function testSetBrowserFromConfiguration()
 	{
 		$browser = array('name' => 'safari');
-		$test = m::mock('PHPUnit_Framework_Test');
+		$test = m::mock('PHPUnit\\Framework\\Test');
 		$test->shouldReceive('setBrowserFromConfiguration')->with($browser)->once();
 
 		$this->_suite->addTest($test);

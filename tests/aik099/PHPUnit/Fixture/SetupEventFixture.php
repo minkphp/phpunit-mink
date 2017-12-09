@@ -97,7 +97,7 @@ class SetupEventFixture extends BrowserTestCase
 
 		// For IsolatedSessionStrategy::onTestEnd (twice per each browser because
 		// we have 2 strategies listening for test end + IsolatedSessionStrategyTest with 2 tests).
-		$session->shouldReceive('stop')->times(6);
+		$session->shouldReceive('stop')->once();
 		$session->shouldReceive('isStarted')->andReturn(true);
 
 		$this->_setSession($session);

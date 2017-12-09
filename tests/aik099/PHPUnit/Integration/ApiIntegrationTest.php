@@ -11,10 +11,11 @@
 namespace tests\aik099\PHPUnit\Integration;
 
 
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
+use PHPUnit\Framework\TestResult;
 use tests\aik099\PHPUnit\Fixture\ApiIntegrationFixture;
 
-class ApiIntegrationTest extends TestCase
+class ApiIntegrationTest extends MockeryTestCase
 {
 
 	protected function setUp()
@@ -36,7 +37,7 @@ class ApiIntegrationTest extends TestCase
 	 */
 	public function testAPICalls()
 	{
-		$result = new \PHPUnit_Framework_TestResult();
+		$result = new TestResult();
 
 		$suite = ApiIntegrationFixture::suite('tests\\aik099\\PHPUnit\\Fixture\\ApiIntegrationFixture');
 		$suite->run($result);

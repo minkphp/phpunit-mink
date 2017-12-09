@@ -13,9 +13,9 @@ namespace tests\aik099\PHPUnit\Session;
 
 use aik099\PHPUnit\Session\SessionFactory;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class SessionFactoryTest extends TestCase
+class SessionFactoryTest extends MockeryTestCase
 {
 
 	/**

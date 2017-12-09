@@ -13,9 +13,9 @@ namespace tests\aik099\PHPUnit\Integration;
 
 use aik099\PHPUnit\Application;
 use aik099\PHPUnit\DIContainer;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class DIContainerTest extends TestCase
+class DIContainerTest extends MockeryTestCase
 {
 
 	/**

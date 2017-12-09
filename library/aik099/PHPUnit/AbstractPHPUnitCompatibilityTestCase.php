@@ -12,8 +12,9 @@ namespace aik099\PHPUnit;
 
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Runner\Version;
 
-if ( version_compare(\PHPUnit_Runner_Version::id(), '5.0.0', '>=') ) {
+if ( version_compare(Version::id(), '5.0.0', '>=') ) {
 	/**
 	 * Implementation for PHPUnit 5+
 	 *
@@ -28,11 +29,11 @@ if ( version_compare(\PHPUnit_Runner_Version::id(), '5.0.0', '>=') ) {
 		/**
 		 * This method is called when a test method did not execute successfully.
 		 *
-		 * @param \Exception $e Exception.
+		 * @param \Throwable $e Exception.
 		 *
 		 * @return void
 		 */
-		protected function onNotSuccessfulTest($e)
+		protected function onNotSuccessfulTest(\Throwable $e)
 		{
 			$this->onNotSuccessfulTestCompatibilized($e);
 

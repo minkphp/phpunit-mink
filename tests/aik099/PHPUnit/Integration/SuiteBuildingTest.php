@@ -14,12 +14,13 @@ namespace tests\aik099\PHPUnit\Integration;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\TestSuite\BrowserTestSuite;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
+use PHPUnit\Runner\Version;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use Mockery as m;
 
-class SuiteBuildingTest extends TestCase
+class SuiteBuildingTest extends MockeryTestCase
 {
 
 	const SUITE_CLASS = '\\aik099\\PHPUnit\\TestSuite\\RegularTestSuite';
@@ -84,7 +85,7 @@ class SuiteBuildingTest extends TestCase
 		$suite->addTest($sub_browser_suite);
 		$suite->addTest($sub_test_suite);
 
-		$result = m::mock('\\PHPUnit_Framework_TestResult');
+		$result = m::mock('\\PHPUnit\\Framework\\TestResult');
 		$result->shouldReceive('startTestSuite');
 		$result->shouldReceive('shouldStop')->andReturn(false);
 		$result->shouldReceive('endTestSuite');
@@ -112,11 +113,11 @@ class SuiteBuildingTest extends TestCase
 		$suite->shouldReceive('run')->once();
 		$suite->shouldReceive('onTestSuiteEnded')->once();
 
-		if ( version_compare(\PHPUnit_Runner_Version::id(), '4.0.0', '>=') ) {
+		if ( version_compare(Version::id(), '4.0.0', '>=') ) {
 			$suite->shouldReceive('count')->once()->andReturn(1);
 		}
 
-		if ( version_compare(\PHPUnit_Runner_Version::id(), '5.0.0', '>=') ) {
+		if ( version_compare(Version::id(), '5.0.0', '>=') ) {
 			$suite->shouldReceive('setbeStrictAboutChangesToGlobalState');
 		}
 

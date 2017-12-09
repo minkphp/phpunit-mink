@@ -20,6 +20,8 @@ use aik099\PHPUnit\Session\SharedSessionStrategy;
 use Behat\Mink\Session;
 use Mockery as m;
 use Mockery\MockInterface;
+use PHPUnit\Framework\IncompleteTestError;
+use PHPUnit\Framework\SkippedTestError;
 
 class SharedSessionStrategyTest extends SessionStrategyTestCase
 {
@@ -95,8 +97,8 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 	{
 		return array(
 			array(null),
-			array(new \PHPUnit_Framework_IncompleteTestError()),
-			array(new \PHPUnit_Framework_SkippedTestError()),
+			array(new IncompleteTestError()),
+			array(new SkippedTestError()),
 		);
 	}
 

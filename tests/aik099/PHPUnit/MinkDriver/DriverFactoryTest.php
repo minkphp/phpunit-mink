@@ -16,9 +16,9 @@ use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\DIContainer;
 use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class DriverFactoryTest extends TestCase
+class DriverFactoryTest extends MockeryTestCase
 {
 
 	/**
@@ -49,10 +49,11 @@ class DriverFactoryTest extends TestCase
 		$factory = new $factory_class();
 		$driver_class_parts = explode('\\', $driver_class);
 
-		$this->setExpectedException(
-			'\RuntimeException',
-			'Install Mink' . end($driver_class_parts) . ' in order to use ' . $factory->getDriverName() . ' driver.'
-		);
+		$this->expectException('\RuntimeException');
+//		$this->setExpectedException(
+//			'\RuntimeException',
+//			'Install Mink' . end($driver_class_parts) . ' in order to use ' . $factory->getDriverName() . ' driver.'
+//		);
 		$factory->createDriver($this->createBrowserConfiguration($factory));
 	}
 

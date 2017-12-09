@@ -20,6 +20,7 @@ use aik099\PHPUnit\Session\ISessionStrategy;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use Mockery as m;
 use Mockery\MockInterface;
+use PHPUnit\Framework\TestResult;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
@@ -299,7 +300,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		/* @var $test_case BrowserTestCase */
 		list($test_case,) = $this->prepareForRun();
 
-		$this->assertInstanceOf('\\PHPUnit_Framework_TestResult', $test_case->run());
+		$this->assertInstanceOf('\\PHPUnit\\Framework\\TestResult', $test_case->run());
 	}
 
 	/**
@@ -477,11 +478,11 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 * @param integer         $run_count        Test run count.
 	 * @param boolean         $collect_coverage Should collect coverage information.
 	 *
-	 * @return \PHPUnit_Framework_TestResult|MockInterface
+	 * @return TestResult|MockInterface
 	 */
 	protected function getTestResult(BrowserTestCase $test_case, $run_count, $collect_coverage = false)
 	{
-		$result = m::mock('\\PHPUnit_Framework_TestResult');
+		$result = m::mock('\\PHPUnit\\Framework\\TestResult');
 		$result->shouldReceive('getCollectCodeCoverageInformation')->withNoArgs()->andReturn($collect_coverage);
 
 		$result->shouldReceive('run')

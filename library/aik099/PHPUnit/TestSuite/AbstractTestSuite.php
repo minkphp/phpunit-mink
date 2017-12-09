@@ -16,6 +16,7 @@ use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\IEventDispatcherAware;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\Session\SessionStrategyManager;
+use PHPUnit\Framework\DataProviderTestSuite;
 use PHPUnit\Framework\TestSuite;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -92,7 +93,7 @@ abstract class AbstractTestSuite extends TestSuite implements IEventDispatcherAw
 		}
 
 		foreach ( $tests as $test ) {
-			if ( $test instanceof \PHPUnit_Framework_TestSuite_DataProvider ) {
+			if ( $test instanceof DataProviderTestSuite ) {
 				$this->setTestDependencies(
 					$session_strategy_manager,
 					$browser_configuration_factory,
@@ -126,7 +127,7 @@ abstract class AbstractTestSuite extends TestSuite implements IEventDispatcherAw
 		}
 
 		foreach ( $tests as $test ) {
-			if ( $test instanceof \PHPUnit_Framework_TestSuite_DataProvider ) {
+			if ( $test instanceof DataProviderTestSuite ) {
 				$this->tearDown($test->tests());
 			}
 			else {

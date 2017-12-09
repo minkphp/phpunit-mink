@@ -14,9 +14,9 @@ namespace tests\aik099\PHPUnit\MinkDriver;
 
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class DriverFactoryRegistryTest extends TestCase
+class DriverFactoryRegistryTest extends MockeryTestCase
 {
 
 	/**

@@ -18,6 +18,7 @@ use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use Behat\Mink\Driver\DriverInterface;
+use PHPUnit\Framework\TestResult;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -510,14 +511,14 @@ class BrowserConfiguration implements EventSubscriberInterface
 	/**
 	 * Returns test run status based on session strategy requested by browser.
 	 *
-	 * @param BrowserTestCase               $test_case   Browser test case.
-	 * @param \PHPUnit_Framework_TestResult $test_result Test result.
+	 * @param BrowserTestCase $test_case   Browser test case.
+	 * @param TestResult      $test_result Test result.
 	 *
 	 * @return boolean
 	 * @see    IsolatedSessionStrategy
 	 * @see    SharedSessionStrategy
 	 */
-	public function getTestStatus(BrowserTestCase $test_case, \PHPUnit_Framework_TestResult $test_result)
+	public function getTestStatus(BrowserTestCase $test_case, TestResult $test_result)
 	{
 		if ( $this->isShared() ) {
 			// All tests in a test case use same session -> failed even if 1 test fails.

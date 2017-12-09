@@ -11,10 +11,11 @@
 namespace tests\aik099\PHPUnit\Integration;
 
 
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
+use PHPUnit\Framework\TestResult;
 use tests\aik099\PHPUnit\Fixture\SetupEventFixture;
 
-class EventDispatchingTest extends TestCase
+class EventDispatchingTest extends MockeryTestCase
 {
 
 	protected function setUp()
@@ -51,7 +52,7 @@ class EventDispatchingTest extends TestCase
 		 * - SharedSessionStrategy::onTestFailed
 		 */
 
-		$result = new \PHPUnit_Framework_TestResult();
+		$result = new TestResult();
 
 		$suite = SetupEventFixture::suite('tests\\aik099\\PHPUnit\\Fixture\\SetupEventFixture');
 		$suite->run($result);

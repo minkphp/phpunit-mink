@@ -23,6 +23,7 @@ use aik099\PHPUnit\Session\SessionStrategyManager;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Session;
+use PHPUnit\Framework\TestResult;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -305,11 +306,11 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 	 *
 	 * If no TestResult object is passed a new one will be created.
 	 *
-	 * @param \PHPUnit_Framework_TestResult $result Test result.
+	 * @param TestResult $result Test result.
 	 *
-	 * @return \PHPUnit_Framework_TestResult
+	 * @return TestResult
 	 */
-	public function run(\PHPUnit_Framework_TestResult $result = null)
+	public function run(TestResult $result = null)
 	{
 		if ( $result === null ) {
 			$result = $this->createResult();
