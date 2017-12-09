@@ -42,10 +42,10 @@ abstract class AbstractPHPUnitCompatibilityTestCase extends TestCase
     /**
      * This method is called when a test method did not execute successfully.
      *
-     * @param \Exception $e Exception.
+     * @param \Throwable $e Exception.
      *
      * @return void
      */
-    abstract protected function onNotSuccessfulTestCompatibilized(\Exception $e);
+    abstract protected function onNotSuccessfulTestCompatibilized(\Throwable $e);
 
 }
