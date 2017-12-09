@@ -14,74 +14,38 @@ namespace aik099\PHPUnit;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Runner\Version;
 
-if ( version_compare(Version::id(), '5.0.0', '>=') ) {
-	/**
-	 * Implementation for PHPUnit 5+
-	 *
-	 * This code should be moved back to aik099\PHPUnit\BrowserTestCase when dropping support for
-	 * PHP 5.5 and older, as PHPUnit 4 won't be needed anymore.
-	 *
-	 * @internal
-	 */
-	abstract class AbstractPHPUnitCompatibilityTestCase extends TestCase
-	{
+/**
+ * Implementation for PHPUnit 5+
+ *
+ * This code should be moved back to aik099\PHPUnit\BrowserTestCase when dropping support for
+ * PHP 5.5 and older, as PHPUnit 4 won't be needed anymore.
+ *
+ * @internal
+ */
+abstract class AbstractPHPUnitCompatibilityTestCase extends TestCase
+{
 
-		/**
-		 * This method is called when a test method did not execute successfully.
-		 *
-		 * @param \Throwable $e Exception.
-		 *
-		 * @return void
-		 */
-		protected function onNotSuccessfulTest(\Throwable $e)
-		{
-			$this->onNotSuccessfulTestCompatibilized($e);
+    /**
+     * This method is called when a test method did not execute successfully.
+     *
+     * @param \Throwable $e Exception.
+     *
+     * @return void
+     */
+    protected function onNotSuccessfulTest(\Throwable $e)
+    {
+        $this->onNotSuccessfulTestCompatibilized($e);
 
-			parent::onNotSuccessfulTest($e);
-		}
+        parent::onNotSuccessfulTest($e);
+    }
 
-		/**
-		 * This method is called when a test method did not execute successfully.
-		 *
-		 * @param \Exception $e Exception.
-		 *
-		 * @return void
-		 */
-		abstract protected function onNotSuccessfulTestCompatibilized(\Exception $e);
+    /**
+     * This method is called when a test method did not execute successfully.
+     *
+     * @param \Exception $e Exception.
+     *
+     * @return void
+     */
+    abstract protected function onNotSuccessfulTestCompatibilized(\Exception $e);
 
-	}
-}
-else {
-	/**
-	 * Implementation for PHPUnit 4
-	 *
-	 * @internal
-	 */
-	abstract class AbstractPHPUnitCompatibilityTestCase extends TestCase
-	{
-
-		/**
-		 * This method is called when a test method did not execute successfully.
-		 *
-		 * @param \Exception $e Exception.
-		 *
-		 * @return void
-		 */
-		protected function onNotSuccessfulTest(\Exception $e)
-		{
-			$this->onNotSuccessfulTestCompatibilized($e);
-
-			parent::onNotSuccessfulTest($e);
-		}
-
-		/**
-		 * This method is called when a test method did not execute successfully.
-		 *
-		 * @param \Exception $e Exception.
-		 *
-		 * @return void
-		 */
-		abstract protected function onNotSuccessfulTestCompatibilized(\Exception $e);
-
-	}
 }
