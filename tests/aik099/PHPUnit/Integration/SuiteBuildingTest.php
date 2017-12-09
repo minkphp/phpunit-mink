@@ -113,13 +113,8 @@ class SuiteBuildingTest extends MockeryTestCase
 		$suite->shouldReceive('run')->once();
 		$suite->shouldReceive('onTestSuiteEnded')->once();
 
-		if ( version_compare(Version::id(), '4.0.0', '>=') ) {
-			$suite->shouldReceive('count')->once()->andReturn(1);
-		}
-
-		if ( version_compare(Version::id(), '5.0.0', '>=') ) {
-			$suite->shouldReceive('setbeStrictAboutChangesToGlobalState');
-		}
+        $suite->shouldReceive('count')->once()->andReturn(1);
+        $suite->shouldReceive('setbeStrictAboutChangesToGlobalState');
 
 		return $suite;
 	}

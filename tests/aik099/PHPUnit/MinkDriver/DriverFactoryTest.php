@@ -49,12 +49,11 @@ class DriverFactoryTest extends MockeryTestCase
 		$factory = new $factory_class();
 		$driver_class_parts = explode('\\', $driver_class);
 
-		$this->expectException('\RuntimeException');
-//		$this->setExpectedException(
-//			'\RuntimeException',
-//			'Install Mink' . end($driver_class_parts) . ' in order to use ' . $factory->getDriverName() . ' driver.'
-//		);
+		$this->expectException(\RuntimeException::class);
+
 		$factory->createDriver($this->createBrowserConfiguration($factory));
+
+		$this->fail('Install Mink' . end($driver_class_parts) . ' in order to use ' . $factory->getDriverName() . ' driver.');
 	}
 
 	/**

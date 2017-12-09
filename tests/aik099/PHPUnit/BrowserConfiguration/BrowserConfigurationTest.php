@@ -505,13 +505,11 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 
 	public function testNonExistingMethod()
 	{
-	    $this->expectException("\\BadMethodCallException");
-//		$this->setExpectedException(
-//			'\BadMethodCallException',
-//			'Method "nonExistingMethod" does not exist on ' . get_class($this->browser) . ' class'
-//		);
+	    $this->expectException(\BadMethodCallException::class);
 
 		$this->browser->nonExistingMethod();
+
+		$this->fail('Method "nonExistingMethod" does not exist on ' . get_class($this->browser) . ' class');
 	}
 
 	/**

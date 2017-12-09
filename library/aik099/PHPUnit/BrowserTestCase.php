@@ -23,6 +23,7 @@ use aik099\PHPUnit\Session\SessionStrategyManager;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Session;
+use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\TestResult;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -31,7 +32,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @method \Mockery\Expectation shouldReceive(string $name)
  */
-abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase implements IEventDispatcherAware
+abstract class BrowserTestCase extends TestCase implements IEventDispatcherAware
 {
 
 	const TEST_ENDED_EVENT = 'test.ended';
@@ -420,12 +421,14 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 	 *
 	 * @return void
 	 */
-	protected function onNotSuccessfulTestCompatibilized(\Throwable $e)
+	protected function onNotSuccessfulTest(\Throwable $e)
 	{
 		$this->_eventDispatcher->dispatch(
 			self::TEST_FAILED_EVENT,
 			new TestFailedEvent($e, $this, $this->_session)
 		);
+
+        parent::onNotSuccessfulTest($e);
 	}
 
 	/**
