@@ -22,8 +22,6 @@ matrix:
           before_script: []
           script: sphinx-build -nW -b html -d docs/build/doctrees docs docs/build/html
           after_script: []
-        - php: 7.1
-          dist: precise
 
 env:
     global:

@@ -15,7 +15,6 @@ use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\TestSuite\BrowserTestSuite;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use PHPUnit\Runner\Version;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use Mockery as m;

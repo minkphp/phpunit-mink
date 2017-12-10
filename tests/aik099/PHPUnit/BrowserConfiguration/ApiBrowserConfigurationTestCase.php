@@ -367,8 +367,6 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 			$event->shouldReceive('getSession')->once();
 		}
 
-//		$event->shouldReceive('setDispatcher')->once(); // To remove with Symfony 3.0 release.
-//		$event->shouldReceive('setName')->once(); // To remove with Symfony 3.0 release.
 		$event->shouldReceive('isPropagationStopped')->once()->andReturn(false);
 		$event->shouldReceive('getTestCase')->andReturn($test_case);
 		$event->shouldReceive('validateSubscriber')->with($test_case)->atLeast()->once()->andReturn(true);
