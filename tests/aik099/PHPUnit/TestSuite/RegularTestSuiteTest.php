@@ -11,8 +11,13 @@
 namespace tests\aik099\PHPUnit\TestSuite;
 
 
+use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
+use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
+use aik099\PHPUnit\Session\SessionStrategyManager;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use Mockery as m;
+use PHPUnit\Framework\Test;
+use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
 
 class RegularTestSuiteTest extends EventDispatcherAwareTestCase
@@ -28,7 +33,7 @@ class RegularTestSuiteTest extends EventDispatcherAwareTestCase
 		$suite = $this->_createSuite(array('addTest'));
 		$suite->shouldReceive('addTest')->twice();
 
-		$actual = $suite->addTestMethods('tests\\aik099\\PHPUnit\\Fixture\\WithoutBrowserConfig');
+		$actual = $suite->addTestMethods(WithoutBrowserConfig::class);
 		$this->assertSame($suite, $actual);
 	}
 
@@ -39,11 +44,11 @@ class RegularTestSuiteTest extends EventDispatcherAwareTestCase
 	 */
 	public function testSetTestDependencies()
 	{
-		$manager = m::mock('aik099\\PHPUnit\\Session\\SessionStrategyManager');
-		$factory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
-		$helper = m::mock('aik099\\PHPUnit\\RemoteCoverage\\RemoteCoverageHelper');
+		$manager = m::mock(SessionStrategyManager::class);
+		$factory = m::mock(IBrowserConfigurationFactory::class);
+		$helper = m::mock(RemoteCoverageHelper::class);
 
-		$test = m::mock('\\PHPUnit\\Framework\\Test');
+		$test = m::mock(Test::class);
 		$test->shouldReceive('setEventDispatcher')->with($this->eventDispatcher)->once();
 		$test->shouldReceive('setSessionStrategyManager')->with($manager)->once();
 		$test->shouldReceive('setBrowserConfigurationFactory')->with($factory)->once();
@@ -64,7 +69,7 @@ class RegularTestSuiteTest extends EventDispatcherAwareTestCase
 	private function _createSuite(array $mock_methods = array())
 	{
 		if ( $mock_methods ) {
-			$suite = m::mock('aik099\\PHPUnit\\TestSuite\\RegularTestSuite[' . implode(',', $mock_methods) . ']');
+			$suite = m::mock(RegularTestSuite::class . '[' . implode(',', $mock_methods) . ']');
 		}
 		else {
 			$suite = new RegularTestSuite();

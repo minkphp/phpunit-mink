@@ -13,6 +13,7 @@ namespace tests\aik099\PHPUnit\MinkDriver;
 
 
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
+use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
@@ -35,7 +36,7 @@ class DriverFactoryRegistryTest extends MockeryTestCase
 
 	public function testAddingAndGetting()
 	{
-		$factory = m::mock('aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$factory = m::mock(IMinkDriverFactory::class);
 		$factory->shouldReceive('getDriverName')->andReturn('test');
 
 		$this->_driverFactoryRegistry->add($factory);
@@ -49,7 +50,7 @@ class DriverFactoryRegistryTest extends MockeryTestCase
 	 */
 	public function testAddingExisting()
 	{
-		$factory = m::mock('aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$factory = m::mock(IMinkDriverFactory::class);
 		$factory->shouldReceive('getDriverName')->andReturn('test');
 
 		$this->_driverFactoryRegistry->add($factory);

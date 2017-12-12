@@ -15,12 +15,16 @@ use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
+use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
+use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageTool;
 use aik099\PHPUnit\Session\ISessionStrategy;
 use aik099\PHPUnit\Session\SessionStrategyManager;
+use Behat\Mink\Session;
 use Mockery as m;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestResult;
+use SebastianBergmann\CodeCoverage\CodeCoverage;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
@@ -28,11 +32,11 @@ use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
 class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 {
 
-	const BROWSER_CLASS = '\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
+	const BROWSER_CLASS = BrowserConfiguration::class;
 
-	const MANAGER_CLASS = '\\aik099\\PHPUnit\\Session\\SessionStrategyManager';
+	const MANAGER_CLASS = SessionStrategyManager::class;
 
-	const SESSION_STRATEGY_INTERFACE = '\\aik099\\PHPUnit\\Session\\ISessionStrategy';
+	const SESSION_STRATEGY_INTERFACE = ISessionStrategy::class;
 
 	/**
 	 *  Browser configuration factory.
@@ -56,7 +60,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		}
 
 		$this->browserConfigurationFactory = m::mock(
-			'aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory'
+            IBrowserConfigurationFactory::class
 		);
 	}
 
@@ -106,9 +110,9 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 */
 	protected function createDriverFactoryRegistry()
 	{
-		$registry = m::mock('\\aik099\\PHPUnit\\MinkDriver\\DriverFactoryRegistry');
+		$registry = m::mock(DriverFactoryRegistry::class);
 
-		$driver_factory = m::mock('\\aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$driver_factory = m::mock(IMinkDriverFactory::class);
 		$driver_factory->shouldReceive('getDriverDefaults')->andReturn(array());
 
 		$registry
@@ -199,8 +203,8 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	{
 		$browser = $this->getBrowser(0);
 
-		$expected_session1 = m::mock('\\Behat\\Mink\\Session');
-		$expected_session2 = m::mock('\\Behat\\Mink\\Session');
+		$expected_session1 = m::mock(Session::class);
+		$expected_session2 = m::mock(Session::class);
 
 		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
@@ -300,7 +304,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		/* @var $test_case BrowserTestCase */
 		list($test_case,) = $this->prepareForRun();
 
-		$this->assertInstanceOf('\\PHPUnit\\Framework\\TestResult', $test_case->run());
+		$this->assertInstanceOf(TestResult::class, $test_case->run());
 	}
 
 	/**
@@ -317,7 +321,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		list($test_case, $session_strategy) = $this->prepareForRun(array());
 		$test_case->setName('getTestId');
 
-		$code_coverage = m::mock('\\PHP_CodeCoverage');
+		$code_coverage = m::mock(CodeCoverage::class);
 		$code_coverage->shouldReceive('append')->with(m::mustBe(array()), $test_case)->once();
 
 		$result = $this->getTestResult($test_case, 1, true);
@@ -329,7 +333,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$browser = $test_case->getBrowser();
 		$browser->shouldReceive('getBaseUrl')->once()->andReturn('A');
 
-		$session = m::mock('\\Behat\\Mink\\Session');
+		$session = m::mock(Session::class);
 		$session->shouldReceive('visit')->with('A')->once();
 		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, null)->once();
 		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, m::not(''))->once();
@@ -352,7 +356,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	{
 		$expected_coverage = array('test1' => 'test2');
 
-		$remote_coverage_helper = m::mock('aik099\\PHPUnit\\RemoteCoverage\\RemoteCoverageHelper');
+		$remote_coverage_helper = m::mock(RemoteCoverageHelper::class);
 		$remote_coverage_helper
 			->shouldReceive('get')
 			->with('some-url', 'tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig__getTestId')
@@ -365,7 +369,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$test_case->setRemoteCoverageHelper($remote_coverage_helper);
 		$test_case->setRemoteCoverageScriptUrl('some-url');
 
-		$code_coverage = m::mock('\\PHP_CodeCoverage');
+		$code_coverage = m::mock(CodeCoverage::class);
 		$code_coverage->shouldReceive('append')->with($expected_coverage, $test_case)->once();
 
 		$result = $this->getTestResult($test_case, 1, true);
@@ -377,7 +381,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$browser = $test_case->getBrowser();
 		$browser->shouldReceive('getBaseUrl')->once()->andReturn('A');
 
-		$session = m::mock('\\Behat\\Mink\\Session');
+		$session = m::mock(Session::class);
 		$session->shouldReceive('visit')->with('A')->once();
 		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, null)->once();
 		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, m::not(''))->once();
@@ -482,7 +486,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 */
 	protected function getTestResult(BrowserTestCase $test_case, $run_count, $collect_coverage = false)
 	{
-		$result = m::mock('\\PHPUnit\\Framework\\TestResult');
+		$result = m::mock(TestResult::class);
 		$result->shouldReceive('getCollectCodeCoverageInformation')->withNoArgs()->andReturn($collect_coverage);
 
 		$result->shouldReceive('run')
@@ -514,7 +518,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$manager->shouldReceive('getSessionStrategy')->andReturn($session_strategy);
 
 		if ( $mock_methods ) {
-			$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase[' . implode(',', $mock_methods) . ']');
+			$test_case = m::mock(BrowserTestCase::class . '[' . implode(',', $mock_methods) . ']');
 		}
 		else {
 			$test_case = new WithoutBrowserConfig();

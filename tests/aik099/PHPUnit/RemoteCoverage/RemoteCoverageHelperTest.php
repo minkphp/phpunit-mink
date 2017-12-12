@@ -43,7 +43,7 @@ class RemoteCoverageHelperTest extends MockeryTestCase
 	{
 		parent::setUp();
 
-		$this->_remoteUrl = m::mock('aik099\\PHPUnit\\RemoteCoverage\\RemoteUrl');
+		$this->_remoteUrl = m::mock(RemoteUrl::class);
 		$this->_remoteCoverageHelper = new RemoteCoverageHelper($this->_remoteUrl);
 	}
 

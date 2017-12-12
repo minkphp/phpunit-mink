@@ -50,8 +50,8 @@ class TestEventTest extends MockeryTestCase
 	{
 		parent::setUp();
 
-		$this->testCase = m::mock('aik099\\PHPUnit\\BrowserTestCase');
-		$this->session = m::mock('Behat\\Mink\\Session');
+		$this->testCase = m::mock(BrowserTestCase::class);
+		$this->session = m::mock(Session::class);
 		$this->event = $this->createEvent();
 	}
 

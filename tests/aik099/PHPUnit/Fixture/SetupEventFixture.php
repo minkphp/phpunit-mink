@@ -11,10 +11,13 @@
 namespace tests\aik099\PHPUnit\Fixture;
 
 
+use aik099\PHPUnit\APIClient\IAPIClient;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
+use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
+use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Session;
 use Mockery as m;
 
@@ -28,16 +31,16 @@ class SetupEventFixture extends BrowserTestCase
 	 */
 	protected function setUp()
 	{
-		$api_client = m::mock('aik099\\PHPUnit\\APIClient\\IAPIClient');
+		$api_client = m::mock(IAPIClient::class);
 		$api_client->shouldReceive('updateStatus')->withAnyArgs()->once();
 
 		/** @var IBrowserConfigurationFactory $factory */
-		$factory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
+		$factory = m::mock(IBrowserConfigurationFactory::class);
 
 		$browser_config = array('apiUsername' => 'a', 'apiKey' => 'b');
 
 		$browser = m::mock(
-			'aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration[getAPIClient]',
+            SauceLabsBrowserConfiguration::class . '[getAPIClient]',
 			array($this->readAttribute($this, '_eventDispatcher'), $this->createDriverFactoryRegistry())
 		);
 
@@ -67,9 +70,9 @@ class SetupEventFixture extends BrowserTestCase
 	 */
 	protected function createDriverFactoryRegistry()
 	{
-		$registry = m::mock('\\aik099\\PHPUnit\\MinkDriver\\DriverFactoryRegistry');
+		$registry = m::mock(DriverFactoryRegistry::class);
 
-		$driver_factory = m::mock('\\aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$driver_factory = m::mock(IMinkDriverFactory::class);
 		$driver_factory->shouldReceive('getDriverDefaults')->andReturn(array());
 
 		$registry
@@ -87,10 +90,10 @@ class SetupEventFixture extends BrowserTestCase
 	 */
 	public function testEvents()
 	{
-		$driver = m::mock('\\Behat\\Mink\\Driver\\Selenium2Driver');
+		$driver = m::mock(Selenium2Driver::class);
 		$driver->shouldReceive('getWebDriverSessionId')->once()->andReturn('SID');
 
-		$session = m::mock('Behat\\Mink\\Session');
+		$session = m::mock(Session::class);
 
 		// For SauceLabsBrowserConfiguration::onTestEnded.
 		$session->shouldReceive('getDriver')->once()->andReturn($driver);
@@ -116,7 +119,7 @@ class SetupEventFixture extends BrowserTestCase
 	 */
 	private function _setSession(Session $session)
 	{
-		$property = new \ReflectionProperty('aik099\\PHPUnit\\BrowserTestCase', '_session');
+		$property = new \ReflectionProperty(BrowserTestCase::class, '_session');
 		$property->setAccessible(true);
 		$property->setValue($this, $session);
 	}

@@ -13,6 +13,7 @@ namespace tests\aik099\PHPUnit\TestSuite;
 
 use aik099\PHPUnit\TestSuite\BrowserTestSuite;
 use Mockery as m;
+use PHPUnit\Framework\Test;
 use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
 
 class BrowserTestSuiteTest extends EventDispatcherAwareTestCase
@@ -77,7 +78,7 @@ class BrowserTestSuiteTest extends EventDispatcherAwareTestCase
 	public function testSetBrowserFromConfiguration()
 	{
 		$browser = array('name' => 'safari');
-		$test = m::mock('PHPUnit\\Framework\\Test');
+		$test = m::mock(Test::class);
 		$test->shouldReceive('setBrowserFromConfiguration')->with($browser)->once();
 
 		$this->_suite->addTest($test);

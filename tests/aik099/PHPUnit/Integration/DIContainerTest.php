@@ -12,8 +12,21 @@ namespace tests\aik099\PHPUnit\Integration;
 
 
 use aik099\PHPUnit\Application;
+use aik099\PHPUnit\BrowserConfiguration\BrowserConfigurationFactory;
 use aik099\PHPUnit\DIContainer;
+use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
+use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
+use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
+use aik099\PHPUnit\Session\IsolatedSessionStrategy;
+use aik099\PHPUnit\Session\SessionFactory;
+use aik099\PHPUnit\Session\SessionStrategyFactory;
+use aik099\PHPUnit\Session\SessionStrategyManager;
+use aik099\PHPUnit\Session\SharedSessionStrategy;
+use aik099\PHPUnit\TestSuite\BrowserTestSuite;
+use aik099\PHPUnit\TestSuite\RegularTestSuite;
+use aik099\PHPUnit\TestSuite\TestSuiteFactory;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class DIContainerTest extends MockeryTestCase
 {
@@ -60,23 +73,20 @@ class DIContainerTest extends MockeryTestCase
 	public function serviceDefinitionsDataProvider()
 	{
 		return array(
-			array('application', 'aik099\\PHPUnit\\Application'),
-			array('event_dispatcher', 'Symfony\\Component\\EventDispatcher\\EventDispatcher'),
-			array('session_factory', 'aik099\\PHPUnit\\Session\\SessionFactory'),
-			array('session_strategy_factory', 'aik099\\PHPUnit\\Session\\SessionStrategyFactory'),
-			array('session_strategy_manager', 'aik099\\PHPUnit\\Session\\SessionStrategyManager'),
-			array('isolated_session_strategy', 'aik099\\PHPUnit\\Session\\IsolatedSessionStrategy'),
-			array('shared_session_strategy', 'aik099\\PHPUnit\\Session\\SharedSessionStrategy'),
-			array('remote_url', 'aik099\\PHPUnit\\RemoteCoverage\\RemoteUrl'),
-			array('remote_coverage_helper', 'aik099\\PHPUnit\\RemoteCoverage\\RemoteCoverageHelper'),
-			array('test_suite_factory', 'aik099\\PHPUnit\\TestSuite\\TestSuiteFactory'),
-			array('regular_test_suite', 'aik099\\PHPUnit\\TestSuite\\RegularTestSuite'),
-			array('browser_test_suite', 'aik099\\PHPUnit\\TestSuite\\BrowserTestSuite'),
-			array(
-				'browser_configuration_factory',
-				'aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfigurationFactory',
-			),
-			array('driver_factory_registry', 'aik099\\PHPUnit\\MinkDriver\\DriverFactoryRegistry'),
+			array('application', Application::class),
+			array('event_dispatcher', EventDispatcher::class),
+			array('session_factory', SessionFactory::class),
+			array('session_strategy_factory', SessionStrategyFactory::class),
+			array('session_strategy_manager', SessionStrategyManager::class),
+			array('isolated_session_strategy', IsolatedSessionStrategy::class),
+			array('shared_session_strategy', SharedSessionStrategy::class),
+			array('remote_url', RemoteUrl::class),
+			array('remote_coverage_helper', RemoteCoverageHelper::class),
+			array('test_suite_factory', TestSuiteFactory::class),
+			array('regular_test_suite', RegularTestSuite::class),
+			array('browser_test_suite', BrowserTestSuite::class),
+			array('browser_configuration_factory', BrowserConfigurationFactory::class),
+			array('driver_factory_registry', DriverFactoryRegistry::class),
 		);
 	}
 

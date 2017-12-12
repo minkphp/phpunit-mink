@@ -35,7 +35,7 @@ class ApplicationAwareTestCase extends MockeryTestCase
 	{
 		parent::setUp();
 
-		$this->application = m::mock('aik099\\PHPUnit\\Application');
+		$this->application = m::mock(Application::class);
 	}
 
 	/**

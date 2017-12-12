@@ -35,7 +35,7 @@ class EventDispatcherAwareTestCase extends MockeryTestCase
 	{
 		parent::setUp();
 
-		$this->eventDispatcher = m::mock('Symfony\\Component\\EventDispatcher\\EventDispatcherInterface');
+		$this->eventDispatcher = m::mock(EventDispatcherInterface::class);
 	}
 
 	/**

@@ -11,6 +11,8 @@
 namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 
+use aik099\PHPUnit\APIClient\BrowserStackAPIClient;
+use aik099\PHPUnit\BrowserConfiguration\BrowserStackBrowserConfiguration;
 use Mockery as m;
 
 class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
@@ -25,7 +27,7 @@ class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCa
 	 */
 	protected function setUp()
 	{
-		$this->browserConfigurationClass = 'aik099\\PHPUnit\\BrowserConfiguration\\BrowserStackBrowserConfiguration';
+		$this->browserConfigurationClass = BrowserStackBrowserConfiguration::class;
 
 		$this->tunnelCapabilities = array(
 			'browserstack.local' => 'true',
@@ -82,7 +84,7 @@ class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCa
 
 	public function testGetAPIClient()
 	{
-		$this->assertInstanceOf('aik099\\PHPUnit\\APIClient\\BrowserStackAPIClient', $this->browser->getAPIClient());
+		$this->assertInstanceOf(BrowserStackAPIClient::class, $this->browser->getAPIClient());
 	}
 
 }

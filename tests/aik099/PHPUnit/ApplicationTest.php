@@ -12,6 +12,7 @@ namespace tests\aik099\PHPUnit;
 
 
 use aik099\PHPUnit\Application;
+use aik099\PHPUnit\TestSuite\TestSuiteFactory;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
@@ -55,7 +56,7 @@ class ApplicationTest extends MockeryTestCase
 	public function testGetTestSuiteFactory()
 	{
 		$this->assertInstanceOf(
-			'aik099\\PHPUnit\\TestSuite\\TestSuiteFactory',
+            TestSuiteFactory::class,
 			$this->_application->getTestSuiteFactory()
 		);
 	}
@@ -67,7 +68,7 @@ class ApplicationTest extends MockeryTestCase
 	 */
 	public function testGetObject()
 	{
-		$this->assertInstanceOf('aik099\\PHPUnit\\Application', $this->_application->getObject('application'));
+		$this->assertInstanceOf(Application::class, $this->_application->getObject('application'));
 	}
 
 	/**

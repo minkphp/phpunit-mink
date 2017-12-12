@@ -15,9 +15,11 @@ use aik099\PHPUnit\BrowserConfiguration\ApiBrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
+use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use Mockery as m;
 use Mockery\Generator\MockConfigurationBuilder;
+use PHPUnit\Framework\TestResult;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
@@ -25,7 +27,7 @@ use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
 class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 {
 
-	const TEST_CASE_CLASS = '\\aik099\\PHPUnit\\BrowserTestCase';
+	const TEST_CASE_CLASS = BrowserTestCase::class;
 
 	const HOST = 'example_host';
 
@@ -97,7 +99,7 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 		parent::setUp();
 
 		if ( !$this->browserConfigurationClass ) {
-			$this->browserConfigurationClass = 'aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
+			$this->browserConfigurationClass = BrowserConfiguration::class;
 		}
 
 		$this->setup = array(
@@ -128,9 +130,9 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	 */
 	protected function createDriverFactoryRegistry()
 	{
-		$registry = m::mock('\\aik099\\PHPUnit\\MinkDriver\\DriverFactoryRegistry');
+		$registry = m::mock(DriverFactoryRegistry::class);
 
-		$selenium2_driver_factory = m::mock('\\aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$selenium2_driver_factory = m::mock(IMinkDriverFactory::class);
 		$selenium2_driver_factory->shouldReceive('getDriverDefaults')->andReturn(array(
 			'baseUrl' => 'http://www.super-url.com',
 			'driverOptions' => array(
@@ -142,7 +144,7 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 			->with('selenium2')
 			->andReturn($selenium2_driver_factory);
 
-		$zombie_driver_factory = m::mock('\\aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$zombie_driver_factory = m::mock(IMinkDriverFactory::class);
 		$zombie_driver_factory->shouldReceive('getDriverDefaults')->andReturn(array());
 		$registry
 			->shouldReceive('get')
@@ -573,7 +575,7 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	{
 		$test_case = m::mock(self::TEST_CASE_CLASS);
 		$test_case->shouldReceive('hasFailed')->once()->andReturn(false);
-		$test_result = m::mock('\\PHPUnit\\Framework\\TestResult');
+		$test_result = m::mock(TestResult::class);
 
 		$this->browser->setSessionStrategy(ISessionStrategyFactory::TYPE_ISOLATED);
 		$this->assertTrue($this->browser->getTestStatus($test_case, $test_result));
@@ -587,7 +589,7 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	public function testGetTestStatusShared()
 	{
 		$test_case = m::mock(self::TEST_CASE_CLASS);
-		$test_result = m::mock('\\PHPUnit\\Framework\\TestResult');
+        $test_result = m::mock(TestResult::class);
 		$test_result->shouldReceive('wasSuccessful')->once()->andReturn(true);
 
 		$this->browser->setSessionStrategy(ISessionStrategyFactory::TYPE_SHARED);

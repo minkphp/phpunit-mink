@@ -57,7 +57,7 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 		$this->_session1 = $this->createSession();
 		$this->_session2 = $this->createSession();
 
-		$this->_isolatedStrategy = m::mock('\\aik099\\PHPUnit\\Session\\IsolatedSessionStrategy');
+		$this->_isolatedStrategy = m::mock(IsolatedSessionStrategy::class);
 		$this->strategy = new SharedSessionStrategy($this->_isolatedStrategy);
 
 		parent::setUp();
@@ -179,7 +179,7 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 			new TestEvent($test_case, $session)
 		);
 
-		$this->assertInstanceOf('aik099\\PHPUnit\\Event\\TestEvent', $event);
+		$this->assertInstanceOf(TestEvent::class, $event);
 	}
 
 	/**

@@ -11,18 +11,21 @@
 namespace tests\aik099\PHPUnit\Session;
 
 
+use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
+use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\Session\ISessionStrategy;
+use Behat\Mink\Session;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class SessionStrategyTestCase extends MockeryTestCase
 {
 
-	const BROWSER_CLASS = '\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
+	const BROWSER_CLASS = BrowserConfiguration::class;
 
-	const SESSION_CLASS = '\\Behat\\Mink\\Session';
+	const SESSION_CLASS = Session::class;
 
-	const TEST_CASE_CLASS = 'aik099\\PHPUnit\\BrowserTestCase';
+	const TEST_CASE_CLASS = BrowserTestCase::class;
 
 	/**
 	 * Event dispatcher.

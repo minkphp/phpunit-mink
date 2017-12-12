@@ -39,7 +39,7 @@ class ApiIntegrationTest extends MockeryTestCase
 	{
 		$result = new TestResult();
 
-		$suite = ApiIntegrationFixture::suite('tests\\aik099\\PHPUnit\\Fixture\\ApiIntegrationFixture');
+		$suite = ApiIntegrationFixture::suite(ApiIntegrationFixture::class);
 		$suite->run($result);
 
 		$this->assertTrue(true);

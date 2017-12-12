@@ -13,7 +13,9 @@ namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfigurationFactory;
+use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
+use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
 use Mockery as m;
 use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
 
@@ -54,9 +56,9 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 	 */
 	protected function createDriverFactoryRegistry()
 	{
-		$registry = m::mock('\\aik099\\PHPUnit\\MinkDriver\\DriverFactoryRegistry');
+		$registry = m::mock(DriverFactoryRegistry::class);
 
-		$driver_factory = m::mock('\\aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$driver_factory = m::mock(IMinkDriverFactory::class);
 		$driver_factory->shouldReceive('getDriverDefaults')->andReturn(array());
 
 		$registry
@@ -81,7 +83,7 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 	{
 		$browser_aliases = array('alias-one' => array());
 
-		$test_case = m::mock('aik099\\PHPUnit\\BrowserTestCase');
+		$test_case = m::mock(BrowserTestCase::class);
 		$test_case->shouldReceive('getBrowserAliases')->once()->andReturn($browser_aliases);
 
 		$cleaned_browser_config = $browser_config;
@@ -102,7 +104,7 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 
 		$actual_browser = $this->_factory->createBrowserConfiguration($browser_config, $test_case);
 		$this->assertEquals($type, $actual_browser->getType());
-		$this->assertInstanceOf('aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration', $actual_browser);
+		$this->assertInstanceOf(BrowserConfiguration::class, $actual_browser);
 	}
 
 	/**
@@ -128,7 +130,7 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 	{
 		$browser_aliases = array('alias-one' => array());
 
-		$test_case = m::mock('aik099\\PHPUnit\\BrowserTestCase');
+		$test_case = m::mock(BrowserTestCase::class);
 		$test_case->shouldReceive('getBrowserAliases')->once()->andReturn($browser_aliases);
 
 		$this->_factory->createBrowserConfiguration(array('type' => 'test'), $test_case);
@@ -156,7 +158,7 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 	 */
 	private function _createBrowserConfiguration($type)
 	{
-		$browser_configuration = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration');
+		$browser_configuration = m::mock(BrowserConfiguration::class);
 		$browser_configuration->shouldReceive('getType')->andReturn($type);
 
 		return $browser_configuration;

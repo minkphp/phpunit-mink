@@ -54,7 +54,7 @@ class EventDispatchingTest extends MockeryTestCase
 
 		$result = new TestResult();
 
-		$suite = SetupEventFixture::suite('tests\\aik099\\PHPUnit\\Fixture\\SetupEventFixture');
+		$suite = SetupEventFixture::suite(SetupEventFixture::class);
 		$suite->run($result);
 
 		$this->assertTrue($result->wasSuccessful(), 'All sub-tests passed');

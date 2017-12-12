@@ -15,6 +15,7 @@ use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\TestSuite\BrowserTestSuite;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use PHPUnit\Framework\TestResult;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use Mockery as m;
@@ -22,13 +23,13 @@ use Mockery as m;
 class SuiteBuildingTest extends MockeryTestCase
 {
 
-	const SUITE_CLASS = '\\aik099\\PHPUnit\\TestSuite\\RegularTestSuite';
+	const SUITE_CLASS = RegularTestSuite::class;
 
-	const BROWSER_SUITE_CLASS = '\\aik099\\PHPUnit\\TestSuite\\BrowserTestSuite';
+	const BROWSER_SUITE_CLASS = BrowserTestSuite::class;
 
-	const TEST_CASE_WITH_CONFIG = '\\tests\\aik099\\PHPUnit\\Fixture\\WithBrowserConfig';
+	const TEST_CASE_WITH_CONFIG = WithBrowserConfig::class;
 
-	const TEST_CASE_WITHOUT_CONFIG = '\\tests\\aik099\\PHPUnit\\Fixture\\WithoutBrowserConfig';
+	const TEST_CASE_WITHOUT_CONFIG = WithoutBrowserConfig::class;
 
 	/**
 	 * Tests, that suite is built correctly in case, when static $browsers array is filled-in in test case class.
@@ -84,7 +85,7 @@ class SuiteBuildingTest extends MockeryTestCase
 		$suite->addTest($sub_browser_suite);
 		$suite->addTest($sub_test_suite);
 
-		$result = m::mock('\\PHPUnit\\Framework\\TestResult');
+		$result = m::mock(TestResult::class);
 		$result->shouldReceive('startTestSuite');
 		$result->shouldReceive('shouldStop')->andReturn(false);
 		$result->shouldReceive('endTestSuite');

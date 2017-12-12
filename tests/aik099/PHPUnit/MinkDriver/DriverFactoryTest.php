@@ -14,9 +14,14 @@ namespace tests\aik099\PHPUnit\MinkDriver;
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\DIContainer;
+use aik099\PHPUnit\MinkDriver\GoutteDriverFactory;
 use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
+use aik099\PHPUnit\MinkDriver\SahiDriverFactory;
+use aik099\PHPUnit\MinkDriver\Selenium2DriverFactory;
+use aik099\PHPUnit\MinkDriver\ZombieDriverFactory;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class DriverFactoryTest extends MockeryTestCase
 {
@@ -66,7 +71,7 @@ class DriverFactoryTest extends MockeryTestCase
 	{
 		$di = new DIContainer();
 
-		$event_dispatcher = m::mock('Symfony\\Component\\EventDispatcher\\EventDispatcherInterface');
+		$event_dispatcher = m::mock(EventDispatcherInterface::class);
 		$browser_configuration = new BrowserConfiguration($event_dispatcher, $di['driver_factory_registry']);
 		$browser_configuration->setDriver($factory->getDriverName());
 
@@ -78,19 +83,19 @@ class DriverFactoryTest extends MockeryTestCase
 		return array(
 			'goutte' => array(
 				'Behat\\Mink\\Driver\\GoutteDriver',
-				'aik099\PHPUnit\MinkDriver\GoutteDriverFactory',
+				GoutteDriverFactory::class,
 			),
 			'sahi' => array(
 				'Behat\\Mink\\Driver\\SahiDriver',
-				'aik099\PHPUnit\MinkDriver\SahiDriverFactory',
+				SahiDriverFactory::class,
 			),
 			'selenium2' => array(
 				'Behat\\Mink\\Driver\\Selenium2Driver',
-				'aik099\PHPUnit\MinkDriver\Selenium2DriverFactory',
+				Selenium2DriverFactory::class,
 			),
 			'zombie' => array(
 				'Behat\\Mink\\Driver\\ZombieDriver',
-				'aik099\PHPUnit\MinkDriver\ZombieDriverFactory',
+				ZombieDriverFactory::class,
 			),
 		);
 	}

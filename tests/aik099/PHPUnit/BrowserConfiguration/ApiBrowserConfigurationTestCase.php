@@ -16,6 +16,10 @@ use aik099\PHPUnit\BrowserConfiguration\ApiBrowserConfiguration;
 use aik099\PHPUnit\Event\TestEndedEvent;
 use aik099\PHPUnit\Event\TestEvent;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
+use Behat\Mink\Driver\DriverInterface;
+use Behat\Mink\Driver\Selenium2Driver;
+use Behat\Mink\Session;
+use PHPUnit\Framework\TestResult;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use aik099\PHPUnit\BrowserTestCase;
 use Mockery as m;
@@ -228,7 +232,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 
 		$event_dispatcher->dispatch(
 			BrowserTestCase::TEST_SETUP_EVENT,
-			new TestEvent($test_case, m::mock('Behat\\Mink\\Session'))
+			new TestEvent($test_case, m::mock(Session::class))
 		);
 
 		$desired_capabilities = $this->browser->getDesiredCapabilities();
@@ -299,29 +303,29 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	{
 		$test_case = $this->createTestCase('TEST_NAME');
 
-		$api_client = m::mock('aik099\\PHPUnit\\APIClient\\IAPIClient');
+		$api_client = m::mock(IAPIClient::class);
 		$this->browser->shouldReceive('getAPIClient')->andReturn($api_client);
 
 		if ( $driver_type == 'selenium' ) {
-			$driver = m::mock('\\Behat\\Mink\\Driver\\Selenium2Driver');
+			$driver = m::mock(Selenium2Driver::class);
 			$driver->shouldReceive('getWebDriverSessionId')->once()->andReturn('SID');
 
 			$api_client->shouldReceive('updateStatus')->with('SID', true)->once();
 			$test_case->shouldReceive('hasFailed')->once()->andReturn(false); // For shared strategy.
 		}
 		else {
-			$driver = m::mock('\\Behat\\Mink\\Driver\\DriverInterface');
-			$this->expectException("\\RuntimeException");
+			$driver = m::mock(DriverInterface::class);
+			$this->expectException(\RuntimeException::class);
 		}
 
-		$session = m::mock('Behat\\Mink\\Session');
+		$session = m::mock(Session::class);
 		$session->shouldReceive('getDriver')->once()->andReturn($driver);
 		$session->shouldReceive('isStarted')->once()->andReturn(true);
 
 		$event_dispatcher = new EventDispatcher();
 		$event_dispatcher->addSubscriber($this->browser);
 
-		$test_result = m::mock('\\PHPUnit\\Framework\\TestResult');
+		$test_result = m::mock(TestResult::class);
 
 		$this->eventDispatcher->shouldReceive('removeSubscriber')->with($this->browser)->once();
 
@@ -330,7 +334,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 			new TestEndedEvent($test_case, $test_result, $session)
 		);
 
-		$this->assertInstanceOf('aik099\\PHPUnit\\Event\\TestEndedEvent', $event);
+		$this->assertInstanceOf(TestEndedEvent::class, $event);
 	}
 
 	/**
@@ -356,10 +360,10 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$event_dispatcher = new EventDispatcher();
 		$event_dispatcher->addSubscriber($this->browser);
 
-		$event = m::mock('aik099\\PHPUnit\\Event\\TestEndedEvent');
+		$event = m::mock(TestEndedEvent::class);
 
 		if ( $stopped_or_missing ) {
-			$session = m::mock('Behat\\Mink\\Session');
+			$session = m::mock(Session::class);
 			$session->shouldReceive('isStarted')->once()->andReturn(false);
 			$event->shouldReceive('getSession')->once()->andReturn($session);
 		}
@@ -374,7 +378,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$this->eventDispatcher->shouldReceive('removeSubscriber')->with($this->browser)->once();
 		$returned_event = $event_dispatcher->dispatch(BrowserTestCase::TEST_ENDED_EVENT, $event);
 
-		$this->assertInstanceOf('aik099\\PHPUnit\\Event\\TestEndedEvent', $returned_event);
+		$this->assertInstanceOf(TestEndedEvent::class, $returned_event);
 	}
 
 	public function sessionStateDataProvider()
@@ -436,7 +440,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 
 		$event_dispatcher->dispatch(
 			BrowserTestCase::TEST_SETUP_EVENT,
-			new TestEvent($test_case, m::mock('Behat\\Mink\\Session'))
+			new TestEvent($test_case, m::mock(Session::class))
 		);
 
 		$desired_capabilities = $this->browser->getDesiredCapabilities();

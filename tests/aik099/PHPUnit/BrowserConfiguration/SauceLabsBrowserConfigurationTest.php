@@ -11,6 +11,8 @@
 namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 
+use aik099\PHPUnit\APIClient\SauceLabsAPIClient;
+use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use Mockery as m;
 
 class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
@@ -25,7 +27,7 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 	 */
 	protected function setUp()
 	{
-		$this->browserConfigurationClass = 'aik099\\PHPUnit\\BrowserConfiguration\\SauceLabsBrowserConfiguration';
+		$this->browserConfigurationClass = SauceLabsBrowserConfiguration::class;
 
 		$this->tunnelCapabilities = array(
 			'tunnel-identifier' => 'env:PHPUNIT_MINK_TUNNEL_ID',
@@ -77,7 +79,7 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 
 	public function testGetAPIClient()
 	{
-		$this->assertInstanceOf('aik099\\PHPUnit\\APIClient\\SauceLabsAPIClient', $this->browser->getAPIClient());
+		$this->assertInstanceOf(SauceLabsAPIClient::class, $this->browser->getAPIClient());
 	}
 
 }
