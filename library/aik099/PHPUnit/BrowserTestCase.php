@@ -428,7 +428,7 @@ abstract class BrowserTestCase extends TestCase implements IEventDispatcherAware
 			new TestFailedEvent($e, $this, $this->_session)
 		);
 
-        parent::onNotSuccessfulTest($e);
+		parent::onNotSuccessfulTest($e);
 	}
 
 	/**
