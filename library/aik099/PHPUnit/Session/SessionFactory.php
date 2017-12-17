@@ -10,7 +10,6 @@
 
 namespace aik099\PHPUnit\Session;
 
-
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use Behat\Mink\Session;
 
@@ -22,16 +21,15 @@ use Behat\Mink\Session;
 class SessionFactory implements ISessionFactory
 {
 
-	/**
-	 * Creates new session based on browser configuration.
-	 *
-	 * @param BrowserConfiguration $browser Browser configuration.
-	 *
-	 * @return Session
-	 */
-	public function createSession(BrowserConfiguration $browser)
-	{
-		return new SessionProxy($browser->createDriver());
-	}
-
+    /**
+     * Creates new session based on browser configuration.
+     *
+     * @param BrowserConfiguration $browser Browser configuration.
+     *
+     * @return Session
+     */
+    public function createSession(BrowserConfiguration $browser)
+    {
+        return new SessionProxy($browser->createDriver());
+    }
 }
