@@ -11,70 +11,68 @@
 
 namespace aik099\PHPUnit\MinkDriver;
 
-
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use Behat\Mink\Driver\DriverInterface;
 
 class SahiDriverFactory implements IMinkDriverFactory
 {
 
-	/**
-	 * Returns driver name, that can be used in browser configuration.
-	 *
-	 * @return string
-	 */
-	public function getDriverName()
-	{
-		return 'sahi';
-	}
+    /**
+     * Returns driver name, that can be used in browser configuration.
+     *
+     * @return string
+     */
+    public function getDriverName()
+    {
+        return 'sahi';
+    }
 
-	/**
-	 * Returns default values for browser configuration.
-	 *
-	 * @return array
-	 */
-	public function getDriverDefaults()
-	{
-		return array(
-			'port' => 9999,
-			'driverOptions' => array(
-				'sid' => null,
-				'limit' => 600,
-				'browser' => null,
-			),
-		);
-	}
+    /**
+     * Returns default values for browser configuration.
+     *
+     * @return array
+     */
+    public function getDriverDefaults()
+    {
+        return array(
+            'port' => 9999,
+            'driverOptions' => array(
+                'sid' => null,
+                'limit' => 600,
+                'browser' => null,
+            ),
+        );
+    }
 
-	/**
-	 * Returns a new driver instance according to the browser configuration.
-	 *
-	 * @param BrowserConfiguration $browser The browser configuration.
-	 *
-	 * @return DriverInterface
-	 * @throws \RuntimeException When driver isn't installed.
-	 */
-	public function createDriver(BrowserConfiguration $browser)
-	{
-		if ( !class_exists('Behat\Mink\Driver\SahiDriver') ) {
-			throw new \RuntimeException(
-				'Install MinkSahiDriver in order to use sahi driver.'
-			);
-		}
+    /**
+     * Returns a new driver instance according to the browser configuration.
+     *
+     * @param BrowserConfiguration $browser The browser configuration.
+     *
+     * @return DriverInterface
+     * @throws \RuntimeException When driver isn't installed.
+     */
+    public function createDriver(BrowserConfiguration $browser)
+    {
+        if (!class_exists('Behat\Mink\Driver\SahiDriver')) {
+            throw new \RuntimeException(
+                'Install MinkSahiDriver in order to use sahi driver.'
+            );
+        }
 
-		$driver_options = $browser->getDriverOptions();
+        $driver_options = $browser->getDriverOptions();
 
-		$connection = new \Behat\SahiClient\Connection(
-			$driver_options['sid'],
-			$browser->getHost(),
-			$browser->getPort(),
-			$driver_options['browser'],
-			$driver_options['limit']
-		);
+        $connection = new \Behat\SahiClient\Connection(
+            $driver_options['sid'],
+            $browser->getHost(),
+            $browser->getPort(),
+            $driver_options['browser'],
+            $driver_options['limit']
+        );
 
-		return new \Behat\Mink\Driver\SahiDriver(
-			$browser->getBrowserName(),
-			new \Behat\SahiClient\Client($connection)
-		);
-	}
-
+        return new \Behat\Mink\Driver\SahiDriver(
+            $browser->getBrowserName(),
+            new \Behat\SahiClient\Client($connection)
+        );
+    }
 }

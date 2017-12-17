@@ -10,7 +10,6 @@
 
 namespace aik099\PHPUnit\Session;
 
-
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\IEventDispatcherAware;
 use Behat\Mink\Session;
@@ -24,13 +23,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 interface ISessionStrategy extends EventSubscriberInterface, IEventDispatcherAware
 {
 
-	/**
-	 * Returns Mink session with given browser configuration.
-	 *
-	 * @param BrowserConfiguration $browser Browser configuration for a session.
-	 *
-	 * @return Session
-	 */
-	public function session(BrowserConfiguration $browser);
-
+    /**
+     * Returns Mink session with given browser configuration.
+     *
+     * @param BrowserConfiguration $browser Browser configuration for a session.
+     *
+     * @return Session
+     */
+    public function session(BrowserConfiguration $browser);
 }
