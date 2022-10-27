@@ -367,8 +367,12 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 			$event->shouldReceive('getSession')->once();
 		}
 
-		$event->shouldReceive('setDispatcher')->once(); // To remove with Symfony 3.0 release.
-		$event->shouldReceive('setName')->once(); // To remove with Symfony 3.0 release.
+		// Below methods were removed in Symfony 3.0.
+		if ( \method_exists('\Symfony\Component\EventDispatcher\Event', 'setDispatcher') ) {
+			$event->shouldReceive('setDispatcher')->once();
+			$event->shouldReceive('setName')->once();
+		}
+
 		$event->shouldReceive('isPropagationStopped')->once()->andReturn(false);
 		$event->shouldReceive('getTestCase')->andReturn($test_case);
 		$event->shouldReceive('validateSubscriber')->with($test_case)->atLeast()->once()->andReturn(true);
@@ -382,8 +386,8 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	public function sessionStateDataProvider()
 	{
 		return array(
-			array(true),
-			array(false),
+			'session stopped/missing' => array(true),
+			'session started' => array(false),
 		);
 	}
 
