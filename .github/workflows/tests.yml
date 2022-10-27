@@ -22,10 +22,10 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php: [ '5.4', '5.5', '5.6', '7.0', '7.1' ]
+        php: [ '5.4', '5.5', '5.6', '7.0', '7.1', '7.2', '7.3', '7.4' ]
         with_coverage: [ false ]
         include:
-          - php: '5.4'
+          - php: '7.4'
             with_coverage: true
       fail-fast: false
 
@@ -36,7 +36,7 @@ jobs:
           fetch-depth: 2
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@2.21.2
         with:
           coverage: "xdebug"
           php-version: "${{ matrix.php }}"
@@ -55,7 +55,7 @@ jobs:
           composer require --no-update --dev scrutinizer/ocular
 
       - name: Install dependencies
-        uses: "ramsey/composer-install@v1"
+        uses: "ramsey/composer-install@v2"
         with:
           dependency-versions: "highest"
 
