@@ -1,10 +1,10 @@
 # PHPUnit-Mink
-[![Build Status](https://travis-ci.org/minkphp/phpunit-mink.svg?branch=master)](https://travis-ci.org/minkphp/phpunit-mink)
-[![HHVM Status](http://hhvm.h4cc.de/badge/aik099/phpunit-mink.svg)](http://hhvm.h4cc.de/package/aik099/phpunit-mink)
+[![CI](https://github.com/minkphp/phpunit-mink/actions/workflows/tests.yml/badge.svg)](https://github.com/minkphp/phpunit-mink/actions/workflows/tests.yml)
+[![Docs](https://github.com/minkphp/phpunit-mink/actions/workflows/docs.yml/badge.svg)](https://github.com/minkphp/phpunit-mink/actions/workflows/docs.yml)
 [![Documentation](https://readthedocs.org/projects/phpunit-mink/badge/?version=latest)](http://phpunit-mink.readthedocs.org/en/latest/)
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/minkphp/phpunit-mink/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/minkphp/phpunit-mink/?branch=master)
-[![Coverage Status](https://coveralls.io/repos/minkphp/phpunit-mink/badge.svg?branch=master)](https://coveralls.io/r/minkphp/phpunit-mink?branch=master)
+[![codecov](https://codecov.io/gh/minkphp/phpunit-mink/branch/master/graph/badge.svg?token=GV4K2at1WW)](https://codecov.io/gh/minkphp/phpunit-mink)
 [![Dependency Status](https://www.versioneye.com/user/projects/52ad65e0ec1375ead3000049/badge.svg?style=flat)](https://www.versioneye.com/user/projects/52ad65e0ec1375ead3000049)
 
 [![Latest Stable Version](https://poser.pugx.org/aik099/phpunit-mink/v/stable.svg)](https://packagist.org/packages/aik099/phpunit-mink) [![Total Downloads](https://poser.pugx.org/aik099/phpunit-mink/downloads.svg)](https://packagist.org/packages/aik099/phpunit-mink) [![Latest Unstable Version](https://poser.pugx.org/aik099/phpunit-mink/v/unstable.svg)](https://packagist.org/packages/aik099/phpunit-mink) [![License](https://poser.pugx.org/aik099/phpunit-mink/license.svg)](https://packagist.org/packages/aik099/phpunit-mink)
