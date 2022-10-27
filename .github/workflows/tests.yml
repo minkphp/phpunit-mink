@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    paths-ignore: ['docs/**', '.github/workflows/docs.yml']
+  pull_request:
+    paths-ignore: ['docs/**', '.github/workflows/docs.yml']
+
+# Cancels all previous workflow runs for the same branch that have not yet completed.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  tests:
+    name: Tests (PHP ${{ matrix.php }})
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php: [ '5.4', '5.5', '5.6', '7.0', '7.1' ]
+        with_coverage: [ false ]
+        include:
+          - php: '5.4'
+            with_coverage: true
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          coverage: "xdebug"
+          php-version: "${{ matrix.php }}"
+          tools: composer
+          # PHP 7.1 development web server segfaults if timezone not set.
+          ini-values: date.timezone=Europe/Paris, error_reporting=-1, display_errors=On
+
+      - name: Configure for PHP >= 7.1
+        if: "${{ matrix.php >= '7.1' }}"
+        run: |
+          composer require --no-update --dev symfony/error-handler "^4.4 || ^5.0"
+
+      - name: Configure for PHP >= 8.0
+        if: "${{ matrix.php >= '8.0' }}"
+        run: |
+          composer require --no-update --dev scrutinizer/ocular
+
+      - name: Install dependencies
+        uses: "ramsey/composer-install@v1"
+        with:
+          dependency-versions: "highest"
+
+      - name: Run tests with Coverage
+        if: "${{ matrix.with_coverage == true }}"
+        run: |
+          vendor/bin/phpunit -v --coverage-clover=coverage.clover
+
+      - name: Run tests without Coverage
+        if: "${{ matrix.with_coverage == false }}"
+        run: |
+          vendor/bin/phpunit -v
+
+      - name: Upload Coverage to CodeCov
+        if: "${{ matrix.with_coverage == true }}"
+        uses: codecov/codecov-action@v2
+
+      - name: Upload Coverage to Scrutinizer CI (PHP < 8.0)
+        if: "${{ matrix.php < '8.0' && matrix.with_coverage == true }}"
+        run: |
+          wget https://scrutinizer-ci.com/ocular.phar
+          php ocular.phar code-coverage:upload --repository=g/minkphp/phpunit-mink --format=php-clover coverage.clover
+
+      - name: Upload Coverage to Scrutinizer CI (PHP >= 8.0)
+        if: "${{ matrix.php >= '8.0' && matrix.with_coverage == true }}"
+        run: |
+           vendor/bin/ocular code-coverage:upload --repository=g/minkphp/phpunit-mink --format=php-clover coverage.clover

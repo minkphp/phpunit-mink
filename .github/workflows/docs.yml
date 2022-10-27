@@ -1,0 +1,35 @@
+name: Docs
+
+on:
+  push:
+    paths: ['docs/**', '.github/workflows/docs.yml']
+  pull_request:
+    paths: ['docs/**', '.github/workflows/docs.yml']
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  tests:
+    name: Tests
+    runs-on: Ubuntu-20.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+
+      - name: Install dependencies
+        run: |
+            pip install Sphinx sphinx_rtd_theme
+
+
+      - name: Run tests
+        run: |
+          sphinx-build -nW -b html -d docs/build/doctrees docs docs/build/html
