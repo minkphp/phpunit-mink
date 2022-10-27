@@ -108,23 +108,41 @@ class ApiIntegrationFixture extends BrowserTestCase
 			$api_client = $browser->getAPIClient();
 			$session_info = $api_client->getInfo($this->_sessionIds[$test_name]);
 
-			$this->assertEquals(get_class($test_case) . '::' . $test_name, $session_info['name']);
-
 			if ( $browser instanceof SauceLabsBrowserConfiguration ) {
+				$this->assertEquals(
+					get_class($test_case) . '::' . $test_name,
+					$session_info['name'],
+					'SauceLabs remote session name matches test name'
+				);
+
 				$passed_mapping = array(
 					'testSuccess' => true,
 					'testFailure' => false,
 				);
 
-				$this->assertSame($passed_mapping[$test_name], $session_info['passed']);
+				$this->assertSame(
+					$passed_mapping[$test_name],
+					$session_info['passed'],
+					'SauceLabs test status set via API'
+				);
 			}
 			elseif ( $browser instanceof BrowserStackBrowserConfiguration ) {
-				$passed_mapping = array(
-					'testSuccess' => 'done',
-					'testFailure' => 'error',
+				$this->assertEquals(
+					\str_replace('\\', '-', get_class($test_case) . '::' . $test_name),
+					$session_info['name'],
+					'BrowserStack remote session name matches test name'
 				);
 
-				$this->assertSame($passed_mapping[$test_name], $session_info['status']);
+				$passed_mapping = array(
+					'testSuccess' => 'passed',
+					'testFailure' => 'failed',
+				);
+
+				$this->assertSame(
+					$passed_mapping[$test_name],
+					$session_info['status'],
+					'BrowserStack test status set via API'
+				);
 			}
 		}
 	}

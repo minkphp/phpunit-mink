@@ -70,6 +70,11 @@ jobs:
           vendor/bin/phpunit -v --coverage-clover=coverage.clover
 
       - name: Run tests without Coverage
+        env:
+          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+          BS_USERNAME: ${{ secrets.BS_USERNAME }}
+          BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
         if: "${{ matrix.with_coverage == false }}"
         run: |
           vendor/bin/phpunit -v
