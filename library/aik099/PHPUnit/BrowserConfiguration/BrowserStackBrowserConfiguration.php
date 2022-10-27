@@ -13,6 +13,7 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 
 use aik099\PHPUnit\APIClient\BrowserStackAPIClient;
 use aik099\PHPUnit\APIClient\IAPIClient;
+use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\Event\TestEvent;
 use WebDriver\ServiceFactory;
 
@@ -94,6 +95,19 @@ class BrowserStackBrowserConfiguration extends ApiBrowserConfiguration
 		}
 
 		return $capabilities;
+	}
+
+	/**
+	 * Returns Job name for API service.
+	 *
+	 * @param BrowserTestCase $test_case Browser test case.
+	 *
+	 * @return string
+	 */
+	protected function getJobName(BrowserTestCase $test_case)
+	{
+		// The BrowserStack started to replace "\" with " " some time ago.
+		return \str_replace('\\', '-', parent::getJobName($test_case));
 	}
 
 }
