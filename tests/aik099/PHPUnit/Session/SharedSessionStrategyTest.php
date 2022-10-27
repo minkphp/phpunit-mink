@@ -166,7 +166,7 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 	public function testEndOfTestCaseWithSession()
 	{
 		$session = $this->createSession();
-		$session->shouldReceive('stop')->withNoArgs()->once();
+		$session->shouldReceive('stop')->withNoArgs()->withAnyArgs()->once();
 		$session->shouldReceive('isStarted')->once()->andReturn(true);
 
 		$test_case = m::mock(self::TEST_CASE_CLASS);

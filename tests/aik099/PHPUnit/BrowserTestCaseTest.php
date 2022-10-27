@@ -482,7 +482,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	protected function getTestResult(BrowserTestCase $test_case, $run_count, $collect_coverage = false)
 	{
 		$result = m::mock('\\PHPUnit_Framework_TestResult');
-		$result->shouldReceive('getCollectCodeCoverageInformation')->withNoArgs()->andReturn($collect_coverage);
+		$result->shouldReceive('getCollectCodeCoverageInformation')->withNoArgs()->withAnyArgs()->andReturn($collect_coverage);
 
 		$result->shouldReceive('run')
 			->with($test_case)
