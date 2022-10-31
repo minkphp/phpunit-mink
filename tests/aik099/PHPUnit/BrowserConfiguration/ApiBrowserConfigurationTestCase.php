@@ -16,12 +16,16 @@ use aik099\PHPUnit\BrowserConfiguration\ApiBrowserConfiguration;
 use aik099\PHPUnit\Event\TestEndedEvent;
 use aik099\PHPUnit\Event\TestEvent;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
+use aik099\PHPUnit\Framework\TestResult;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use aik099\PHPUnit\BrowserTestCase;
 use Mockery as m;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 {
+
+	use ExpectException;
 
 	const PORT = 80;
 
@@ -42,11 +46,9 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	protected $apiClient;
 
 	/**
-	 * Configures all tests.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
 		$this->testsRequireSubscriber[] = 'testTestSetupEvent';
 		$this->testsRequireSubscriber[] = 'testTestEndedEvent';
@@ -57,7 +59,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 			$this->mockBrowserMethods[] = 'getAPIClient';
 		}
 
-		parent::setUp();
+		parent::setUpTest();
 
 		$this->setup['port'] = 80;
 		$this->setup['apiUsername'] = 'UN';
@@ -311,7 +313,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		}
 		else {
 			$driver = m::mock('\\Behat\\Mink\\Driver\\DriverInterface');
-			$this->setExpectedException('RuntimeException');
+			$this->expectException('RuntimeException');
 		}
 
 		$session = m::mock('Behat\\Mink\\Session');
@@ -321,7 +323,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$event_dispatcher = new EventDispatcher();
 		$event_dispatcher->addSubscriber($this->browser);
 
-		$test_result = m::mock('PHPUnit_Framework_TestResult');
+		$test_result = new TestResult(); // Can't mock, because it's a final class.
 
 		$this->eventDispatcher->shouldReceive('removeSubscriber')->with($this->browser)->once();
 

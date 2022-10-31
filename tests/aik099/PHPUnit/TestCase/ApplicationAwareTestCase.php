@@ -11,12 +11,12 @@
 namespace tests\aik099\PHPUnit\TestCase;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\Application;
 use Mockery\MockInterface;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
-class ApplicationAwareTestCase extends TestCase
+class ApplicationAwareTestCase extends AbstractPHPUnitCompatibilityTestCase
 {
 
 	/**
@@ -27,14 +27,10 @@ class ApplicationAwareTestCase extends TestCase
 	protected $application;
 
 	/**
-	 * Configures the tests.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
-		parent::setUp();
-
 		$this->application = m::mock('aik099\\PHPUnit\\Application');
 	}
 

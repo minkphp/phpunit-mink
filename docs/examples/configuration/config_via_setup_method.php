@@ -5,7 +5,10 @@ use aik099\PHPUnit\BrowserTestCase;
 class PerTestBrowserConfigTest extends BrowserTestCase
 {
 
-    protected function setUp()
+    /**
+     * @before
+     */
+    protected function setUpTest()
     {
         // To create regular browser configuration via BrowserConfigurationFactory.
         $browser = $this->createBrowserConfiguration(array(
@@ -40,7 +43,7 @@ class PerTestBrowserConfigTest extends BrowserTestCase
         // Set browser configuration to test case.
         $this->setBrowser($browser);
 
-        parent::setUp();
+        parent::setUpTest();
     }
 
 }

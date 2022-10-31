@@ -15,17 +15,26 @@ use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
+use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageTool;
 use aik099\PHPUnit\Session\ISessionStrategy;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use Mockery as m;
 use Mockery\MockInterface;
+use aik099\PHPUnit\Framework\TestResult;
+use aik099\SebastianBergmann\CodeCoverage\CodeCoverage;
+use aik099\SebastianBergmann\CodeCoverage\Filter;
+use SebastianBergmann\CodeCoverage\ProcessedCodeCoverageData;
+use SebastianBergmann\CodeCoverage\RawCodeCoverageData;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 {
+
+	use ExpectException;
 
 	const BROWSER_CLASS = '\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
 
@@ -41,13 +50,11 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	protected $browserConfigurationFactory;
 
 	/**
-	 * Configures all tests.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
-		parent::setUp();
+		parent::setUpTest();
 
 		// Define the constant because this test is running PHPUnit testcases manually.
 		if ( $this->isInIsolation() ) {
@@ -122,10 +129,11 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \RuntimeException
 	 */
 	public function testGetBrowserNotSpecified()
 	{
+		$this->expectException('RuntimeException');
+
 		$test_case = new WithoutBrowserConfig();
 		$test_case->getBrowser();
 	}
@@ -207,7 +215,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 
 		$test_case = $this->getFixture($session_strategy);
 		$test_case->setBrowser($browser);
-		$test_case->setTestResultObject($this->getTestResult($test_case, 0));
+		$test_case->setTestResultObject(new TestResult());
 
 		// Create session when missing.
 		$session1 = $test_case->getSession();
@@ -222,11 +230,12 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \Exception
-	 * @expectedExceptionMessage MSG_SKIP
 	 */
 	public function testGetSessionDriverError()
 	{
+		$this->expectException('Exception');
+		$this->expectExceptionMessage('MSG_SKIP');
+
 		$browser = $this->getBrowser(1);
 
 		/* @var $session_strategy ISessionStrategy */
@@ -265,7 +274,24 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	public function testGetCollectCodeCoverageInformationSuccess()
 	{
 		$test_case = $this->getFixture();
-		$test_result = $this->getTestResult($test_case, 0, true);
+
+		$test_result = new TestResult();
+
+		// Can't mock due to class being marked as final.
+		if ( \interface_exists('\PHP_CodeCoverage_Driver') ) {
+			$code_coverage = new CodeCoverage(
+				m::mock('\PHP_CodeCoverage_Driver'),
+				new Filter()
+			);
+		}
+		else {
+			$code_coverage = new CodeCoverage(
+				m::mock('\\aik099\\SebastianBergmann\\CodeCoverage\\Driver\\Driver'),
+				new Filter()
+			);
+		}
+
+		$test_result->setCodeCoverage($code_coverage);
 		$test_case->setTestResultObject($test_result);
 
 		$this->assertTrue($test_case->getCollectCodeCoverageInformation());
@@ -282,7 +308,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	{
 		/* @var $test_case BrowserTestCase */
 		list($test_case,) = $this->prepareForRun();
-		$result = $this->getTestResult($test_case, 1);
+		$result = new TestResult();
 
 		$this->assertSame($result, $test_case->run($result));
 	}
@@ -299,7 +325,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		/* @var $test_case BrowserTestCase */
 		list($test_case,) = $this->prepareForRun();
 
-		$this->assertInstanceOf('\\PHPUnit_Framework_TestResult', $test_case->run());
+		$this->assertInstanceOf('\\aik099\\PHPUnit\\Framework\\TestResult', $test_case->run());
 	}
 
 	/**
@@ -315,12 +341,20 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		/* @var $session_strategy ISessionStrategy */
 		list($test_case, $session_strategy) = $this->prepareForRun(array());
 		$test_case->setName('getTestId');
+		$test_case->setRemoteCoverageHelper($this->getRemoteCoverageHelperMock());
 
-		$code_coverage = m::mock('\\PHP_CodeCoverage');
-		$code_coverage->shouldReceive('append')->with(m::mustBe(array()), $test_case)->once();
-
-		$result = $this->getTestResult($test_case, 1, true);
-		$result->shouldReceive('getCodeCoverage')->once()->andReturn($code_coverage);
+		$result = new TestResult();
+		$code_coverage = $this->getCodeCoverageMock(array(
+			$this->getCoverageFixtureFile() => array (
+				7 => -1, // Means line not executed.
+				8 => -1,
+				9 => -1,
+				12 => -1,
+				13 => -1,
+				14 => -1,
+			),
+		));
+		$result->setCodeCoverage($code_coverage);
 
 		$test_id = $test_case->getTestId();
 		$this->assertEmpty($test_id);
@@ -336,6 +370,32 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$session_strategy->shouldReceive('session')->once()->andReturn($session);
 
 		$test_case->run($result);
+
+		if ( \class_exists('\SebastianBergmann\CodeCoverage\ProcessedCodeCoverageData') ) {
+			$actual_coverage = $code_coverage->getData();
+			$expected_coverage = new ProcessedCodeCoverageData();
+			$expected_coverage->setLineCoverage(array(
+				$this->getCoverageFixtureFile() => array(
+					8 => array(), // First "return null;" statement.
+					13 => array(), // Second "return null;" statement.
+				),
+			));
+			$this->assertEquals($expected_coverage, $actual_coverage);
+		}
+		else {
+			$actual_coverage = $code_coverage->getData();
+			$expected_coverage = array(
+				$this->getCoverageFixtureFile() => array (
+					7 => array(), // Means, that this test hasn't executed a tested code.
+					8 => array(),
+					9 => array(),
+					12 => array(),
+					13 => array(),
+					14 => array(),
+				),
+			);
+			$this->assertEquals($expected_coverage, $actual_coverage);
+		}
 
 		$this->assertNotEmpty($test_case->getTestId());
 	}
@@ -349,26 +409,27 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 */
 	public function testRunWithCoverage()
 	{
-		$expected_coverage = array('test1' => 'test2');
-
-		$remote_coverage_helper = m::mock('aik099\\PHPUnit\\RemoteCoverage\\RemoteCoverageHelper');
-		$remote_coverage_helper
-			->shouldReceive('get')
-			->with('some-url', 'tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig__getTestId')
-			->andReturn($expected_coverage);
+		$expected_coverage = array(
+			$this->getCoverageFixtureFile() => array (
+				7 => 1, // Means line executed.
+				8 => -1, // Means, that this test hasn't executed a tested code.
+				9 => 1,
+				12 => 1,
+				13 => 1,
+				14 => 1,
+			),
+		);
 
 		/* @var $test_case BrowserTestCase */
 		/* @var $session_strategy ISessionStrategy */
 		list($test_case, $session_strategy) = $this->prepareForRun();
 		$test_case->setName('getTestId');
-		$test_case->setRemoteCoverageHelper($remote_coverage_helper);
+		$test_case->setRemoteCoverageHelper($this->getRemoteCoverageHelperMock($expected_coverage));
 		$test_case->setRemoteCoverageScriptUrl('some-url');
 
-		$code_coverage = m::mock('\\PHP_CodeCoverage');
-		$code_coverage->shouldReceive('append')->with($expected_coverage, $test_case)->once();
-
-		$result = $this->getTestResult($test_case, 1, true);
-		$result->shouldReceive('getCodeCoverage')->once()->andReturn($code_coverage);
+		$result = new TestResult();
+		$code_coverage = $this->getCodeCoverageMock($expected_coverage);
+		$result->setCodeCoverage($code_coverage);
 
 		$test_id = $test_case->getTestId();
 		$this->assertEmpty($test_id);
@@ -385,7 +446,127 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 
 		$test_case->run($result);
 
+		$covered_by_test = 'tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig::getTestId';
+
+		if ( \class_exists('\SebastianBergmann\CodeCoverage\ProcessedCodeCoverageData') ) {
+			$expected_coverage = new ProcessedCodeCoverageData();
+			$expected_coverage->setLineCoverage(array(
+				$this->getCoverageFixtureFile() => array(
+					8 => array(), // Means, that this test hasn't executed a tested code.
+					13 => array($covered_by_test, $covered_by_test), // Means, covered by this test twice.
+				),
+			));
+			$actual_coverage = $code_coverage->getData();
+			$this->assertEquals($expected_coverage, $actual_coverage);
+		}
+		else {
+			$actual_coverage = $code_coverage->getData();
+			$expected_coverage = array(
+				$this->getCoverageFixtureFile() => array (
+					7 => array($covered_by_test), // Means, covered by this test.
+					8 => array(), // Means, that this test hasn't executed a tested code.
+					9 => array($covered_by_test),
+					12 => array($covered_by_test),
+					13 => array($covered_by_test),
+					14 => array($covered_by_test),
+				),
+			);
+			$this->assertEquals($expected_coverage, $actual_coverage);
+		}
+
 		$this->assertNotEmpty($test_case->getTestId());
+	}
+
+	/**
+	 * Returns the coverage fixture file.
+	 *
+	 * @return string
+	 */
+	protected function getCoverageFixtureFile()
+	{
+		return \realpath(__DIR__ . '/Fixture/DummyClass.php');
+	}
+
+	/**
+	 * Returns remote coverage helper mock.
+	 *
+	 * @param array|null $expected_coverage Expected coverage.
+	 *
+	 * @return RemoteCoverageHelper
+	 */
+	protected function getRemoteCoverageHelperMock(array $expected_coverage = null)
+	{
+		$remote_coverage_helper = m::mock('aik099\\PHPUnit\\RemoteCoverage\\RemoteCoverageHelper');
+
+		if ( $expected_coverage !== null ) {
+			if ( \class_exists('\SebastianBergmann\CodeCoverage\RawCodeCoverageData') ) {
+				$remote_coverage_helper
+					->shouldReceive('get')
+					->with('some-url', 'tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig__getTestId')
+					->andReturn(RawCodeCoverageData::fromXdebugWithoutPathCoverage($expected_coverage));
+			}
+			else {
+				$remote_coverage_helper
+					->shouldReceive('get')
+					->with('some-url', 'tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig__getTestId')
+					->andReturn($expected_coverage);
+			}
+		}
+
+		if ( \class_exists('\SebastianBergmann\CodeCoverage\RawCodeCoverageData') ) {
+			$remote_coverage_helper
+				->shouldReceive('getEmpty')
+				->andReturn(RawCodeCoverageData::fromXdebugWithoutPathCoverage(array()));
+		}
+		else {
+			$remote_coverage_helper
+				->shouldReceive('getEmpty')
+				->andReturn(array());
+		}
+
+		return $remote_coverage_helper;
+	}
+
+	/**
+	 * Returns code coverage mock.
+	 *
+	 * @param array $expected_coverage Expected coverage.
+	 *
+	 * @return CodeCoverage
+	 */
+	protected function getCodeCoverageMock(array $expected_coverage)
+	{
+		if ( \interface_exists('\PHP_CodeCoverage_Driver') ) {
+			$driver = m::mock('\PHP_CodeCoverage_Driver');
+		}
+		else {
+			$driver = m::mock('\\aik099\\SebastianBergmann\\CodeCoverage\\Driver\\Driver');
+		}
+
+		$driver->shouldReceive('start')->once();
+
+		// Can't assert call count, because expectations are verified prior to coverage being queried.
+		if ( \class_exists('\SebastianBergmann\CodeCoverage\RawCodeCoverageData') ) {
+			$driver->shouldReceive('stop')
+				/*->once()*/
+				->andReturn(
+					RawCodeCoverageData::fromXdebugWithoutPathCoverage($expected_coverage)
+				);
+		}
+		else {
+			$driver->shouldReceive('stop')->/*once()->*/andReturn($expected_coverage);
+		}
+
+		$filter = new Filter();
+
+		if ( \method_exists($filter, 'addFileToWhitelist') ) {
+			$filter->addFileToWhitelist($this->getCoverageFixtureFile());
+		}
+		elseif ( \method_exists($filter, 'includeFile') ) {
+			$filter->includeFile($this->getCoverageFixtureFile());
+		}
+
+		return new CodeCoverage($driver, $filter);
 	}
 
 	/**
@@ -411,11 +592,12 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \Exception
-	 * @expectedExceptionMessage MSG_TEST
 	 */
 	public function testOnTestFailed()
 	{
+		$this->expectException('Exception');
+		$this->expectExceptionMessage('MSG_TEST');
+
 		$this->expectEvent(BrowserTestCase::TEST_FAILED_EVENT);
 
 		/* @var $session_strategy ISessionStrategy */
@@ -445,18 +627,13 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	/**
 	 * Prepares test case to be used by "run" method.
 	 *
-	 * @param array   $mock_methods      Method names to mock.
-	 * @param boolean $expect_test_ended Tells, that we should expect "test.ended" event.
+	 * @param array $mock_methods Method names to mock.
 	 *
 	 * @return array
 	 */
-	protected function prepareForRun(array $mock_methods = array(), $expect_test_ended = true)
+	protected function prepareForRun(array $mock_methods = array())
 	{
 		$this->expectEvent(BrowserTestCase::TEST_SETUP_EVENT);
-
-		if ( $expect_test_ended ) {
-			$this->expectEvent(BrowserTestCase::TEST_ENDED_EVENT);
-		}
 
 		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
@@ -467,31 +644,9 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$browser = $this->getBrowser(0);
 		$test_case->setBrowser($browser);
 
+		$this->expectEvent(\aik099\PHPUnit\BrowserTestCase::TEST_ENDED_EVENT);
+
 		return array($test_case, $session_strategy);
-	}
-
-	/**
-	 * Returns test result.
-	 *
-	 * @param BrowserTestCase $test_case        Browser test case.
-	 * @param integer         $run_count        Test run count.
-	 * @param boolean         $collect_coverage Should collect coverage information.
-	 *
-	 * @return \PHPUnit_Framework_TestResult|MockInterface
-	 */
-	protected function getTestResult(BrowserTestCase $test_case, $run_count, $collect_coverage = false)
-	{
-		$result = m::mock('\\PHPUnit_Framework_TestResult');
-		$result->shouldReceive('getCollectCodeCoverageInformation')->withNoArgs()->withAnyArgs()->andReturn($collect_coverage);
-
-		$result->shouldReceive('run')
-			->with($test_case)
-			->times($run_count)
-			->andReturnUsing(function () use ($test_case) {
-				$test_case->runBare();
-			});
-
-		return $result;
 	}
 
 	/**

@@ -12,6 +12,7 @@ namespace aik099\PHPUnit\TestSuite;
 
 
 use aik099\PHPUnit\BrowserTestCase;
+use aik099\PHPUnit\Framework\DataProviderTestSuite;
 
 /**
  * Test Suite class for a set of tests from a single Test Case Class executed with a particular browser.
@@ -54,7 +55,7 @@ class BrowserTestSuite extends AbstractTestSuite
 		}
 
 		foreach ( $tests as $test ) {
-			if ( $test instanceof \PHPUnit_Framework_TestSuite_DataProvider ) {
+			if ( $test instanceof DataProviderTestSuite ) {
 				$this->setBrowserFromConfiguration($browser, $test->tests());
 			}
 			else {

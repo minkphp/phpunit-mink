@@ -11,8 +11,12 @@
 namespace tests\aik099\PHPUnit\Integration;
 
 
+use Yoast\PHPUnitPolyfills\Polyfills\AssertStringContains;
+
 class SharedSessionStrategyTest extends SauceLabsAwareTestCase
 {
+
+	use AssertStringContains;
 
 	/**
 	 * Browser list to be used in tests.
@@ -46,7 +50,7 @@ class SharedSessionStrategyTest extends SauceLabsAwareTestCase
 		$session = $this->getSession();
 		$url = $session->getCurrentUrl();
 
-		$this->assertContains('https://www.google.com', $url);
+		$this->assertStringContainsString('https://www.google.com', $url);
 	}
 
 }

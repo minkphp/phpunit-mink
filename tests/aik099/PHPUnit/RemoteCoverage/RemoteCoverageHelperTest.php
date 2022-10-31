@@ -11,14 +11,19 @@
 namespace tests\aik099\PHPUnit\RemoteCoverage;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
 use Mockery as m;
 use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase;
+use SebastianBergmann\CodeCoverage\RawCodeCoverageData;
+use Yoast\PHPUnitPolyfills\Polyfills\AssertIsType;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class RemoteCoverageHelperTest extends TestCase
+class RemoteCoverageHelperTest extends AbstractPHPUnitCompatibilityTestCase
 {
+
+	use ExpectException, AssertIsType;
 
 	/**
 	 * Remote URL.
@@ -37,12 +42,10 @@ class RemoteCoverageHelperTest extends TestCase
 	/**
 	 * Prepares test.
 	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
-		parent::setUp();
-
 		$this->_remoteUrl = m::mock('aik099\\PHPUnit\\RemoteCoverage\\RemoteUrl');
 		$this->_remoteCoverageHelper = new RemoteCoverageHelper($this->_remoteUrl);
 	}
@@ -55,10 +58,11 @@ class RemoteCoverageHelperTest extends TestCase
 	 *
 	 * @return void
 	 * @dataProvider createUrlErrorDataProvider
-	 * @expectedException \InvalidArgumentException
 	 */
 	public function testCreateUrlError($coverage_script_url, $test_id)
 	{
+		$this->expectException('InvalidArgumentException');
+
 		$this->_remoteCoverageHelper->get($coverage_script_url, $test_id);
 	}
 
@@ -95,8 +99,15 @@ class RemoteCoverageHelperTest extends TestCase
 			->andReturn(false);
 
 		$result = $this->_remoteCoverageHelper->get($coverage_script_url, $test_id);
-		$this->assertInternalType('array', $result);
-		$this->assertCount(0, $result);
+
+		if ( \class_exists('\SebastianBergmann\CodeCoverage\RawCodeCoverageData') ) {
+			$this->assertInstanceOf('\SebastianBergmann\CodeCoverage\RawCodeCoverageData', $result);
+			$this->assertCount(0, $result->lineCoverage());
+		}
+		else {
+			$this->assertIsArray($result);
+			$this->assertCount(0, $result);
+		}
 	}
 
 	/**
@@ -116,10 +127,11 @@ class RemoteCoverageHelperTest extends TestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \RuntimeException
 	 */
 	public function testReturnedCoverageNotASerializedArray()
 	{
+		$this->expectException('RuntimeException');
+
 		$this->_remoteUrl
 			->shouldReceive('getPageContent')
 			->once()
@@ -154,7 +166,12 @@ class RemoteCoverageHelperTest extends TestCase
 			14 => 1,
 		);
 
-		$this->assertEquals($expected, $content[$class_source_file]);
+		if ( \class_exists('\SebastianBergmann\CodeCoverage\RawCodeCoverageData') ) {
+			$this->assertEquals(array($class_source_file => $expected), $content->lineCoverage());
+		}
+		else {
+			$this->assertEquals($expected, $content[$class_source_file]);
+		}
 	}
 
 }

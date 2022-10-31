@@ -11,11 +11,11 @@
 namespace tests\aik099\PHPUnit\Integration;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\Application;
 use aik099\PHPUnit\DIContainer;
-use PHPUnit\Framework\TestCase;
 
-class DIContainerTest extends TestCase
+class DIContainerTest extends AbstractPHPUnitCompatibilityTestCase
 {
 
 	/**
@@ -28,12 +28,10 @@ class DIContainerTest extends TestCase
 	/**
 	 * Creates container for testing.
 	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
-		parent::setUp();
-
 		$this->_container = new DIContainer();
 		$this->_container->setApplication(new Application());
 	}

@@ -23,6 +23,7 @@ use aik099\PHPUnit\Session\SessionStrategyManager;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Session;
+use SebastianBergmann\CodeCoverage\RawCodeCoverageData;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -177,11 +178,10 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 	 * Set session meta-info for "Sauce Labs".
 	 *
 	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
-		parent::setUp();
-
 		$this->_eventDispatcher->dispatch(
 			self::TEST_SETUP_EVENT,
 			new TestEvent($this)
@@ -301,37 +301,22 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 	}
 
 	/**
-	 * Runs the test case and collects the results in a TestResult object.
+	 * Collects remote coverage information and dispatches "test ended" event.
 	 *
-	 * If no TestResult object is passed a new one will be created.
-	 *
-	 * @param \PHPUnit_Framework_TestResult $result Test result.
-	 *
-	 * @return \PHPUnit_Framework_TestResult
+	 * @after
 	 */
-	public function run(\PHPUnit_Framework_TestResult $result = null)
+	protected function tearDownTest()
 	{
-		if ( $result === null ) {
-			$result = $this->createResult();
-		}
-
-		parent::run($result);
+		$result = $this->getTestResultObject();
 
 		if ( $result->getCollectCodeCoverageInformation() ) {
 			$result->getCodeCoverage()->append($this->getRemoteCodeCoverageInformation(), $this);
 		}
 
-		/*$this->setTestResultObject($result);*/
-
-		// Do not call this before to give the time to the Listeners to run.
 		$this->_eventDispatcher->dispatch(
 			self::TEST_ENDED_EVENT,
 			new TestEndedEvent($this, $result, $this->_session)
 		);
-
-		/*$this->setTestResultObject(null);*/
-
-		return $result;
 	}
 
 	/**
@@ -387,7 +372,7 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 	/**
 	 * Returns remote code coverage information, when enabled.
 	 *
-	 * @return array
+	 * @return array|RawCodeCoverageData
 	 */
 	public function getRemoteCodeCoverageInformation()
 	{
@@ -395,7 +380,7 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 			return $this->remoteCoverageHelper->get($this->_remoteCoverageScriptUrl, $this->_testId);
 		}
 
-		return array();
+		return $this->remoteCoverageHelper->getEmpty();
 	}
 
 	/**
@@ -415,11 +400,11 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 	/**
 	 * This method is called when a test method did not execute successfully.
 	 *
-	 * @param \Exception $e Exception.
+	 * @param \Exception|\Throwable $e Exception.
 	 *
 	 * @return void
 	 */
-	protected function onNotSuccessfulTestCompatibilized(\Exception $e)
+	protected function onNotSuccessfulTestCompatibilized($e)
 	{
 		$this->_eventDispatcher->dispatch(
 			self::TEST_FAILED_EVENT,

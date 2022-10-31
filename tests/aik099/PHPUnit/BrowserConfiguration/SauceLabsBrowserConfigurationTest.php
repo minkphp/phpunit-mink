@@ -19,11 +19,9 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 	const HOST = ':@ondemand.saucelabs.com';
 
 	/**
-	 * Configures all tests.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
 		$this->browserConfigurationClass = 'aik099\\PHPUnit\\BrowserConfiguration\\SauceLabsBrowserConfiguration';
 
@@ -31,7 +29,7 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 			'tunnel-identifier' => 'env:PHPUNIT_MINK_TUNNEL_ID',
 		);
 
-		parent::setUp();
+		parent::setUpTest();
 
 		$this->setup['host'] = 'UN:AK@ondemand.saucelabs.com';
 	}

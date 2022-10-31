@@ -11,11 +11,11 @@
 namespace tests\aik099\PHPUnit\Session;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\Session\SessionFactory;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
-class SessionFactoryTest extends TestCase
+class SessionFactoryTest extends AbstractPHPUnitCompatibilityTestCase
 {
 
 	/**
@@ -26,14 +26,10 @@ class SessionFactoryTest extends TestCase
 	private $_factory;
 
 	/**
-	 * Creates session strategy.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
-		parent::setUp();
-
 		$this->_factory = new SessionFactory();
 	}
 

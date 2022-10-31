@@ -11,14 +11,14 @@
 namespace tests\aik099\PHPUnit\Session;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\Session\ISessionStrategy;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use aik099\PHPUnit\Session\SessionStrategyFactory;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
-class SessionStrategyManagerTest extends TestCase
+class SessionStrategyManagerTest extends AbstractPHPUnitCompatibilityTestCase
 {
 
 	/**
@@ -36,14 +36,10 @@ class SessionStrategyManagerTest extends TestCase
 	protected $factory;
 
 	/**
-	 * Creates session strategy manager to use for tests.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
-		parent::setUp();
-
 		$this->factory = m::mock('aik099\\PHPUnit\\Session\\ISessionStrategyFactory');
 		$this->manager = new SessionStrategyManager($this->factory);
 	}

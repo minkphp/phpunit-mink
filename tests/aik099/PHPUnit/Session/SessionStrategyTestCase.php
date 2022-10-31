@@ -11,11 +11,11 @@
 namespace tests\aik099\PHPUnit\Session;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\Session\ISessionStrategy;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class SessionStrategyTestCase extends TestCase
+class SessionStrategyTestCase extends AbstractPHPUnitCompatibilityTestCase
 {
 
 	const BROWSER_CLASS = '\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
@@ -39,14 +39,10 @@ class SessionStrategyTestCase extends TestCase
 	protected $strategy;
 
 	/**
-	 * Configures all tests.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
-		parent::setUp();
-
 		$this->eventDispatcher = new EventDispatcher();
 		$this->strategy->setEventDispatcher($this->eventDispatcher);
 	}

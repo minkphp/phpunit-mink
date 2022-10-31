@@ -18,12 +18,16 @@ use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use Mockery as m;
 use Mockery\Generator\MockConfigurationBuilder;
+use aik099\PHPUnit\Framework\TestResult;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 {
+
+	use ExpectException;
 
 	const TEST_CASE_CLASS = '\\aik099\\PHPUnit\\BrowserTestCase';
 
@@ -88,13 +92,11 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	protected $testsRequireSubscriber = array();
 
 	/**
-	 * Configures all tests.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
-		parent::setUp();
+		parent::setUpTest();
 
 		if ( !$this->browserConfigurationClass ) {
 			$this->browserConfigurationClass = 'aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
@@ -239,10 +241,11 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \InvalidArgumentException
 	 */
 	public function testResolveAliasesUsingIncorrectAlias()
 	{
+		$this->expectException('InvalidArgumentException');
+
 		$this->browser->setup(array('alias' => 'not_found'));
 	}
 
@@ -266,10 +269,11 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \RuntimeException
 	 */
 	public function testGetTestCaseException()
 	{
+		$this->expectException('RuntimeException');
+
 		$this->browser->getTestCase();
 	}
 
@@ -296,10 +300,11 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \InvalidArgumentException
 	 */
 	public function testSetupScreamsAboutUnknownParameters()
 	{
+		$this->expectException('InvalidArgumentException');
+
 		$this->browser->setup(array('unknown-parameter' => 'value'));
 	}
 
@@ -308,12 +313,11 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 		$this->assertEquals('default', $this->browser->getType());
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The Mink driver name must be a string
-	 */
 	public function testSetDriverIncorrect()
 	{
+		$this->expectException('InvalidArgumentException');
+		$this->expectExceptionMessage('The Mink driver name must be a string');
+
 		$this->browser->setDriver(array());
 	}
 
@@ -344,10 +348,11 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \InvalidArgumentException
 	 */
 	public function testSetHostIncorrect()
 	{
+		$this->expectException('InvalidArgumentException');
+
 		$this->browser->setHost(5555);
 	}
 
@@ -367,10 +372,11 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \InvalidArgumentException
 	 */
 	public function testSetPortIncorrect()
 	{
+		$this->expectException('InvalidArgumentException');
+
 		$this->browser->setPort('5555');
 	}
 
@@ -390,10 +396,11 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \InvalidArgumentException
 	 */
 	public function testSetBrowserNameIncorrect()
 	{
+		$this->expectException('InvalidArgumentException');
+
 		$this->browser->setBrowserName(5555);
 	}
 
@@ -413,10 +420,11 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \InvalidArgumentException
 	 */
 	public function testSetBaseUrlIncorrect()
 	{
+		$this->expectException('InvalidArgumentException');
+
 		$this->browser->setBaseUrl(5555);
 	}
 
@@ -452,10 +460,11 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \InvalidArgumentException
 	 */
 	public function testSetTimeoutIncorrect()
 	{
+		$this->expectException('InvalidArgumentException');
+
 		$this->browser->setTimeout('5555');
 	}
 
@@ -485,12 +494,11 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 		$this->assertSame($expected, $this->browser->getSessionStrategy());
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Unable to get unknown parameter "nonExisting"
-	 */
 	public function testGetParameterIncorrect()
 	{
+		$this->expectException('InvalidArgumentException');
+		$this->expectExceptionMessage('Unable to get unknown parameter "nonExisting"');
+
 		$this->browser->getNonExisting();
 	}
 
@@ -505,8 +513,8 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 
 	public function testNonExistingMethod()
 	{
-		$this->setExpectedException(
-			'\BadMethodCallException',
+		$this->expectException('BadMethodCallException');
+		$this->expectExceptionMessage(
 			'Method "nonExistingMethod" does not exist on ' . get_class($this->browser) . ' class'
 		);
 
@@ -575,7 +583,7 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	{
 		$test_case = m::mock(self::TEST_CASE_CLASS);
 		$test_case->shouldReceive('hasFailed')->once()->andReturn(false);
-		$test_result = m::mock('\\PHPUnit_Framework_TestResult');
+		$test_result = new TestResult(); // Can't mock, because it's a final class.
 
 		$this->browser->setSessionStrategy(ISessionStrategyFactory::TYPE_ISOLATED);
 		$this->assertTrue($this->browser->getTestStatus($test_case, $test_result));
@@ -589,8 +597,7 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	public function testGetTestStatusShared()
 	{
 		$test_case = m::mock(self::TEST_CASE_CLASS);
-		$test_result = m::mock('\\PHPUnit_Framework_TestResult');
-		$test_result->shouldReceive('wasSuccessful')->once()->andReturn(true);
+		$test_result = new TestResult(); // Can't mock, because it's a final class.
 
 		$this->browser->setSessionStrategy(ISessionStrategyFactory::TYPE_SHARED);
 		$this->assertTrue($this->browser->getTestStatus($test_case, $test_result));

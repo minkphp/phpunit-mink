@@ -26,13 +26,11 @@ class BrowserTestSuiteTest extends EventDispatcherAwareTestCase
 	private $_suite;
 
 	/**
-	 * Creates suite for testing.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
-		parent::setUp();
+		parent::setUpTest();
 
 		$this->_suite = new BrowserTestSuite();
 		$this->_suite->setEventDispatcher($this->eventDispatcher);
@@ -77,7 +75,7 @@ class BrowserTestSuiteTest extends EventDispatcherAwareTestCase
 	public function testSetBrowserFromConfiguration()
 	{
 		$browser = array('name' => 'safari');
-		$test = m::mock('PHPUnit_Framework_Test');
+		$test = m::mock('\\aik099\\PHPUnit\\Framework\\Test');
 		$test->shouldReceive('setBrowserFromConfiguration')->with($browser)->once();
 
 		$this->_suite->addTest($test);

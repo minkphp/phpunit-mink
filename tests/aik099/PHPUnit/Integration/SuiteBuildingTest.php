@@ -11,15 +11,17 @@
 namespace tests\aik099\PHPUnit\Integration;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\TestSuite\BrowserTestSuite;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
-use PHPUnit\Framework\TestCase;
+use aik099\PHPUnit\Framework\TestResult;
+use PHPUnit\Runner\Version;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use Mockery as m;
 
-class SuiteBuildingTest extends TestCase
+class SuiteBuildingTest extends AbstractPHPUnitCompatibilityTestCase
 {
 
 	const SUITE_CLASS = '\\aik099\\PHPUnit\\TestSuite\\RegularTestSuite';
@@ -84,10 +86,7 @@ class SuiteBuildingTest extends TestCase
 		$suite->addTest($sub_browser_suite);
 		$suite->addTest($sub_test_suite);
 
-		$result = m::mock('\\PHPUnit_Framework_TestResult');
-		$result->shouldReceive('startTestSuite');
-		$result->shouldReceive('shouldStop')->andReturn(false);
-		$result->shouldReceive('endTestSuite');
+		$result = new TestResult(); // Can't mock, because it's a final class.
 
 		$this->assertSame($result, $suite->run($result));
 	}
@@ -109,18 +108,37 @@ class SuiteBuildingTest extends TestCase
 		$suite->shouldReceive('setBackupStaticAttributes');
 		$suite->shouldReceive('setRunTestInSeparateProcess');
 
-		$suite->shouldReceive('run')->once();
+		$suite->shouldReceive('run')->once()->andReturnUsing(function ($result = null) {
+			return $result;
+		});
 		$suite->shouldReceive('onTestSuiteEnded')->once();
 
-		if ( version_compare(\PHPUnit_Runner_Version::id(), '4.0.0', '>=') ) {
+		$phpunit_version = $this->getPhpUnitVersion();
+
+		// Pretend, that mocked test suite has 1 test inside it.
+		if ( version_compare($phpunit_version, '4.0.0', '>=') ) {
 			$suite->shouldReceive('count')->once()->andReturn(1);
 		}
 
-		if ( version_compare(\PHPUnit_Runner_Version::id(), '5.0.0', '>=') ) {
+		if ( version_compare($phpunit_version, '5.0.0', '>=') ) {
 			$suite->shouldReceive('setBeStrictAboutChangesToGlobalState');
 		}
 
 		return $suite;
+	}
+
+	/**
+	 * Returns PHPUnit version.
+	 *
+	 * @return string
+	 */
+	protected function getPhpUnitVersion()
+	{
+		if ( \class_exists('PHPUnit\Runner\Version') ) {
+			return Version::id();
+		}
+
+		return \PHPUnit_Runner_Version::id();
 	}
 
 	/**

@@ -12,12 +12,15 @@
 namespace tests\aik099\PHPUnit\MinkDriver;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class DriverFactoryRegistryTest extends TestCase
+class DriverFactoryRegistryTest extends AbstractPHPUnitCompatibilityTestCase
 {
+
+	use ExpectException;
 
 	/**
 	 * Driver factory registry.
@@ -26,10 +29,11 @@ class DriverFactoryRegistryTest extends TestCase
 	 */
 	private $_driverFactoryRegistry;
 
-	public function setUp()
+	/**
+	 * @before
+	 */
+	public function setUpTest()
 	{
-		parent::setUp();
-
 		$this->_driverFactoryRegistry = new DriverFactoryRegistry();
 	}
 
@@ -43,12 +47,11 @@ class DriverFactoryRegistryTest extends TestCase
 		$this->assertSame($factory, $this->_driverFactoryRegistry->get('test'));
 	}
 
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage Driver factory for "test" driver is already registered.
-	 */
 	public function testAddingExisting()
 	{
+		$this->expectException('LogicException');
+		$this->expectExceptionMessage('Driver factory for "test" driver is already registered.');
+
 		$factory = m::mock('aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
 		$factory->shouldReceive('getDriverName')->andReturn('test');
 
@@ -56,12 +59,11 @@ class DriverFactoryRegistryTest extends TestCase
 		$this->_driverFactoryRegistry->add($factory);
 	}
 
-	/**
-	 * @expectedException \OutOfBoundsException
-	 * @expectedExceptionMessage No driver factory for "test" driver.
-	 */
 	public function testGettingNonExisting()
 	{
+		$this->expectException('OutOfBoundsException');
+		$this->expectExceptionMessage('No driver factory for "test" driver.');
+
 		$this->_driverFactoryRegistry->get('test');
 	}
 

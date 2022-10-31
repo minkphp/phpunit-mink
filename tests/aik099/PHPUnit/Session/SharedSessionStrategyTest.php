@@ -20,6 +20,8 @@ use aik099\PHPUnit\Session\SharedSessionStrategy;
 use Behat\Mink\Session;
 use Mockery as m;
 use Mockery\MockInterface;
+use aik099\PHPUnit\Framework\IncompleteTestError;
+use aik099\PHPUnit\Framework\SkippedTestError;
 
 class SharedSessionStrategyTest extends SessionStrategyTestCase
 {
@@ -46,11 +48,9 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 	private $_session2;
 
 	/**
-	 * Creates session strategy.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
 		$this->_session1 = $this->createSession();
 		$this->_session2 = $this->createSession();
@@ -58,7 +58,7 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 		$this->_isolatedStrategy = m::mock('\\aik099\\PHPUnit\\Session\\IsolatedSessionStrategy');
 		$this->strategy = new SharedSessionStrategy($this->_isolatedStrategy);
 
-		parent::setUp();
+		parent::setUpTest();
 	}
 
 	/**
@@ -95,8 +95,8 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 	{
 		return array(
 			array(null),
-			array(new \PHPUnit_Framework_IncompleteTestError()),
-			array(new \PHPUnit_Framework_SkippedTestError()),
+			array(new IncompleteTestError()),
+			array(new SkippedTestError()),
 		);
 	}
 

@@ -8,7 +8,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Bumped minimum PHPUnit version to 4.8.35 or 5.4.3.
+- Lifted restriction on used PHPUnit version.
 - Use namespaced class versions of PHPUnit.
+- Bumped minimum PHP version to 5.4.7.
+- Test case configuration method renamed from "BrowserTestCase::setUp" into "BrowserTestCase::setUpTest".
 
 ### Fixed
 - Fixed "PHP Strict standards" notice when used with PHPUnit 5+.

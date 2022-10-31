@@ -17,6 +17,7 @@ use aik099\PHPUnit\Session\ISessionFactory;
 use aik099\PHPUnit\Session\IsolatedSessionStrategy;
 use Mockery as m;
 use Mockery\MockInterface;
+use aik099\PHPUnit\Framework\TestResult;
 
 class IsolatedSessionStrategyTest extends SessionStrategyTestCase
 {
@@ -29,16 +30,14 @@ class IsolatedSessionStrategyTest extends SessionStrategyTestCase
 	private $_factory;
 
 	/**
-	 * Creates session strategy.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
 		$this->_factory = m::mock('aik099\\PHPUnit\\Session\\ISessionFactory');
 		$this->strategy = new IsolatedSessionStrategy($this->_factory);
 
-		parent::setUp();
+		parent::setUpTest();
 	}
 
 	/**
@@ -81,7 +80,7 @@ class IsolatedSessionStrategyTest extends SessionStrategyTestCase
 			BrowserTestCase::TEST_ENDED_EVENT,
 			new TestEndedEvent(
 				$test_case,
-				m::mock('PHPUnit_Framework_TestResult'),
+				new TestResult() /* Can't mock, because it's a final class. */,
 				$session
 			)
 		);
