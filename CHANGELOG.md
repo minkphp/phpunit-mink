@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Fixed "PHP Strict standards" notice when used with PHPUnit 5+.
+- Fixed issue with BrowserStack, that caused PHPUnit test result not being reported into the BrowserStack due their API changes.
 
 ## [2.2.0] - 2016-06-26
 ### Added
