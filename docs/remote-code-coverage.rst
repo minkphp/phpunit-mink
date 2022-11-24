@@ -23,7 +23,7 @@ On Test Machine
 ^^^^^^^^^^^^^^^
 This is machine, where PHPUnit tests are being executed.
 
-Following code needs to be placed in the ``setUp`` method of the test case class (that extends ``BrowserTestCase``
+Following code needs to be placed in the ``setUpTest`` method of the test case class (that extends ``BrowserTestCase``
 class) to enable remote coverage information collection:
 
 .. code-block:: php

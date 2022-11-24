@@ -6,7 +6,7 @@ All possible ways of browser configuration are described below.
 Per Test Configuration
 ^^^^^^^^^^^^^^^^^^^^^^
 It is possible to configure browser individually for each test within a test case by creating
-an instance of ``\aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration`` class in ``setUp``
+an instance of ``\aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration`` class in ``setUpTest``
 method in of test case class and setting it via ``setBrowser`` method.
 
 .. literalinclude:: examples/configuration/config_via_setup_method.php
@@ -69,6 +69,6 @@ Name                     Description
 =======================  ==================================================================================================
 
 There are also corresponding setters (e.g. ``setHost``) and getters (e.g. ``getHost``) for each of mentioned
-above settings, that allow to individually change them from ``setUp`` method before test has started.
+above settings, that allow to individually change them from ``setUpTest`` method before test has started.
 
 .. _`Mink`: https://github.com/Behat/Mink
