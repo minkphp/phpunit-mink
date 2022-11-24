@@ -7,6 +7,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ...
 
 ### Changed
+...
+
+### Fixed
+...
+
+## [2.3.0] - 2022-11-24
+### Changed
 - Bumped minimum PHPUnit version to 4.8.35 or 5.4.3.
 - Lifted restriction on used PHPUnit version.
 - Use namespaced class versions of PHPUnit.
