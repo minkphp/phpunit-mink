@@ -19,11 +19,9 @@ class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCa
 	const HOST = ':@hub.browserstack.com';
 
 	/**
-	 * Configures all tests.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
 		$this->browserConfigurationClass = 'aik099\\PHPUnit\\BrowserConfiguration\\BrowserStackBrowserConfiguration';
 
@@ -32,7 +30,7 @@ class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCa
 			'browserstack.localIdentifier' => 'env:PHPUNIT_MINK_TUNNEL_ID',
 		);
 
-		parent::setUp();
+		parent::setUpTest();
 
 		$this->setup['desiredCapabilities'] = array(
 			'os' => 'Windows', 'os_version' => 'XP', 'version' => 10,

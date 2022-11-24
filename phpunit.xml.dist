@@ -32,10 +32,6 @@
 		-->
 	</php>
 
-	<listeners>
-		<listener class="\Mockery\Adapter\Phpunit\TestListener"/>
-	</listeners>
-
 	<filter>
 		<whitelist>
 			<directory>library/aik099/PHPUnit</directory>

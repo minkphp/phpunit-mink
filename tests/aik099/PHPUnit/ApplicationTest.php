@@ -11,12 +11,15 @@
 namespace tests\aik099\PHPUnit;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\Application;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class ApplicationTest extends TestCase
+class ApplicationTest extends AbstractPHPUnitCompatibilityTestCase
 {
+
+	use ExpectException;
 
 	/**
 	 * Application.
@@ -26,14 +29,10 @@ class ApplicationTest extends TestCase
 	private $_application;
 
 	/**
-	 * Creates container for testing.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
-		parent::setUp();
-
 		$this->_application = new Application();
 	}
 
@@ -89,10 +88,11 @@ class ApplicationTest extends TestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \InvalidArgumentException
 	 */
 	public function testReplaceObjectFailure()
 	{
+		$this->expectException('InvalidArgumentException');
+
 		$this->_application->replaceObject('bad_service', function () {
 
 		});

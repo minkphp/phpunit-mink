@@ -11,12 +11,12 @@
 namespace tests\aik099\PHPUnit\TestCase;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use Mockery\MockInterface;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class EventDispatcherAwareTestCase extends TestCase
+class EventDispatcherAwareTestCase extends AbstractPHPUnitCompatibilityTestCase
 {
 
 	/**
@@ -27,14 +27,10 @@ class EventDispatcherAwareTestCase extends TestCase
 	protected $eventDispatcher;
 
 	/**
-	 * Configures the tests.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
-		parent::setUp();
-
 		$this->eventDispatcher = m::mock('Symfony\\Component\\EventDispatcher\\EventDispatcherInterface');
 	}
 

@@ -15,9 +15,12 @@ use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use aik099\PHPUnit\Session\SessionStrategyFactory;
 use Mockery as m;
 use tests\aik099\PHPUnit\TestCase\ApplicationAwareTestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class SessionStrategyFactoryTest extends ApplicationAwareTestCase
 {
+
+	use ExpectException;
 
 	/**
 	 * Session factory.
@@ -27,13 +30,11 @@ class SessionStrategyFactoryTest extends ApplicationAwareTestCase
 	private $_factory;
 
 	/**
-	 * Creates session strategy.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
-		parent::setUp();
+		parent::setUpTest();
 
 		$this->_factory = new SessionStrategyFactory();
 		$this->_factory->setApplication($this->application);
@@ -72,10 +73,11 @@ class SessionStrategyFactoryTest extends ApplicationAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \InvalidArgumentException
 	 */
 	public function testCreateStrategyFailure()
 	{
+		$this->expectException('InvalidArgumentException');
+
 		$this->_factory->createStrategy('wrong');
 	}
 

@@ -51,13 +51,11 @@ class TestSuiteFactoryTest extends ApplicationAwareTestCase
 	private $_remoteCoverageHelper;
 
 	/**
-	 * Creates suite for testing.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
-		parent::setUp();
+		parent::setUpTest();
 
 		$this->_manager = m::mock('aik099\\PHPUnit\\Session\\SessionStrategyManager');
 		$this->_browserFactory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');

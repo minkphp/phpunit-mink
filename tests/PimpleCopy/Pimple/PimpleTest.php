@@ -29,12 +29,15 @@ namespace tests\PimpleCopy\Pimple;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use PimpleCopy\Pimple\Container;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 /**
  * @author  Igor Wiedler <igor@wiedler.ch>
  */
 class PimpleTest extends TestCase
 {
+	use ExpectException;
+
 	public function testWithString()
 	{
 		$pimple = new Container();
@@ -107,12 +110,11 @@ class PimpleTest extends TestCase
 		$this->assertSame($params['param'], $pimple['param']);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Identifier "foo" is not defined.
-	 */
 	public function testOffsetGetValidatesKeyIsPresent()
 	{
+		$this->expectException('InvalidArgumentException');
+		$this->expectExceptionMessage('Identifier "foo" is not defined.');
+
 		$pimple = new Container();
 		echo $pimple['foo'];
 	}
@@ -197,12 +199,11 @@ class PimpleTest extends TestCase
 		$this->assertSame($pimple, $pimple->register($serviceProviderMock));
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Identifier "foo" is not defined.
-	 */
 	public function testRawValidatesKeyIsPresent()
 	{
+		$this->expectException('InvalidArgumentException');
+		$this->expectExceptionMessage('Identifier "foo" is not defined.');
+
 		$pimple = new Container();
 		$pimple->raw('foo');
 	}
@@ -262,12 +263,11 @@ class PimpleTest extends TestCase
 		$this->assertCount(0, $p->getValue($pimple));
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Identifier "foo" is not defined.
-	 */
 	public function testExtendValidatesKeyIsPresent()
 	{
+		$this->expectException('InvalidArgumentException');
+		$this->expectExceptionMessage('Identifier "foo" is not defined.');
+
 		$pimple = new Container();
 		$pimple->extend('foo', function () {});
 	}
@@ -301,33 +301,36 @@ class PimpleTest extends TestCase
 
 	/**
 	 * @dataProvider badServiceDefinitionProvider
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Service definition is not a Closure or invokable object.
 	 */
 	public function testFactoryFailsForInvalidServiceDefinitions($service)
 	{
+		$this->expectException('InvalidArgumentException');
+		$this->expectExceptionMessage('Service definition is not a Closure or invokable object.');
+
 		$pimple = new Container();
 		$pimple->factory($service);
 	}
 
 	/**
 	 * @dataProvider badServiceDefinitionProvider
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Callable is not a Closure or invokable object.
 	 */
 	public function testProtectFailsForInvalidServiceDefinitions($service)
 	{
+		$this->expectException('InvalidArgumentException');
+		$this->expectExceptionMessage('Callable is not a Closure or invokable object.');
+
 		$pimple = new Container();
 		$pimple->protect($service);
 	}
 
 	/**
 	 * @dataProvider badServiceDefinitionProvider
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Identifier "foo" does not contain an object definition.
 	 */
 	public function testExtendFailsForKeysNotContainingServiceDefinitions($service)
 	{
+		$this->expectException('InvalidArgumentException');
+		$this->expectExceptionMessage('Identifier "foo" does not contain an object definition.');
+
 		$pimple = new Container();
 		$pimple['foo'] = $service;
 		$pimple->extend('foo', function () {});
@@ -335,11 +338,12 @@ class PimpleTest extends TestCase
 
 	/**
 	 * @dataProvider badServiceDefinitionProvider
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Extension service definition is not a Closure or invokable object.
 	 */
 	public function testExtendFailsForInvalidServiceDefinitions($service)
 	{
+		$this->expectException('InvalidArgumentException');
+		$this->expectExceptionMessage('Extension service definition is not a Closure or invokable object.');
+
 		$pimple = new Container();
 		$pimple['foo'] = function () {};
 		$pimple->extend('foo', $service);
@@ -386,12 +390,11 @@ class PimpleTest extends TestCase
 		$this->assertSame('bar', $pimple['bar']);
 	}
 
-	/**
-	 * @expectedException \RuntimeException
-	 * @expectedExceptionMessage Cannot override frozen service "foo".
-	 */
 	public function testOverridingServiceAfterFreeze()
 	{
+		$this->expectException('RuntimeException');
+		$this->expectExceptionMessage('Cannot override frozen service "foo".');
+
 		$pimple = new Container();
 		$pimple['foo'] = function () {
 			return 'foo';

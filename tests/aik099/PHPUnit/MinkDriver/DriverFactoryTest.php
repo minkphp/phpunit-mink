@@ -12,14 +12,17 @@
 namespace tests\aik099\PHPUnit\MinkDriver;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\DIContainer;
 use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class DriverFactoryTest extends TestCase
+class DriverFactoryTest extends AbstractPHPUnitCompatibilityTestCase
 {
+
+	use ExpectException;
 
 	/**
 	 * @dataProvider driverDataProvider
@@ -49,8 +52,8 @@ class DriverFactoryTest extends TestCase
 		$factory = new $factory_class();
 		$driver_class_parts = explode('\\', $driver_class);
 
-		$this->setExpectedException(
-			'\RuntimeException',
+		$this->expectException('RuntimeException');
+		$this->expectExceptionMessage(
 			'Install Mink' . end($driver_class_parts) . ' in order to use ' . $factory->getDriverName() . ' driver.'
 		);
 		$factory->createDriver($this->createBrowserConfiguration($factory));

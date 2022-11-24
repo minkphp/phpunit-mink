@@ -11,12 +11,14 @@
 namespace aik099\PHPUnit\TestSuite;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestSuite;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\IEventDispatcherAware;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\Session\SessionStrategyManager;
-use PHPUnit\Framework\TestSuite;
+use aik099\PHPUnit\Framework\DataProviderTestSuite;
+use PHPUnit\Util\Test as TestUtil;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -24,7 +26,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @method \Mockery\Expectation shouldReceive(string $name)
  */
-abstract class AbstractTestSuite extends TestSuite implements IEventDispatcherAware
+abstract class AbstractTestSuite extends AbstractPHPUnitCompatibilityTestSuite implements IEventDispatcherAware
 {
 
 	/**
@@ -64,8 +66,19 @@ abstract class AbstractTestSuite extends TestSuite implements IEventDispatcherAw
 	{
 		$class = new \ReflectionClass($class_name);
 
-		foreach ( $class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method ) {
-			$this->addTestMethod($class, $method);
+		if ( \method_exists($this, 'isTestMethod') ) {
+			// PHPUnit < 8.0 is calling "isTestMethod" inside "TestSuite::addTestMethod".
+			foreach ( $class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method ) {
+				$this->addTestMethod($class, $method);
+			}
+		}
+		else {
+			// PHPUnit >= 8.0 is calling "TestUtil::isTestMethod" outside of "TestSuite::addTestMethod".
+			foreach ( $class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method ) {
+				if ( TestUtil::isTestMethod($method) ) {
+					$this->addTestMethod($class, $method);
+				}
+			}
 		}
 
 		return $this;
@@ -92,7 +105,7 @@ abstract class AbstractTestSuite extends TestSuite implements IEventDispatcherAw
 		}
 
 		foreach ( $tests as $test ) {
-			if ( $test instanceof \PHPUnit_Framework_TestSuite_DataProvider ) {
+			if ( $test instanceof DataProviderTestSuite ) {
 				$this->setTestDependencies(
 					$session_strategy_manager,
 					$browser_configuration_factory,
@@ -113,24 +126,44 @@ abstract class AbstractTestSuite extends TestSuite implements IEventDispatcherAw
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public function runCompatibilized($result = null)
+	{
+		$result = parent::runCompatibilized($result);
+
+		$this->triggerTestSuiteEnded();
+
+		return $result;
+	}
+
+	/**
 	 * Report back suite ending to each it's test.
 	 *
 	 * @param array $tests Tests to process.
 	 *
 	 * @return void
 	 */
-	protected function tearDown(array $tests = null)
+	protected function triggerTestSuiteEnded(array $tests = null)
 	{
 		if ( !isset($tests) ) {
 			$tests = $this->tests();
 		}
 
 		foreach ( $tests as $test ) {
-			if ( $test instanceof \PHPUnit_Framework_TestSuite_DataProvider ) {
-				$this->tearDown($test->tests());
+			if ( $test instanceof DataProviderTestSuite ) {
+				/*
+				 * Use our test suite method to tear down
+				 * supported test suites wrapped in a data
+				 * provider test suite.
+				 */
+				$this->triggerTestSuiteEnded($test->tests());
 			}
 			else {
-				/* @var $test BrowserTestCase */
+				/*
+				 * Once browser test suite ends the shared sessions strategy can stop the browser.
+				 */
+				/* @var $test BrowserTestCase|AbstractTestSuite */
 				$test->onTestSuiteEnded();
 			}
 		}

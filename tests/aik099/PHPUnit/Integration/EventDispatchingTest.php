@@ -11,16 +11,18 @@
 namespace tests\aik099\PHPUnit\Integration;
 
 
-use PHPUnit\Framework\TestCase;
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
+use aik099\PHPUnit\Framework\TestResult;
 use tests\aik099\PHPUnit\Fixture\SetupEventFixture;
 
-class EventDispatchingTest extends TestCase
+class EventDispatchingTest extends AbstractPHPUnitCompatibilityTestCase
 {
 
-	protected function setUp()
+	/**
+	 * @before
+	 */
+	protected function setUpTest()
 	{
-		parent::setUp();
-
 		// Define the constant because this test is running PHPUnit testcases manually.
 		if ( $this->isInIsolation() ) {
 			define('PHPUNIT_TESTSUITE', true);
@@ -51,7 +53,7 @@ class EventDispatchingTest extends TestCase
 		 * - SharedSessionStrategy::onTestFailed
 		 */
 
-		$result = new \PHPUnit_Framework_TestResult();
+		$result = new TestResult();
 
 		$suite = SetupEventFixture::suite('tests\\aik099\\PHPUnit\\Fixture\\SetupEventFixture');
 		$suite->run($result);

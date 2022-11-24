@@ -16,9 +16,12 @@ use aik099\PHPUnit\BrowserConfiguration\BrowserConfigurationFactory;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use Mockery as m;
 use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 {
+
+	use ExpectException;
 
 	/**
 	 * Browser configuration factory.
@@ -35,13 +38,11 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 	private $_driverFactoryRegistry;
 
 	/**
-	 * Configures the tests.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
-		parent::setUp();
+		parent::setUpTest();
 
 		$this->_factory = new BrowserConfigurationFactory();
 		$this->_driverFactoryRegistry = $this->createDriverFactoryRegistry();
@@ -122,10 +123,11 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \InvalidArgumentException
 	 */
 	public function testCreateBrowserConfigurationError()
 	{
+		$this->expectException('InvalidArgumentException');
+
 		$browser_aliases = array('alias-one' => array());
 
 		$test_case = m::mock('aik099\\PHPUnit\\BrowserTestCase');
@@ -138,10 +140,11 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 	 * Test description.
 	 *
 	 * @return void
-	 * @expectedException \InvalidArgumentException
 	 */
 	public function testRegisterFailure()
 	{
+		$this->expectException('InvalidArgumentException');
+
 		$browser_configuration = $this->_createBrowserConfiguration('new-one');
 		$this->_factory->register($browser_configuration);
 		$this->_factory->register($browser_configuration);

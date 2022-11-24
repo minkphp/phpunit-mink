@@ -26,17 +26,13 @@ abstract class SauceLabsAwareTestCase extends BrowserTestCase
 	);
 
 	/**
-	 * Set session meta-info for "Sauce Labs".
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
 		if ( !getenv('SAUCE_USERNAME') || !getenv('SAUCE_ACCESS_KEY') ) {
 			$this->markTestSkipped('SauceLabs integration is not configured');
 		}
-
-		parent::setUp();
 	}
 
 	/**

@@ -11,6 +11,8 @@
 namespace aik099\PHPUnit\RemoteCoverage;
 
 
+use SebastianBergmann\CodeCoverage\RawCodeCoverageData;
+
 /**
  * Class collects remove code coverage information and maps patch from remote to local server.
  *
@@ -53,14 +55,44 @@ class RemoteCoverageHelper
 		if ( $buffer !== false ) {
 			$coverage_data = unserialize($buffer);
 
-			if ( is_array($coverage_data) ) {
-				return $this->matchLocalAndRemotePaths($coverage_data);
+			if ( is_array($coverage_data) || \is_object($coverage_data) ) {
+				return $this->upgradeCoverageDataFormat(
+					$this->matchLocalAndRemotePaths($coverage_data)
+				);
 			}
 
 			throw new \RuntimeException('Empty or invalid code coverage data received from url "' . $url . '"');
 		}
 
-		return array();
+		return $this->getEmpty();
+	}
+
+	/**
+	 * Returns an empty coverage data.
+	 *
+	 * @return array|RawCodeCoverageData
+	 */
+	public function getEmpty()
+	{
+		return $this->upgradeCoverageDataFormat(array());
+	}
+
+	/**
+	 * Upgrades coverage data format.
+	 *
+	 * @param array|RawCodeCoverageData $coverage_data Coverage data.
+	 *
+	 * @return array|RawCodeCoverageData
+	 */
+	protected function upgradeCoverageDataFormat($coverage_data)
+	{
+		// @codeCoverageIgnoreStart
+		if ( !\class_exists('\SebastianBergmann\CodeCoverage\RawCodeCoverageData') || !\is_array($coverage_data) ) {
+			return $coverage_data;
+		}
+		// @codeCoverageIgnoreEnd
+
+		return RawCodeCoverageData::fromXdebugWithoutPathCoverage($coverage_data);
 	}
 
 	/**

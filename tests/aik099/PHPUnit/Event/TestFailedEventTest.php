@@ -25,15 +25,13 @@ class TestFailedEventTest extends TestEventTest
 	private $_exception;
 
 	/**
-	 * Prepares the tests.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
 		$this->_exception = new Exception();
 
-		parent::setUp();
+		parent::setUpTest();
 	}
 
 	/**

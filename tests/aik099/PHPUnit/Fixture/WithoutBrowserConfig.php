@@ -23,7 +23,7 @@ class WithoutBrowserConfig extends BrowserTestCase
 	 */
 	public function testSuccess()
 	{
-
+		echo '';
 	}
 
 	/**

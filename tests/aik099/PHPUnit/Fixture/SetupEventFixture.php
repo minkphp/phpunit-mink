@@ -22,11 +22,9 @@ class SetupEventFixture extends BrowserTestCase
 {
 
 	/**
-	 * Creating browser configuration that would listen for events.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
 		$api_client = m::mock('aik099\\PHPUnit\\APIClient\\IAPIClient');
 		$api_client->shouldReceive('updateStatus')->withAnyArgs()->once();
@@ -38,7 +36,7 @@ class SetupEventFixture extends BrowserTestCase
 
 		$browser = m::mock(
 			'aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration[getAPIClient]',
-			array($this->readAttribute($this, '_eventDispatcher'), $this->createDriverFactoryRegistry())
+			array($this->getObjectProperty($this, '_eventDispatcher'), $this->createDriverFactoryRegistry())
 		);
 
 		// These magic methods can't be properly passed through to mocked object otherwise.
@@ -57,7 +55,31 @@ class SetupEventFixture extends BrowserTestCase
 
 		$this->setBrowserFromConfiguration($browser_config);
 
-		parent::setUp();
+		parent::setUpTest();
+	}
+
+	/**
+	 * Returns object property value.
+	 *
+	 * @param mixed  $object        Object.
+	 * @param string $property_name Property name.
+	 *
+	 * @return mixed
+	 */
+	protected function getObjectProperty($object, $property_name)
+	{
+		$reflector = new \ReflectionObject($object);
+
+		while ( !$reflector->hasProperty($property_name) && $reflector->getParentClass() !== false ) {
+			$reflector = $reflector->getParentClass();
+		}
+
+		$attribute = $reflector->getProperty($property_name);
+		$attribute->setAccessible(true);
+		$value = $attribute->getValue($object);
+		$attribute->setAccessible(false);
+
+		return $value;
 	}
 
 	/**
@@ -95,9 +117,7 @@ class SetupEventFixture extends BrowserTestCase
 		// For SauceLabsBrowserConfiguration::onTestEnded.
 		$session->shouldReceive('getDriver')->once()->andReturn($driver);
 
-		// For IsolatedSessionStrategy::onTestEnd (twice per each browser because
-		// we have 2 strategies listening for test end + IsolatedSessionStrategyTest with 2 tests).
-		$session->shouldReceive('stop')->times(6);
+		$session->shouldReceive('stop')->once();
 		$session->shouldReceive('isStarted')->andReturn(true);
 
 		$this->_setSession($session);

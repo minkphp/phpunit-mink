@@ -11,13 +11,13 @@
 namespace tests\aik099\PHPUnit\Event;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\Event\TestEvent;
 use Behat\Mink\Session;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
-class TestEventTest extends TestCase
+class TestEventTest extends AbstractPHPUnitCompatibilityTestCase
 {
 
 	/**
@@ -42,14 +42,10 @@ class TestEventTest extends TestCase
 	protected $session;
 
 	/**
-	 * Prepares the tests.
-	 *
-	 * @return void
+	 * @before
 	 */
-	protected function setUp()
+	protected function setUpTest()
 	{
-		parent::setUp();
-
 		$this->testCase = m::mock('aik099\\PHPUnit\\BrowserTestCase');
 		$this->session = m::mock('Behat\\Mink\\Session');
 		$this->event = $this->createEvent();
