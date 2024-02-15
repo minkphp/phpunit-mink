@@ -25,7 +25,7 @@ Service Integrations
 .. _SauceLabs: https://saucelabs.com/
 
 .. |BrowserStack| image:: /assets/images/browserstack_logo.png
-.. _BrowserStack: http://www.browserstack.com/
+.. _BrowserStack: https://www.browserstack.com/
 
 .. _`Mink`: https://github.com/Behat/Mink
 
