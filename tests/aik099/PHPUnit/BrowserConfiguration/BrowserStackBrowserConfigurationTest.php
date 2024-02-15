@@ -73,7 +73,7 @@ class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCa
 			),
 			array(
 				array('acceptSslCerts' => 'false'),
-				array('acceptSslCerts' => 'false', 'os' => 'Windows', 'os_version' => '7'),
+				array('acceptSslCerts' => 'false', 'os' => 'Windows', 'os_version' => '10'),
 			),
 		);
 	}

@@ -107,7 +107,7 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 			'port' => self::PORT,
 			'timeout' => 500,
 			'browserName' => 'safari',
-			'desiredCapabilities' => array('platform' => 'Windows 7', 'version' => 10),
+			'desiredCapabilities' => array('platform' => 'Windows 10', 'version' => 10),
 			'baseUrl' => 'http://other-host',
 			'sessionStrategy' => ISessionStrategyFactory::TYPE_SHARED,
 			'driver' => 'zombie',

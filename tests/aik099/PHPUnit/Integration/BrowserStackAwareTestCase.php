@@ -65,7 +65,7 @@ abstract class BrowserStackAwareTestCase extends BrowserTestCase
 				'api_key' => getenv('BS_ACCESS_KEY'),
 
 				'browserName' => 'chrome',
-				'desiredCapabilities' => array('browser_version' => 28),
+				'desiredCapabilities' => array('browser_version' => 110),
 				'baseUrl' => 'http://www.google.com',
 			),
 		);

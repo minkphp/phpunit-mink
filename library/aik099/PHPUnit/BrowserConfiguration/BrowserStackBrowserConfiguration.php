@@ -80,6 +80,7 @@ class BrowserStackBrowserConfiguration extends ApiBrowserConfiguration
 	 *
 	 * @return array
 	 * @link   http://www.browserstack.com/automate/capabilities
+	 * @link   https://www.browserstack.com/docs/automate/selenium/select-browsers-and-devices#Selenium_Legacy_JSON
 	 */
 	public function getDesiredCapabilities()
 	{
@@ -87,7 +88,7 @@ class BrowserStackBrowserConfiguration extends ApiBrowserConfiguration
 
 		if ( !isset($capabilities['os']) ) {
 			$capabilities['os'] = 'Windows';
-			$capabilities['os_version'] = '7';
+			$capabilities['os_version'] = '10';
 		}
 
 		if ( !isset($capabilities['acceptSslCerts']) ) {
