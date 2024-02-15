@@ -289,11 +289,19 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 		$this->assertSame($this->setup['port'], $this->browser->getPort());
 		$this->assertSame($this->setup['timeout'], $this->browser->getTimeout());
 		$this->assertSame($this->setup['browserName'], $this->browser->getBrowserName());
-		$this->assertSame($this->setup['desiredCapabilities'], $this->browser->getDesiredCapabilities());
+		$this->assertSame(
+			$this->setup['desiredCapabilities'],
+			$this->browser->getDesiredCapabilities(),
+			'The browser\'s desired capabilities weren\'t set to the test case.'
+		);
 		$this->assertSame($this->setup['baseUrl'], $this->browser->getBaseUrl());
 		$this->assertSame($this->setup['sessionStrategy'], $this->browser->getSessionStrategy());
 		$this->assertSame($this->setup['driver'], $this->browser->getDriver());
-		$this->assertSame($this->setup['driverOptions'], $this->browser->getDriverOptions());
+		$this->assertSame(
+			$this->setup['driverOptions'],
+			$this->browser->getDriverOptions(),
+			'The browser\'s driver options weren\'t set to the test case.'
+		);
 	}
 
 	/**
@@ -334,7 +342,11 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 		$expected_driver_options = array('driverParam1' => 'driverParamValue1') + $user_driver_options;
 
 		$this->assertSame($this->browser, $this->browser->setDriverOptions($user_driver_options));
-		$this->assertSame($expected_driver_options, $this->browser->getDriverOptions());
+		$this->assertSame(
+			$expected_driver_options,
+			$this->browser->getDriverOptions(),
+			'The browser driver options wren\'t set correctly.'
+		);
 	}
 
 	public function testDriverFactoryDefaultsApplied()
@@ -453,7 +465,11 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	{
 		$expected = array('k1' => 'v1', 'k2' => 'v2');
 		$this->assertSame($this->browser, $this->browser->setDesiredCapabilities($expected));
-		$this->assertSame($expected, $this->browser->getDesiredCapabilities());
+		$this->assertSame(
+			$expected,
+			$this->browser->getDesiredCapabilities(),
+			'The browser desired capabilities wren\'t set correctly.'
+		);
 	}
 
 	/**

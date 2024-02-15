@@ -182,7 +182,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$browser->setApiKey('B');
 
 		$this->assertSame($browser, $browser->setDesiredCapabilities($desired_capabilities));
-		$this->assertSame($expected, $browser->getDesiredCapabilities());
+		$this->assertSame($expected, $browser->getDesiredCapabilities(), 'Failed changing the desired capabilities.');
 	}
 
 	/**
