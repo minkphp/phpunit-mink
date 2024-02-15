@@ -25,8 +25,9 @@ class IsolatedSessionStrategyTest extends SauceLabsAwareTestCase
 	 */
 	public static $browsers = array(
 		array(
-			'alias' => 'saucelabs',
+			'alias' => 'default',
 			'sessionStrategy' => 'isolated',
+			'desiredCapabilities' => array('build' => BUILD_NAME, 'name' => 'IsolatedSessionStrategyTest'),
 		),
 	);
 

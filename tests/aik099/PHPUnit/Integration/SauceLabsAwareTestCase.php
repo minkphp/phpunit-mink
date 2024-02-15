@@ -22,7 +22,9 @@ abstract class SauceLabsAwareTestCase extends BrowserTestCase
 	 * @var array
 	 */
 	public static $browsers = array(
-		array('alias' => 'saucelabs'),
+		array(
+			'alias' => 'default',
+		),
 	);
 
 	/**
@@ -57,7 +59,7 @@ abstract class SauceLabsAwareTestCase extends BrowserTestCase
 	public function getBrowserAliases()
 	{
 		return array(
-			'saucelabs' => array(
+			'default' => array(
 				'type' => 'saucelabs',
 				'apiUsername' => getenv('SAUCE_USERNAME'),
 				'apiKey' => getenv('SAUCE_ACCESS_KEY'),

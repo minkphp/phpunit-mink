@@ -25,8 +25,9 @@ class SharedSessionStrategyTest extends SauceLabsAwareTestCase
 	 */
 	public static $browsers = array(
 		array(
-			'alias' => 'saucelabs',
+			'alias' => 'default',
 			'sessionStrategy' => 'shared',
+			'desiredCapabilities' => array('build' => BUILD_NAME, 'name' => 'SharedSessionStrategyTest'),
 		),
 	);
 

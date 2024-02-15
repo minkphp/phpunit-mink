@@ -14,6 +14,18 @@ namespace tests\aik099\PHPUnit\Integration;
 class DataProviderTest extends SauceLabsAwareTestCase
 {
 
+	/**
+	 * Browser list to be used in tests.
+	 *
+	 * @var array
+	 */
+	public static $browsers = array(
+		array(
+			'alias' => 'default',
+			'desiredCapabilities' => array('build' => BUILD_NAME, 'name' => 'DataProviderTest'),
+		),
+	);
+
 	public function sampleDataProvider()
 	{
 		return array(
