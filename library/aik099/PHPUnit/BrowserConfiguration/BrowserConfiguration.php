@@ -530,6 +530,40 @@ class BrowserConfiguration implements EventSubscriberInterface
 	}
 
 	/**
+	 * Returns test status message based on session strategy requested by browser.
+	 *
+	 * @param BrowserTestCase $test_case   Browser test case.
+	 * @param TestResult      $test_result Test result.
+	 *
+	 * @return boolean
+	 * @see    IsolatedSessionStrategy
+	 * @see    SharedSessionStrategy
+	 */
+	public function getTestStatusMessage(BrowserTestCase $test_case, TestResult $test_result)
+	{
+		if ( $this->isShared() ) {
+			// All tests in a test case use same session -> failed even if 1 test fails.
+			$test_failures = array();
+
+			if ( $test_result->errorCount() > 0 ) {
+				$test_failures = $test_result->errors();
+			}
+			elseif ( $test_result->failureCount() > 0 ) {
+				$test_failures = $test_result->failures();
+			}
+			elseif ( $test_result->warningCount() > 0 ) {
+				$test_failures = $test_result->warnings();
+			}
+
+			return $test_failures ? reset($test_failures)->exceptionMessage() : '';
+
+		}
+
+		// Each test in a test case are using it's own session -> failed if test fails.
+		return $test_case->getStatusMessage();
+	}
+
+	/**
 	 * Returns checksum from current configuration.
 	 *
 	 * @return integer

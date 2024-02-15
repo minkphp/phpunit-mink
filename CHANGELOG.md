@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-...
+- Specify failed PHPUnit assertion text to the BrowserStack ("reason" field)/SauceLabs("custom-data" field) test.
 
 ### Changed
 - Bumped minimum PHP version to 5.6.

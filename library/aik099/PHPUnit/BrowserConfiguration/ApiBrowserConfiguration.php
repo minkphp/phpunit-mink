@@ -206,7 +206,8 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 
 		$this->getAPIClient()->updateStatus(
 			$this->getSessionId($session),
-			$this->getTestStatus($test_case, $event->getTestResult())
+			$this->getTestStatus($test_case, $event->getTestResult()),
+			$this->getTestStatusMessage($test_case, $event->getTestResult())
 		);
 	}
 

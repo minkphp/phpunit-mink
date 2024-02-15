@@ -68,14 +68,20 @@ class BrowserStackAPIClient implements IAPIClient
 	/**
 	 * Update status of the test, that was executed in the given session.
 	 *
-	 * @param string  $session_id  Session ID.
-	 * @param boolean $test_status Test status.
+	 * @param string  $session_id          Session ID.
+	 * @param boolean $test_status         Test status.
+	 * @param string  $test_status_message Test status message.
 	 *
 	 * @return array
 	 */
-	public function updateStatus($session_id, $test_status)
+	public function updateStatus($session_id, $test_status, $test_status_message)
 	{
 		$data = array('status' => $test_status ? 'passed' : 'failed');
+
+		if ( $test_status_message ) {
+			$data['reason'] = $test_status_message;
+		}
+
 		$result = $this->execute('PUT', 'sessions/' . $session_id . '.json', $data);
 
 		return $result['automation_session'];

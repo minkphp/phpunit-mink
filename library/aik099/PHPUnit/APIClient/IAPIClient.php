@@ -29,11 +29,12 @@ interface IAPIClient
 	/**
 	 * Update status of the test, that was executed in the given session.
 	 *
-	 * @param string  $session_id  Session ID.
-	 * @param boolean $test_status Test status.
+	 * @param string  $session_id          Session ID.
+	 * @param boolean $test_status         Test status.
+	 * @param string  $test_status_message Test status message.
 	 *
 	 * @return array
 	 */
-	public function updateStatus($session_id, $test_status);
+	public function updateStatus($session_id, $test_status, $test_status_message);
 
 }
