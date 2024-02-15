@@ -13,7 +13,7 @@ namespace tests\aik099\PHPUnit\Integration;
 
 use aik099\PHPUnit\BrowserTestCase;
 
-abstract class SauceLabsAwareTestCase extends BrowserTestCase
+abstract class BrowserStackAwareTestCase extends BrowserTestCase
 {
 
 	/**
@@ -32,8 +32,8 @@ abstract class SauceLabsAwareTestCase extends BrowserTestCase
 	 */
 	protected function setUpTest()
 	{
-		if ( !getenv('SAUCE_USERNAME') || !getenv('SAUCE_ACCESS_KEY') ) {
-			$this->markTestSkipped('SauceLabs integration is not configured');
+		if ( !getenv('BS_USERNAME') || !getenv('BS_ACCESS_KEY') ) {
+			$this->markTestSkipped('BrowserStack integration is not configured');
 		}
 	}
 
@@ -60,12 +60,12 @@ abstract class SauceLabsAwareTestCase extends BrowserTestCase
 	{
 		return array(
 			'default' => array(
-				'type' => 'saucelabs',
-				'apiUsername' => getenv('SAUCE_USERNAME'),
-				'apiKey' => getenv('SAUCE_ACCESS_KEY'),
+				'type' => 'browserstack',
+				'api_username' => getenv('BS_USERNAME'),
+				'api_key' => getenv('BS_ACCESS_KEY'),
 
 				'browserName' => 'chrome',
-				'desiredCapabilities' => array('version' => 28),
+				'desiredCapabilities' => array('browser_version' => 110),
 				'baseUrl' => 'http://www.google.com',
 			),
 		);

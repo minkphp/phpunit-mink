@@ -13,7 +13,7 @@ namespace tests\aik099\PHPUnit\Integration;
 
 use Yoast\PHPUnitPolyfills\Polyfills\AssertStringContains;
 
-class IsolatedSessionStrategyTest extends SauceLabsAwareTestCase
+class IsolatedSessionStrategyTest extends BrowserStackAwareTestCase
 {
 
 	use AssertStringContains;
