@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Bumped minimum PHP version to 5.6.
+- Changed default OS from "Windows 7" to "Windows 10" for BrowserStack/SauceLabs browser configurations.
 
 ### Fixed
 ...

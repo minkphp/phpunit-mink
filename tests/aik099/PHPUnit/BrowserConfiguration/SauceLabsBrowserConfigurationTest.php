@@ -31,6 +31,9 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 
 		parent::setUpTest();
 
+		$this->setup['desiredCapabilities'] = array(
+			'platform' => 'Windows 10',
+		);
 		$this->setup['host'] = 'UN:AK@ondemand.saucelabs.com';
 	}
 
@@ -64,11 +67,11 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 		return array(
 			array(
 				array('platform' => 'pl1'),
-				array('platform' => 'pl1', 'version' => ''),
+				array('platform' => 'pl1',),
 			),
 			array(
 				array('version' => 'ver1'),
-				array('version' => 'ver1', 'platform' => 'Windows 7'),
+				array('version' => 'ver1', 'platform' => 'Windows 10'),
 			),
 		);
 	}

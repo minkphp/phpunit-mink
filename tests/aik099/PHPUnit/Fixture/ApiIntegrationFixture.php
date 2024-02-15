@@ -213,7 +213,7 @@ class ApiIntegrationFixture extends BrowserTestCase
 				'apiKey' => getenv('SAUCE_ACCESS_KEY'),
 
 				'browserName' => 'chrome',
-				'desiredCapabilities' => array('build' => BUILD_NAME, 'version' => 38),
+				'desiredCapabilities' => array('build' => BUILD_NAME, 'version' => 120),
 				'baseUrl' => 'http://www.google.com',
 			),
 			'browserstack' => array(
@@ -222,7 +222,7 @@ class ApiIntegrationFixture extends BrowserTestCase
 				'api_key' => getenv('BS_ACCESS_KEY'),
 
 				'browserName' => 'chrome',
-				'desiredCapabilities' => array('build' => BUILD_NAME, 'browser_version' => '38.0'),
+				'desiredCapabilities' => array('build' => BUILD_NAME, 'browser_version' => 120),
 			),
 		);
 	}

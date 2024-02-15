@@ -81,11 +81,7 @@ class SauceLabsBrowserConfiguration extends ApiBrowserConfiguration
 		$capabilities = parent::getDesiredCapabilities();
 
 		if ( !isset($capabilities['platform']) ) {
-			$capabilities['platform'] = 'Windows 7';
-		}
-
-		if ( !isset($capabilities['version']) ) {
-			$capabilities['version'] = '';
+			$capabilities['platform'] = 'Windows 10';
 		}
 
 		return $capabilities;
