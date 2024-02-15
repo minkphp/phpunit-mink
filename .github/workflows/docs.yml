@@ -2,9 +2,9 @@ name: Docs
 
 on:
   push:
-    paths: ['docs/**', '.github/workflows/docs.yml']
+    paths: ['docs/**', '.github/workflows/docs.yml', '.readthedocs.yaml']
   pull_request:
-    paths: ['docs/**', '.github/workflows/docs.yml']
+    paths: ['docs/**', '.github/workflows/docs.yml', '.readthedocs.yaml']
 
 defaults:
   run:
@@ -18,12 +18,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
 
       - name: Install dependencies
         run: |

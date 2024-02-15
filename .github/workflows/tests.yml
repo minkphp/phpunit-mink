@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    paths-ignore: ['docs/**', '.github/workflows/docs.yml']
+    paths-ignore: ['docs/**', '.github/workflows/docs.yml', '.readthedocs.yaml']
   pull_request:
-    paths-ignore: ['docs/**', '.github/workflows/docs.yml']
+    paths-ignore: ['docs/**', '.github/workflows/docs.yml', '.readthedocs.yaml']
 
 # Cancels all previous workflow runs for the same branch that have not yet completed.
 concurrency:
