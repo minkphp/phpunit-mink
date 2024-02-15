@@ -17,8 +17,10 @@ This library is an extension for [PHPUnit](https://phpunit.de), that allows to w
 
 ## Service Integrations
 
+https://saucelabs.com/
+
 [![SauceLabs](docs/assets/images/saucelabs_logo.png)](https://saucelabs.com/)
-[![BrowserStack](docs/assets/images/browserstack_logo.png)](http://www.browserstack.com/)
+[![BrowserStack](docs/assets/images/browserstack_logo.png)](https://www.browserstack.com/)
 
 ## Installation using Composer
 
