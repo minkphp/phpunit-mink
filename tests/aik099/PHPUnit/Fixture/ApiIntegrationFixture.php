@@ -125,6 +125,19 @@ class ApiIntegrationFixture extends BrowserTestCase
 					$session_info['passed'],
 					'SauceLabs test status set via API'
 				);
+
+				$custom_data_mapping = array(
+					'testSuccess' => null,
+					'testFailure' => array(
+						'status_message' => "This test is expected to fail.\nFailed asserting that false is true."
+					),
+				);
+
+				$this->assertSame(
+					$custom_data_mapping[$test_name],
+					$session_info['custom-data'],
+					'SauceLabs test status message set via API'
+				);
 			}
 			elseif ( $browser instanceof BrowserStackBrowserConfiguration ) {
 				$this->assertEquals(
@@ -142,6 +155,17 @@ class ApiIntegrationFixture extends BrowserTestCase
 					$passed_mapping[$test_name],
 					$session_info['status'],
 					'BrowserStack test status set via API'
+				);
+
+				$reason_mapping = array(
+					'testSuccess' => '',
+					'testFailure' => "This test is expected to fail.\nFailed asserting that false is true.",
+				);
+
+				$this->assertSame(
+					$reason_mapping[$test_name],
+					$session_info['reason'],
+					'BrowserStack test status message set via API'
 				);
 			}
 		}
@@ -194,7 +218,7 @@ class ApiIntegrationFixture extends BrowserTestCase
 		$session = $this->getSession();
 		$session->visit('http://www.google.com');
 
-		$this->assertTrue(false);
+		$this->assertTrue(false, 'This test is expected to fail.');
 	}
 
 	/**

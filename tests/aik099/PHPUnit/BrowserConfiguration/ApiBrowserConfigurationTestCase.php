@@ -308,8 +308,9 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 			$driver = m::mock('\\Behat\\Mink\\Driver\\Selenium2Driver');
 			$driver->shouldReceive('getWebDriverSessionId')->once()->andReturn('SID');
 
-			$api_client->shouldReceive('updateStatus')->with('SID', true)->once();
+			$api_client->shouldReceive('updateStatus')->with('SID', true, 'test status message')->once();
 			$test_case->shouldReceive('hasFailed')->once()->andReturn(false); // For shared strategy.
+			$test_case->shouldReceive('getStatusMessage')->once()->andReturn('test status message'); // For shared strategy.
 		}
 		else {
 			$driver = m::mock('\\Behat\\Mink\\Driver\\DriverInterface');
