@@ -84,6 +84,10 @@ class SauceLabsBrowserConfiguration extends ApiBrowserConfiguration
 			$capabilities['platform'] = 'Windows 10';
 		}
 
+		if ( !isset($capabilities['acceptInsecureCerts']) ) {
+			$capabilities['acceptInsecureCerts'] = true;
+		}
+
 		return $capabilities;
 	}
 
