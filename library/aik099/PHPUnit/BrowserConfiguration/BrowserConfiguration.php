@@ -633,7 +633,7 @@ class BrowserConfiguration implements EventSubscriberInterface
 	public function onTestSetup(TestEvent $event)
 	{
 		if ( !$event->validateSubscriber($this->getTestCase()) ) {
-			return;
+			return; // @codeCoverageIgnore
 		}
 
 		// Place code here.
