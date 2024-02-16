@@ -18,7 +18,7 @@ defaults:
 jobs:
 
   tests:
-    name: Tests (PHP ${{ matrix.php }})
+    name: "PHP ${{ matrix.php }} (with coverage: ${{ matrix.with_coverage }})"
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -81,7 +81,7 @@ jobs:
 
       - name: Upload Coverage to CodeCov
         if: "${{ matrix.with_coverage == true }}"
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v4
 
       - name: Upload Coverage to Scrutinizer CI (PHP < 8.0)
         if: "${{ matrix.php < '8.0' && matrix.with_coverage == true }}"
