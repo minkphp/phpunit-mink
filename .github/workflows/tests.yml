@@ -82,6 +82,8 @@ jobs:
       - name: Upload Coverage to CodeCov
         if: "${{ matrix.with_coverage == true }}"
         uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload Coverage to Scrutinizer CI (PHP < 8.0)
         if: "${{ matrix.php < '8.0' && matrix.with_coverage == true }}"
