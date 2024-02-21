@@ -18,7 +18,7 @@ defaults:
 jobs:
 
   tests:
-    name: "PHP ${{ matrix.php }} (with coverage: ${{ matrix.with_coverage }})"
+    name: "PHP ${{ matrix.php }}${{ matrix.with_coverage == true && ' with coverage' || ''}}"
     runs-on: ubuntu-20.04
     strategy:
       matrix:
