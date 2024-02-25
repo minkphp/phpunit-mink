@@ -20,6 +20,7 @@ use aik099\PHPUnit\Session\SessionStrategyManager;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Session;
+use ConsoleHelpers\PHPUnitCompat\AbstractTestCase;
 use SebastianBergmann\CodeCoverage\RawCodeCoverageData;
 
 /**
@@ -27,7 +28,7 @@ use SebastianBergmann\CodeCoverage\RawCodeCoverageData;
  *
  * @method \Mockery\Expectation shouldReceive(string $name)
  */
-abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase
+abstract class BrowserTestCase extends AbstractTestCase
 {
 
 	/**
@@ -372,13 +373,9 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase
 	}
 
 	/**
-	 * This method is called when a test method did not execute successfully.
-	 *
-	 * @param \Exception|\Throwable $e Exception.
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
-	protected function onNotSuccessfulTestCompatibilized($e)
+	protected function onNotSuccessfulTestCompat($e)
 	{
 		if ( $this->sessionStrategy !== null ) {
 			$this->sessionStrategy->onTestFailed($this, $e);

@@ -12,12 +12,12 @@
 namespace tests\aik099\PHPUnit\MinkDriver;
 
 
-use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use Mockery as m;
+use tests\aik099\PHPUnit\AbstractTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class DriverFactoryRegistryTest extends AbstractPHPUnitCompatibilityTestCase
+class DriverFactoryRegistryTest extends AbstractTestCase
 {
 
 	use ExpectException;

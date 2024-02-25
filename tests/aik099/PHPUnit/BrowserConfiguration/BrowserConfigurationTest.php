@@ -11,19 +11,19 @@
 namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 
-use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\BrowserConfiguration\ApiBrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\Framework\TestResult;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
+use ConsoleHelpers\PHPUnitCompat\Framework\TestResult;
 use Mockery as m;
+use tests\aik099\PHPUnit\AbstractTestCase;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class BrowserConfigurationTest extends AbstractPHPUnitCompatibilityTestCase
+class BrowserConfigurationTest extends AbstractTestCase
 {
 
 	use ExpectException;

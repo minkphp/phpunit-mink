@@ -12,11 +12,11 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 
 
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\Framework\TestResult;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use Behat\Mink\Driver\DriverInterface;
+use ConsoleHelpers\PHPUnitCompat\Framework\TestResult;
 
 /**
  * Browser configuration for browser.

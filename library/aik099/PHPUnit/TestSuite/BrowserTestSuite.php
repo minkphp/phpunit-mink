@@ -12,7 +12,7 @@ namespace aik099\PHPUnit\TestSuite;
 
 
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\Framework\DataProviderTestSuite;
+use ConsoleHelpers\PHPUnitCompat\Framework\DataProviderTestSuite;
 
 /**
  * Test Suite class for a set of tests from a single Test Case Class executed with a particular browser.

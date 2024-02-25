@@ -12,13 +12,13 @@
 namespace tests\aik099\PHPUnit\MinkDriver;
 
 
-use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\DIContainer;
 use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
+use tests\aik099\PHPUnit\AbstractTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class DriverFactoryTest extends AbstractPHPUnitCompatibilityTestCase
+class DriverFactoryTest extends AbstractTestCase
 {
 
 	use ExpectException;

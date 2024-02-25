@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "48f60d5675361c47fa38c2ea9526af97",
+    "content-hash": "494c2858cc1bd23a8dc3131ef787d0c6",
     "packages": [
         {
             "name": "behat/mink",
@@ -136,6 +136,55 @@
                 "source": "https://github.com/minkphp/MinkSelenium2Driver/tree/v1.5.0"
             },
             "time": "2021-10-12T16:01:47+00:00"
+        },
+        {
+            "name": "console-helpers/phpunit-compat",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/console-helpers/phpunit-compat.git",
+                "reference": "ec8608c3863d75b0389ebb5c0a1f5703b638c451"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/console-helpers/phpunit-compat/zipball/ec8608c3863d75b0389ebb5c0a1f5703b638c451",
+                "reference": "ec8608c3863d75b0389ebb5c0a1f5703b638c451",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "aik099/coding-standard": "dev-master"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ConsoleHelpers\\PHPUnitCompat\\": "src/PHPUnitCompat/",
+                    "Tests\\ConsoleHelpers\\PHPUnitCompat\\": "tests/PHPUnitCompat/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Obuhovich",
+                    "email": "aik.bold@gmail.com"
+                }
+            ],
+            "description": "Compatibility layer for PHPUnit test cases/test suite to work on different major PHPUnit versions",
+            "support": {
+                "issues": "https://github.com/console-helpers/phpunit-compat/issues",
+                "source": "https://github.com/console-helpers/phpunit-compat/tree/v1.0.1"
+            },
+            "time": "2024-03-03T21:01:14+00:00"
         },
         {
             "name": "doctrine/instantiator",

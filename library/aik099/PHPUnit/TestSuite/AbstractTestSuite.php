@@ -11,12 +11,12 @@
 namespace aik099\PHPUnit\TestSuite;
 
 
-use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestSuite;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\Framework\DataProviderTestSuite;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\Session\SessionStrategyManager;
+use ConsoleHelpers\PHPUnitCompat\AbstractTestSuite as PHPUnitCompatAbstractTestSuite;
+use ConsoleHelpers\PHPUnitCompat\Framework\DataProviderTestSuite;
 use PHPUnit\Util\Test as TestUtil;
 
 /**
@@ -24,7 +24,7 @@ use PHPUnit\Util\Test as TestUtil;
  *
  * @method \Mockery\Expectation shouldReceive(string $name)
  */
-abstract class AbstractTestSuite extends AbstractPHPUnitCompatibilityTestSuite
+abstract class AbstractTestSuite extends PHPUnitCompatAbstractTestSuite
 {
 
 	/**
@@ -122,9 +122,9 @@ abstract class AbstractTestSuite extends AbstractPHPUnitCompatibilityTestSuite
 	/**
 	 * @inheritDoc
 	 */
-	public function runCompatibilized($result = null)
+	public function runCompat($result = null)
 	{
-		$result = parent::runCompatibilized($result);
+		$result = parent::runCompat($result);
 
 		$this->triggerTestSuiteEnded();
 

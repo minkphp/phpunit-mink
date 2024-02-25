@@ -11,18 +11,17 @@
 namespace tests\aik099\PHPUnit;
 
 
-use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\Framework\TestResult;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageTool;
 use aik099\PHPUnit\Session\ISessionStrategy;
 use aik099\PHPUnit\Session\SessionStrategyManager;
-use aik099\SebastianBergmann\CodeCoverage\CodeCoverage;
-use aik099\SebastianBergmann\CodeCoverage\Filter;
+use ConsoleHelpers\CodeCoverageCompat\CodeCoverage;
+use ConsoleHelpers\CodeCoverageCompat\Filter;
+use ConsoleHelpers\PHPUnitCompat\Framework\TestResult;
 use Mockery as m;
 use Mockery\MockInterface;
 use SebastianBergmann\CodeCoverage\ProcessedCodeCoverageData;
@@ -31,7 +30,7 @@ use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class BrowserTestCaseTest extends AbstractPHPUnitCompatibilityTestCase
+class BrowserTestCaseTest extends AbstractTestCase
 {
 
 	use ExpectException;
@@ -282,7 +281,7 @@ class BrowserTestCaseTest extends AbstractPHPUnitCompatibilityTestCase
 		}
 		else {
 			$code_coverage = new CodeCoverage(
-				m::mock('\\aik099\\SebastianBergmann\\CodeCoverage\\Driver\\Driver'),
+				m::mock('\\ConsoleHelpers\\CodeCoverageCompat\\Driver\\Driver'),
 				new Filter()
 			);
 		}
@@ -321,7 +320,7 @@ class BrowserTestCaseTest extends AbstractPHPUnitCompatibilityTestCase
 		/* @var $test_case BrowserTestCase */
 		list($test_case,) = $this->prepareForRun();
 
-		$this->assertInstanceOf('\\aik099\\PHPUnit\\Framework\\TestResult', $test_case->run());
+		$this->assertInstanceOf('\\ConsoleHelpers\\PHPUnitCompat\\Framework\\TestResult', $test_case->run());
 	}
 
 	/**
@@ -449,7 +448,7 @@ class BrowserTestCaseTest extends AbstractPHPUnitCompatibilityTestCase
 			$expected_coverage->setLineCoverage(array(
 				$this->getCoverageFixtureFile() => array(
 					8 => array(), // Means, that this test hasn't executed a tested code.
-					13 => array($covered_by_test, $covered_by_test), // Means, covered by this test twice.
+					13 => array($covered_by_test),
 				),
 			));
 			$actual_coverage = $code_coverage->getData();
@@ -536,7 +535,7 @@ class BrowserTestCaseTest extends AbstractPHPUnitCompatibilityTestCase
 			$driver = m::mock('\PHP_CodeCoverage_Driver');
 		}
 		else {
-			$driver = m::mock('\\aik099\\SebastianBergmann\\CodeCoverage\\Driver\\Driver');
+			$driver = m::mock('\\ConsoleHelpers\\CodeCoverageCompat\\Driver\\Driver');
 		}
 
 		$driver->shouldReceive('start')->once();

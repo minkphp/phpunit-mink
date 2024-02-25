@@ -11,10 +11,10 @@
 namespace tests\aik099\PHPUnit\Session;
 
 
-use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\Session\ISessionStrategy;
+use tests\aik099\PHPUnit\AbstractTestCase;
 
-class SessionStrategyTestCase extends AbstractPHPUnitCompatibilityTestCase
+class SessionStrategyTestCase extends AbstractTestCase
 {
 
 	const BROWSER_CLASS = '\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
