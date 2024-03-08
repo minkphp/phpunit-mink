@@ -68,13 +68,13 @@ abstract class AbstractTestSuite extends AbstractPHPUnitCompatibilityTestSuite i
 
 		if ( \method_exists($this, 'isTestMethod') ) {
 			// PHPUnit < 8.0 is calling "isTestMethod" inside "TestSuite::addTestMethod".
-			foreach ( $class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method ) {
+			foreach ( $this->getTestMethods($class) as $method ) {
 				$this->addTestMethod($class, $method);
 			}
 		}
 		else {
 			// PHPUnit >= 8.0 is calling "TestUtil::isTestMethod" outside of "TestSuite::addTestMethod".
-			foreach ( $class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method ) {
+			foreach ( $this->getTestMethods($class) as $method ) {
 				if ( TestUtil::isTestMethod($method) ) {
 					$this->addTestMethod($class, $method);
 				}
@@ -82,6 +82,22 @@ abstract class AbstractTestSuite extends AbstractPHPUnitCompatibilityTestSuite i
 		}
 
 		return $this;
+	}
+
+	/**
+	 * Returns test methods.
+	 *
+	 * @param \ReflectionClass $class Reflection class.
+	 *
+	 * @return \ReflectionMethod[]
+	 */
+	protected function getTestMethods(\ReflectionClass $class)
+	{
+		$ret = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
+
+		return \array_filter($ret, function (\ReflectionMethod $method) {
+			return !$method->isStatic();
+		});
 	}
 
 	/**
