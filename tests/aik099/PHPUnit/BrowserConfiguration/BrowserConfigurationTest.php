@@ -544,11 +544,11 @@ class BrowserConfigurationTest extends AbstractPHPUnitCompatibilityTestCase
 	 */
 	public function testGetSessionStrategyHashNotSharing()
 	{
-		$test_case1 = new WithBrowserConfig();
+		$test_case1 = new WithBrowserConfig('test name');
 		$browser1 = $this->createBrowserConfiguration();
 		$browser1->setSessionStrategy(ISessionStrategyFactory::TYPE_SHARED);
 
-		$test_case2 = new WithoutBrowserConfig();
+		$test_case2 = new WithoutBrowserConfig('test name');
 		$browser2 = $this->createBrowserConfiguration();
 		$browser2->setSessionStrategy(ISessionStrategyFactory::TYPE_SHARED);
 
