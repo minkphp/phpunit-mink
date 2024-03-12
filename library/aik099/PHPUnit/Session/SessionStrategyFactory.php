@@ -11,8 +11,8 @@
 namespace aik099\PHPUnit\Session;
 
 
-use aik099\PHPUnit\IApplicationAware;
 use aik099\PHPUnit\Application;
+use aik099\PHPUnit\IApplicationAware;
 
 /**
  * Produces sessions.

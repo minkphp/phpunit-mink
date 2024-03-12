@@ -13,7 +13,6 @@ namespace tests\aik099\PHPUnit\Session;
 
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use aik099\PHPUnit\Session\SessionStrategyFactory;
-use Mockery as m;
 use tests\aik099\PHPUnit\TestCase\ApplicationAwareTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 

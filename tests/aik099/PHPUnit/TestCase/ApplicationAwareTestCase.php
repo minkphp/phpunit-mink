@@ -13,8 +13,8 @@ namespace tests\aik099\PHPUnit\TestCase;
 
 use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\Application;
-use Mockery\MockInterface;
 use Mockery as m;
+use Mockery\MockInterface;
 
 class ApplicationAwareTestCase extends AbstractPHPUnitCompatibilityTestCase
 {

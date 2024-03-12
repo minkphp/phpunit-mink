@@ -13,9 +13,9 @@ namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 use aik099\PHPUnit\APIClient\IAPIClient;
 use aik099\PHPUnit\BrowserConfiguration\ApiBrowserConfiguration;
-use aik099\PHPUnit\Session\ISessionStrategyFactory;
-use aik099\PHPUnit\Framework\TestResult;
 use aik099\PHPUnit\BrowserTestCase;
+use aik099\PHPUnit\Framework\TestResult;
+use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use Mockery as m;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 

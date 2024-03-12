@@ -13,9 +13,9 @@ namespace aik099\PHPUnit\Session;
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
-use Behat\Mink\Session;
 use aik099\PHPUnit\Framework\IncompleteTestError;
 use aik099\PHPUnit\Framework\SkippedTestError;
+use Behat\Mink\Session;
 
 /**
  * Keeps a Session object shared between test runs to save time.

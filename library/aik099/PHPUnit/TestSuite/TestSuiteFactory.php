@@ -11,11 +11,11 @@
 namespace aik099\PHPUnit\TestSuite;
 
 
+use aik099\PHPUnit\Application;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\IApplicationAware;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\Session\SessionStrategyManager;
-use aik099\PHPUnit\Application;
 
 /**
  * Creates test suites based on test case class configuration.

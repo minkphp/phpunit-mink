@@ -13,13 +13,13 @@ namespace tests\aik099\PHPUnit\Integration;
 
 use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\BrowserTestCase;
+use aik099\PHPUnit\Framework\TestResult;
 use aik099\PHPUnit\TestSuite\BrowserTestSuite;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
-use aik099\PHPUnit\Framework\TestResult;
+use Mockery as m;
 use PHPUnit\Runner\Version;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
-use Mockery as m;
 
 class SuiteBuildingTest extends AbstractPHPUnitCompatibilityTestCase
 {

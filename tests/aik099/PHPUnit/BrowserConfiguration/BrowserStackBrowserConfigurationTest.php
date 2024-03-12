@@ -11,8 +11,6 @@
 namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 
-use Mockery as m;
-
 class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 {
 

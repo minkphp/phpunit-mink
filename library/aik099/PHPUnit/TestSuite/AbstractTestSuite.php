@@ -14,9 +14,9 @@ namespace aik099\PHPUnit\TestSuite;
 use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestSuite;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserTestCase;
+use aik099\PHPUnit\Framework\DataProviderTestSuite;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\Session\SessionStrategyManager;
-use aik099\PHPUnit\Framework\DataProviderTestSuite;
 use PHPUnit\Util\Test as TestUtil;
 
 /**

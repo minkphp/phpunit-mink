@@ -12,13 +12,13 @@ namespace tests\aik099\PHPUnit\Session;
 
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
+use aik099\PHPUnit\Framework\IncompleteTestError;
+use aik099\PHPUnit\Framework\SkippedTestError;
 use aik099\PHPUnit\Session\IsolatedSessionStrategy;
 use aik099\PHPUnit\Session\SharedSessionStrategy;
 use Behat\Mink\Session;
 use Mockery as m;
 use Mockery\MockInterface;
-use aik099\PHPUnit\Framework\IncompleteTestError;
-use aik099\PHPUnit\Framework\SkippedTestError;
 
 class SharedSessionStrategyTest extends SessionStrategyTestCase
 {
