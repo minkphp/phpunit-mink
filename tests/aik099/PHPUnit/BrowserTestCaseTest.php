@@ -74,7 +74,7 @@ class BrowserTestCaseTest extends AbstractPHPUnitCompatibilityTestCase
 		/* @var $manager SessionStrategyManager */
 		$manager = m::mock(self::MANAGER_CLASS);
 
-		$test_case = new WithoutBrowserConfig();
+		$test_case = new WithoutBrowserConfig('test name');
 		$test_case->setSessionStrategyManager($manager);
 
 		$property = new \ReflectionProperty($test_case, 'sessionStrategyManager');
@@ -131,7 +131,7 @@ class BrowserTestCaseTest extends AbstractPHPUnitCompatibilityTestCase
 	{
 		$this->expectException('RuntimeException');
 
-		$test_case = new WithoutBrowserConfig();
+		$test_case = new WithoutBrowserConfig('test name');
 		$test_case->getBrowser();
 	}
 
@@ -167,7 +167,7 @@ class BrowserTestCaseTest extends AbstractPHPUnitCompatibilityTestCase
 		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 
-		$test_case = new WithoutBrowserConfig();
+		$test_case = new WithoutBrowserConfig('test name');
 		$this->assertSame($test_case, $test_case->setSessionStrategy($session_strategy));
 		$this->assertSame($session_strategy, $test_case->getSessionStrategy());
 	}
@@ -185,10 +185,10 @@ class BrowserTestCaseTest extends AbstractPHPUnitCompatibilityTestCase
 
 		$manager->shouldReceive('getDefaultSessionStrategy')->twice()->andReturn('STRATEGY');
 
-		$test_case1 = new WithoutBrowserConfig();
+		$test_case1 = new WithoutBrowserConfig('test name');
 		$test_case1->setSessionStrategyManager($manager);
 
-		$test_case2 = new WithBrowserConfig();
+		$test_case2 = new WithBrowserConfig('test name');
 		$test_case2->setSessionStrategyManager($manager);
 
 		$this->assertSame($test_case1->getSessionStrategy(), $test_case2->getSessionStrategy());
@@ -575,7 +575,7 @@ class BrowserTestCaseTest extends AbstractPHPUnitCompatibilityTestCase
 		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 
-		$test_case = new WithoutBrowserConfig();
+		$test_case = new WithoutBrowserConfig('test name');
 		$test_case->setSessionStrategy($session_strategy);
 
 		$session_strategy->shouldReceive('onTestSuiteEnded')->with($test_case)->once();
@@ -668,7 +668,7 @@ class BrowserTestCaseTest extends AbstractPHPUnitCompatibilityTestCase
 			$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase[' . implode(',', $mock_methods) . ']');
 		}
 		else {
-			$test_case = new WithoutBrowserConfig();
+			$test_case = new WithoutBrowserConfig('test name');
 		}
 
 		$test_case->setBrowserConfigurationFactory($this->browserConfigurationFactory);
