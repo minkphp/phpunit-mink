@@ -11,6 +11,7 @@
 namespace tests\aik099\PHPUnit\Fixture;
 
 
+use aik099\PHPUnit\BrowserConfiguration\ApiBrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
@@ -42,7 +43,7 @@ class SetupFixture extends BrowserTestCase
 		// These magic methods can't be properly passed through to mocked object otherwise.
 		$browser->shouldReceive('getSessionStrategy')->andReturn('isolated');
 		$browser->shouldReceive('getDesiredCapabilities')->andReturn(array(
-			SauceLabsBrowserConfiguration::NAME_CAPABILITY => 'something',
+			ApiBrowserConfiguration::NAME_CAPABILITY => 'something',
 		));
 
 		$browser->shouldReceive('getAPIClient')->once()->andReturn($api_client);
@@ -90,7 +91,7 @@ class SetupFixture extends BrowserTestCase
 
 		$session = m::mock('Behat\\Mink\\Session');
 
-		// For SauceLabsBrowserConfiguration::onTestEnded.
+		// For ApiBrowserConfiguration::onTestEnded.
 		$session->shouldReceive('getDriver')->once()->andReturn($driver);
 
 		$session->shouldReceive('stop')->once();
@@ -98,9 +99,9 @@ class SetupFixture extends BrowserTestCase
 
 		$this->_setSession($session);
 
-		// For SauceLabsBrowserConfiguration::onTestSetup.
+		// For ApiBrowserConfiguration::onTestSetup.
 		$desired_capabilities = $this->getBrowser()->getDesiredCapabilities();
-		$this->assertArrayHasKey(SauceLabsBrowserConfiguration::NAME_CAPABILITY, $desired_capabilities);
+		$this->assertArrayHasKey(ApiBrowserConfiguration::NAME_CAPABILITY, $desired_capabilities);
 	}
 
 	/**
