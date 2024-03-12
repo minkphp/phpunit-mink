@@ -31,7 +31,6 @@ use aik099\PHPUnit\TestSuite\BrowserTestSuite;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use aik099\PHPUnit\TestSuite\TestSuiteFactory;
 use PimpleCopy\Pimple\Container;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class DIContainer extends Container implements IApplicationAware
 {
@@ -59,10 +58,6 @@ class DIContainer extends Container implements IApplicationAware
 	{
 		parent::__construct($values);
 
-		$this['event_dispatcher'] = function () {
-			return new EventDispatcher();
-		};
-
 		$this['session_factory'] = function () {
 			return new SessionFactory();
 		};
@@ -79,17 +74,11 @@ class DIContainer extends Container implements IApplicationAware
 		};
 
 		$this['isolated_session_strategy'] = $this->factory(function ($c) {
-			$session_strategy = new IsolatedSessionStrategy($c['session_factory']);
-			$session_strategy->setEventDispatcher($c['event_dispatcher']);
-
-			return $session_strategy;
+			return new IsolatedSessionStrategy($c['session_factory']);
 		});
 
 		$this['shared_session_strategy'] = $this->factory(function ($c) {
-			$session_strategy = new SharedSessionStrategy($c['isolated_session_strategy']);
-			$session_strategy->setEventDispatcher($c['event_dispatcher']);
-
-			return $session_strategy;
+			return new SharedSessionStrategy($c['isolated_session_strategy']);
 		});
 
 		$this['remote_url'] = function () {
@@ -112,17 +101,11 @@ class DIContainer extends Container implements IApplicationAware
 		};
 
 		$this['regular_test_suite'] = $this->factory(function ($c) {
-			$test_suite = new RegularTestSuite();
-			$test_suite->setEventDispatcher($c['event_dispatcher']);
-
-			return $test_suite;
+			return new RegularTestSuite();
 		});
 
 		$this['browser_test_suite'] = $this->factory(function ($c) {
-			$test_suite = new BrowserTestSuite();
-			$test_suite->setEventDispatcher($c['event_dispatcher']);
-
-			return $test_suite;
+			return new BrowserTestSuite();
 		});
 
 		$this['driver_factory_registry'] = function () {
@@ -140,13 +123,13 @@ class DIContainer extends Container implements IApplicationAware
 			$browser_configuration_factory = new BrowserConfigurationFactory();
 
 			$browser_configuration_factory->register(
-				new BrowserConfiguration($c['event_dispatcher'], $c['driver_factory_registry'])
+				new BrowserConfiguration($c['driver_factory_registry'])
 			);
 			$browser_configuration_factory->register(
-				new SauceLabsBrowserConfiguration($c['event_dispatcher'], $c['driver_factory_registry'])
+				new SauceLabsBrowserConfiguration($c['driver_factory_registry'])
 			);
 			$browser_configuration_factory->register(
-				new BrowserStackBrowserConfiguration($c['event_dispatcher'], $c['driver_factory_registry'])
+				new BrowserStackBrowserConfiguration($c['driver_factory_registry'])
 			);
 
 			return $browser_configuration_factory;

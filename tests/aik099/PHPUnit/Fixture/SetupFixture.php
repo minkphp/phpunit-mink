@@ -18,7 +18,7 @@ use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use Behat\Mink\Session;
 use Mockery as m;
 
-class SetupEventFixture extends BrowserTestCase
+class SetupFixture extends BrowserTestCase
 {
 
 	/**
@@ -36,7 +36,7 @@ class SetupEventFixture extends BrowserTestCase
 
 		$browser = m::mock(
 			'aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration[getAPIClient]',
-			array($this->getObjectProperty($this, '_eventDispatcher'), $this->createDriverFactoryRegistry())
+			array($this->createDriverFactoryRegistry())
 		);
 
 		// These magic methods can't be properly passed through to mocked object otherwise.
@@ -56,30 +56,6 @@ class SetupEventFixture extends BrowserTestCase
 		$this->setBrowserFromConfiguration($browser_config);
 
 		parent::setUpTest();
-	}
-
-	/**
-	 * Returns object property value.
-	 *
-	 * @param mixed  $object        Object.
-	 * @param string $property_name Property name.
-	 *
-	 * @return mixed
-	 */
-	protected function getObjectProperty($object, $property_name)
-	{
-		$reflector = new \ReflectionObject($object);
-
-		while ( !$reflector->hasProperty($property_name) && $reflector->getParentClass() !== false ) {
-			$reflector = $reflector->getParentClass();
-		}
-
-		$attribute = $reflector->getProperty($property_name);
-		$attribute->setAccessible(true);
-		$value = $attribute->getValue($object);
-		$attribute->setAccessible(false);
-
-		return $value;
 	}
 
 	/**

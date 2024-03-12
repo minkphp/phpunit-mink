@@ -12,6 +12,7 @@ namespace aik099\PHPUnit\Session;
 
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
+use aik099\PHPUnit\BrowserTestCase;
 
 /**
  * Manages session strategies used across browser tests.
@@ -78,11 +79,12 @@ class SessionStrategyManager
 	/**
 	 * Initializes session strategy using given browser test case.
 	 *
-	 * @param BrowserConfiguration $browser Browser configuration.
+	 * @param BrowserConfiguration $browser   Browser configuration.
+	 * @param BrowserTestCase      $test_case Test case.
 	 *
 	 * @return ISessionStrategy
 	 */
-	public function getSessionStrategy(BrowserConfiguration $browser)
+	public function getSessionStrategy(BrowserConfiguration $browser, BrowserTestCase $test_case)
 	{
 		/*
 		 * This logic creates separate strategy for:
@@ -90,7 +92,7 @@ class SessionStrategyManager
 		 * - each browser configuration in BrowserTestCase::$browsers for each test case class (for shared strategy)
 		 */
 		$strategy_type = $browser->getSessionStrategy();
-		$strategy_hash = $browser->getSessionStrategyHash();
+		$strategy_hash = $browser->getSessionStrategyHash($test_case);
 
 		if ( $strategy_hash !== $this->lastUsedSessionStrategyHash ) {
 			$this->sessionStrategiesInUse[$strategy_hash] = $this->_sessionStrategyFactory->createStrategy(

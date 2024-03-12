@@ -15,32 +15,20 @@ use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageTool;
-use aik099\PHPUnit\Event\TestEndedEvent;
-use aik099\PHPUnit\Event\TestEvent;
-use aik099\PHPUnit\Event\TestFailedEvent;
 use aik099\PHPUnit\Session\ISessionStrategy;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Session;
 use SebastianBergmann\CodeCoverage\RawCodeCoverageData;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Test Case class for writing browser-based tests.
  *
  * @method \Mockery\Expectation shouldReceive(string $name)
  */
-abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase implements IEventDispatcherAware
+abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase
 {
-
-	const TEST_ENDED_EVENT = 'test.ended';
-
-	const TEST_SUITE_ENDED_EVENT = 'test_suite.ended';
-
-	const TEST_FAILED_EVENT = 'test.failed';
-
-	const TEST_SETUP_EVENT = 'test.setup';
 
 	/**
 	 * Browser list to be used in tests.
@@ -48,13 +36,6 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 	 * @var array
 	 */
 	public static $browsers = array();
-
-	/**
-	 * Event dispatcher.
-	 *
-	 * @var EventDispatcherInterface
-	 */
-	private $_eventDispatcher;
 
 	/**
 	 * Browser configuration factory.
@@ -125,18 +106,6 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 	}
 
 	/**
-	 * Sets event dispatcher.
-	 *
-	 * @param EventDispatcherInterface $event_dispatcher Event dispatcher.
-	 *
-	 * @return void
-	 */
-	public function setEventDispatcher(EventDispatcherInterface $event_dispatcher)
-	{
-		$this->_eventDispatcher = $event_dispatcher;
-	}
-
-	/**
 	 * Sets session strategy manager.
 	 *
 	 * @param SessionStrategyManager $session_strategy_manager Session strategy manager.
@@ -182,10 +151,9 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 	 */
 	protected function setUpTest()
 	{
-		$this->_eventDispatcher->dispatch(
-			self::TEST_SETUP_EVENT,
-			new TestEvent($this)
-		);
+		if ( $this->_browser !== null ) {
+			$this->_browser->onTestSetup($this);
+		}
 	}
 
 	/**
@@ -197,10 +165,12 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 	 */
 	public function setBrowser(BrowserConfiguration $browser)
 	{
-		$this->_browser = $browser->attachToTestCase($this);
+		$this->_browser = $browser;
 
 		// Configure session strategy.
-		return $this->setSessionStrategy($this->sessionStrategyManager->getSessionStrategy($browser));
+		return $this->setSessionStrategy(
+			$this->sessionStrategyManager->getSessionStrategy($browser, $this)
+		);
 	}
 
 	/**
@@ -275,11 +245,13 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 	/**
 	 * Creates Mink session using current session strategy and returns it.
 	 *
+	 * @param boolean $auto_create Automatically create session, when missing.
+	 *
 	 * @return Session
 	 */
-	public function getSession()
+	public function getSession($auto_create = true)
 	{
-		if ( $this->_session ) {
+		if ( $this->_session || $auto_create === false ) {
 			return $this->_session;
 		}
 
@@ -301,7 +273,7 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 	}
 
 	/**
-	 * Collects remote coverage information and dispatches "test ended" event.
+	 * Collects remote coverage information and notifies strategy/browser about test finish.
 	 *
 	 * @after
 	 */
@@ -313,10 +285,13 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 			$result->getCodeCoverage()->append($this->getRemoteCodeCoverageInformation(), $this);
 		}
 
-		$this->_eventDispatcher->dispatch(
-			self::TEST_ENDED_EVENT,
-			new TestEndedEvent($this, $result, $this->_session)
-		);
+		if ( $this->_browser !== null ) {
+			$this->_browser->onTestEnded($this, $result);
+		}
+
+		if ( $this->sessionStrategy !== null ) {
+			$this->sessionStrategy->onTestEnded($this);
+		}
 	}
 
 	/**
@@ -361,10 +336,9 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 	 */
 	public function onTestSuiteEnded()
 	{
-		$this->_eventDispatcher->dispatch(
-			self::TEST_SUITE_ENDED_EVENT,
-			new TestEvent($this, $this->_session)
-		);
+		if ( $this->sessionStrategy !== null ) {
+			$this->sessionStrategy->onTestSuiteEnded($this);
+		}
 
 		return $this;
 	}
@@ -406,10 +380,9 @@ abstract class BrowserTestCase extends AbstractPHPUnitCompatibilityTestCase impl
 	 */
 	protected function onNotSuccessfulTestCompatibilized($e)
 	{
-		$this->_eventDispatcher->dispatch(
-			self::TEST_FAILED_EVENT,
-			new TestFailedEvent($e, $this, $this->_session)
-		);
+		if ( $this->sessionStrategy !== null ) {
+			$this->sessionStrategy->onTestFailed($this, $e);
+		}
 	}
 
 	/**

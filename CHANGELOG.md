@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Bumped minimum PHP version to 5.6.
 - Changed default OS from "Windows 7" to "Windows 10" for BrowserStack/SauceLabs browser configurations.
 - Allow using self-signed/invalid SSL certificates during testing on the SauceLabs by default.
+- Rewritten library object communication mechanism (the event dispatcher is no longer used). Update any custom session strategy/browser configuration implementations.
 
 ### Fixed
 ...

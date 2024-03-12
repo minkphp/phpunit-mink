@@ -59,7 +59,6 @@ class DIContainerTest extends AbstractPHPUnitCompatibilityTestCase
 	{
 		return array(
 			array('application', 'aik099\\PHPUnit\\Application'),
-			array('event_dispatcher', 'Symfony\\Component\\EventDispatcher\\EventDispatcher'),
 			array('session_factory', 'aik099\\PHPUnit\\Session\\SessionFactory'),
 			array('session_strategy_factory', 'aik099\\PHPUnit\\Session\\SessionStrategyFactory'),
 			array('session_strategy_manager', 'aik099\\PHPUnit\\Session\\SessionStrategyManager'),

@@ -70,8 +70,7 @@ class DriverFactoryTest extends AbstractPHPUnitCompatibilityTestCase
 	{
 		$di = new DIContainer();
 
-		$event_dispatcher = m::mock('Symfony\\Component\\EventDispatcher\\EventDispatcherInterface');
-		$browser_configuration = new BrowserConfiguration($event_dispatcher, $di['driver_factory_registry']);
+		$browser_configuration = new BrowserConfiguration($di['driver_factory_registry']);
 		$browser_configuration->setDriver($factory->getDriverName());
 
 		return $browser_configuration;

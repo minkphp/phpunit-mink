@@ -12,15 +12,11 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 
 
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\Event\TestEndedEvent;
-use aik099\PHPUnit\Event\TestEvent;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use Behat\Mink\Driver\DriverInterface;
 use aik099\PHPUnit\Framework\TestResult;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Browser configuration for browser.
@@ -36,7 +32,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * @method integer getTimeout() Returns server timeout.
  * @method string getSessionStrategy() Returns session strategy name.
  */
-class BrowserConfiguration implements EventSubscriberInterface
+class BrowserConfiguration
 {
 	const TYPE = 'default';
 
@@ -85,20 +81,6 @@ class BrowserConfiguration implements EventSubscriberInterface
 	protected $aliases;
 
 	/**
-	 * Test case.
-	 *
-	 * @var BrowserTestCase
-	 */
-	private $_testCase;
-
-	/**
-	 * Event dispatcher.
-	 *
-	 * @var EventDispatcherInterface
-	 */
-	private $_eventDispatcher;
-
-	/**
 	 * Driver factory registry.
 	 *
 	 * @var DriverFactoryRegistry
@@ -142,14 +124,10 @@ class BrowserConfiguration implements EventSubscriberInterface
 	/**
 	 * Creates browser configuration.
 	 *
-	 * @param EventDispatcherInterface $event_dispatcher        Event dispatcher.
-	 * @param DriverFactoryRegistry    $driver_factory_registry Driver factory registry.
+	 * @param DriverFactoryRegistry $driver_factory_registry Driver factory registry.
 	 */
-	public function __construct(
-		EventDispatcherInterface $event_dispatcher,
-		DriverFactoryRegistry $driver_factory_registry
-	) {
-		$this->_eventDispatcher = $event_dispatcher;
+	public function __construct(DriverFactoryRegistry $driver_factory_registry)
+	{
 		$this->_driverFactoryRegistry = $driver_factory_registry;
 
 		if ( $this->defaults['driver'] ) {
@@ -165,60 +143,6 @@ class BrowserConfiguration implements EventSubscriberInterface
 	public function getType()
 	{
 		return static::TYPE;
-	}
-
-	/**
-	 * Returns an array of event names this subscriber wants to listen to.
-	 *
-	 * @return array The event names to listen to
-	 */
-	public static function getSubscribedEvents()
-	{
-		return array(
-			BrowserTestCase::TEST_SETUP_EVENT => array('onTestSetup', 100),
-			BrowserTestCase::TEST_ENDED_EVENT => array('onTestEnded', 100),
-		);
-	}
-
-	/**
-	 * Attaches listeners.
-	 *
-	 * @param BrowserTestCase $test_case Test case.
-	 *
-	 * @return self
-	 */
-	public function attachToTestCase(BrowserTestCase $test_case)
-	{
-		$this->_testCase = $test_case;
-		$this->_eventDispatcher->addSubscriber($this);
-
-		return $this;
-	}
-
-	/**
-	 * Detaches listeners.
-	 *
-	 * @return void
-	 */
-	protected function detachFromTestCase()
-	{
-		$this->_testCase = null;
-		$this->_eventDispatcher->removeSubscriber($this);
-	}
-
-	/**
-	 * Returns associated test case.
-	 *
-	 * @return BrowserTestCase
-	 * @throws \RuntimeException When test case not attached.
-	 */
-	public function getTestCase()
-	{
-		if ( $this->_testCase === null ) {
-			throw new \RuntimeException('Test Case not attached, use "attachToTestCase" method');
-		}
-
-		return $this->_testCase;
 	}
 
 	/**
@@ -495,14 +419,16 @@ class BrowserConfiguration implements EventSubscriberInterface
 	/**
 	 * Returns session strategy hash based on given test case and current browser configuration.
 	 *
+	 * @param BrowserTestCase $test_case Test case.
+	 *
 	 * @return string
 	 */
-	public function getSessionStrategyHash()
+	public function getSessionStrategyHash(BrowserTestCase $test_case)
 	{
 		$ret = $this->getChecksum();
 
 		if ( $this->isShared() ) {
-			$ret .= '::' . get_class($this->getTestCase());
+			$ret .= '::' . get_class($test_case);
 		}
 
 		return $ret;
@@ -624,35 +550,30 @@ class BrowserConfiguration implements EventSubscriberInterface
 	}
 
 	/**
-	 * Hook, called from "BrowserTestCase::setUp" method.
+	 * Hook, called from "BrowserTestCase::setUpTest" method.
 	 *
-	 * @param TestEvent $event Test event.
+	 * @param BrowserTestCase $test_case Test case.
 	 *
-	 * @return void
+	 * @return   void
+	 * @internal
 	 */
-	public function onTestSetup(TestEvent $event)
+	public function onTestSetup(BrowserTestCase $test_case)
 	{
-		if ( !$event->validateSubscriber($this->getTestCase()) ) {
-			return; // @codeCoverageIgnore
-		}
-
 		// Place code here.
 	}
 
 	/**
-	 * Hook, called from "BrowserTestCase::run" method.
+	 * Hook, called from "BrowserTestCase::tearDownTest" method.
 	 *
-	 * @param TestEndedEvent $event Test ended event.
+	 * @param BrowserTestCase $test_case   Test case.
+	 * @param TestResult      $test_result Test result.
 	 *
-	 * @return void
+	 * @return   void
+	 * @internal
 	 */
-	public function onTestEnded(TestEndedEvent $event)
+	public function onTestEnded(BrowserTestCase $test_case, TestResult $test_result)
 	{
-		if ( !$event->validateSubscriber($this->getTestCase()) ) {
-			return;
-		}
-
-		$this->detachFromTestCase();
+		// Place code here.
 	}
 
 }

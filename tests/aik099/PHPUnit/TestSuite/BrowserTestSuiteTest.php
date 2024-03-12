@@ -11,11 +11,11 @@
 namespace tests\aik099\PHPUnit\TestSuite;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\TestSuite\BrowserTestSuite;
 use Mockery as m;
-use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
 
-class BrowserTestSuiteTest extends EventDispatcherAwareTestCase
+class BrowserTestSuiteTest extends AbstractPHPUnitCompatibilityTestCase
 {
 
 	/**
@@ -30,10 +30,7 @@ class BrowserTestSuiteTest extends EventDispatcherAwareTestCase
 	 */
 	protected function setUpTest()
 	{
-		parent::setUpTest();
-
 		$this->_suite = new BrowserTestSuite();
-		$this->_suite->setEventDispatcher($this->eventDispatcher);
 	}
 
 	/**

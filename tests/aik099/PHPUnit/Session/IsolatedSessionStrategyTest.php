@@ -11,13 +11,10 @@
 namespace tests\aik099\PHPUnit\Session;
 
 
-use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\Event\TestEndedEvent;
 use aik099\PHPUnit\Session\ISessionFactory;
 use aik099\PHPUnit\Session\IsolatedSessionStrategy;
 use Mockery as m;
 use Mockery\MockInterface;
-use aik099\PHPUnit\Framework\TestResult;
 
 class IsolatedSessionStrategyTest extends SessionStrategyTestCase
 {
@@ -36,8 +33,6 @@ class IsolatedSessionStrategyTest extends SessionStrategyTestCase
 	{
 		$this->_factory = m::mock('aik099\\PHPUnit\\Session\\ISessionFactory');
 		$this->strategy = new IsolatedSessionStrategy($this->_factory);
-
-		parent::setUpTest();
 	}
 
 	/**
@@ -67,25 +62,32 @@ class IsolatedSessionStrategyTest extends SessionStrategyTestCase
 	 *
 	 * @return void
 	 */
-	public function testOnTestEnd()
+	public function testOnTestEnded()
 	{
 		$session = m::mock(self::SESSION_CLASS);
 		$session->shouldReceive('stop')->once();
 		$session->shouldReceive('isStarted')->once()->andReturn(true);
 
 		$test_case = m::mock(self::TEST_CASE_CLASS);
-		$test_case->shouldReceive('getSessionStrategy')->once()->andReturn($this->strategy);
+		$test_case->shouldReceive('getSession')->with(false)->once()->andReturn($session);
 
-		$event = $this->eventDispatcher->dispatch(
-			BrowserTestCase::TEST_ENDED_EVENT,
-			new TestEndedEvent(
-				$test_case,
-				new TestResult() /* Can't mock, because it's a final class. */,
-				$session
-			)
-		);
+		$this->strategy->onTestEnded($test_case);
+	}
 
-		$this->assertInstanceOf('aik099\\PHPUnit\\Event\\TestEndedEvent', $event);
+	public function testOnTestFailed()
+	{
+		$test_case = m::mock(self::TEST_CASE_CLASS);
+		$test_case->shouldReceive('getSession')->never();
+
+		$this->strategy->onTestFailed($test_case, new \Exception('test'));
+	}
+
+	public function testOnTestSuiteEnded()
+	{
+		$test_case = m::mock(self::TEST_CASE_CLASS);
+		$test_case->shouldReceive('getSession')->never();
+
+		$this->strategy->onTestSuiteEnded($test_case);
 	}
 
 }

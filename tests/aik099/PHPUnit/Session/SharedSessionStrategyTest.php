@@ -12,9 +12,6 @@ namespace tests\aik099\PHPUnit\Session;
 
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
-use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\Event\TestEvent;
-use aik099\PHPUnit\Event\TestFailedEvent;
 use aik099\PHPUnit\Session\IsolatedSessionStrategy;
 use aik099\PHPUnit\Session\SharedSessionStrategy;
 use Behat\Mink\Session;
@@ -57,8 +54,6 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 
 		$this->_isolatedStrategy = m::mock('\\aik099\\PHPUnit\\Session\\IsolatedSessionStrategy');
 		$this->strategy = new SharedSessionStrategy($this->_isolatedStrategy);
-
-		parent::setUpTest();
 	}
 
 	/**
@@ -146,16 +141,24 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 	 *
 	 * @param \Exception $e Exception.
 	 *
-	 * @return TestFailedEvent
+	 * @return void
 	 */
 	private function _sessionFailure(\Exception $e)
 	{
-		$event = $this->eventDispatcher->dispatch(
-			BrowserTestCase::TEST_FAILED_EVENT,
-			new TestFailedEvent($e, m::mock(self::TEST_CASE_CLASS), $this->_session1)
-		);
+		$this->strategy->onTestFailed(m::mock(self::TEST_CASE_CLASS), $e);
+	}
 
-		return $event;
+	/**
+	 * Test description.
+	 *
+	 * @return void
+	 */
+	public function testOnTestEnded()
+	{
+		$test_case = m::mock(self::TEST_CASE_CLASS);
+		$test_case->shouldReceive('getSession')->never();
+
+		$this->strategy->onTestEnded($test_case);
 	}
 
 	/**
@@ -170,14 +173,9 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 		$session->shouldReceive('isStarted')->once()->andReturn(true);
 
 		$test_case = m::mock(self::TEST_CASE_CLASS);
-		$test_case->shouldReceive('getSessionStrategy')->once()->andReturn($this->strategy);
+		$test_case->shouldReceive('getSession')->with(false)->once()->andReturn($session);
 
-		$event = $this->eventDispatcher->dispatch(
-			BrowserTestCase::TEST_SUITE_ENDED_EVENT,
-			new TestEvent($test_case, $session)
-		);
-
-		$this->assertInstanceOf('aik099\\PHPUnit\\Event\\TestEvent', $event);
+		$this->strategy->onTestSuiteEnded($test_case);
 	}
 
 	/**
