@@ -13,12 +13,9 @@ namespace aik099\PHPUnit\Session;
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\Event\TestEvent;
-use aik099\PHPUnit\Event\TestFailedEvent;
 use Behat\Mink\Session;
 use aik099\PHPUnit\Framework\IncompleteTestError;
 use aik099\PHPUnit\Framework\SkippedTestError;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Keeps a Session object shared between test runs to save time.
@@ -57,31 +54,6 @@ class SharedSessionStrategy implements ISessionStrategy
 	public function __construct(ISessionStrategy $original_strategy)
 	{
 		$this->_originalStrategy = $original_strategy;
-	}
-
-	/**
-	 * Returns an array of event names this subscriber wants to listen to.
-	 *
-	 * @return array The event names to listen to
-	 */
-	public static function getSubscribedEvents()
-	{
-		return array(
-			BrowserTestCase::TEST_FAILED_EVENT => array('onTestFailed', 0),
-			BrowserTestCase::TEST_SUITE_ENDED_EVENT => array('onTestSuiteEnd', 0),
-		);
-	}
-
-	/**
-	 * Sets event dispatcher.
-	 *
-	 * @param EventDispatcherInterface $event_dispatcher Event dispatcher.
-	 *
-	 * @return void
-	 */
-	public function setEventDispatcher(EventDispatcherInterface $event_dispatcher)
-	{
-		$event_dispatcher->addSubscriber($this);
 	}
 
 	/**
@@ -134,16 +106,18 @@ class SharedSessionStrategy implements ISessionStrategy
 	}
 
 	/**
-	 * Called, when test fails.
-	 *
-	 * @param TestFailedEvent $event Test failed event.
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
-	public function onTestFailed(TestFailedEvent $event)
+	public function onTestEnded(BrowserTestCase $test_case)
 	{
-		$exception = $event->getException();
 
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function onTestFailed(BrowserTestCase $test_case, $exception)
+	{
 		if ( $exception instanceof IncompleteTestError || $exception instanceof SkippedTestError ) {
 			return;
 		}
@@ -152,35 +126,15 @@ class SharedSessionStrategy implements ISessionStrategy
 	}
 
 	/**
-	 * Called, when test case ends.
-	 *
-	 * @param TestEvent $event Test event.
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
-	public function onTestSuiteEnd(TestEvent $event)
+	public function onTestSuiteEnded(BrowserTestCase $test_case)
 	{
-		if ( !$this->_isEventForMe($event) ) {
-			return;
-		}
-
-		$session = $event->getSession();
+		$session = $test_case->getSession(false);
 
 		if ( $session !== null && $session->isStarted() ) {
 			$session->stop();
 		}
-	}
-
-	/**
-	 * Checks, that event can be handled by this class.
-	 *
-	 * @param TestEvent $event Test event.
-	 *
-	 * @return boolean
-	 */
-	private function _isEventForMe(TestEvent $event)
-	{
-		return $event->getTestCase()->getSessionStrategy() instanceof self;
 	}
 
 }

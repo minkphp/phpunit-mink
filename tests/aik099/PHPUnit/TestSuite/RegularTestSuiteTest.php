@@ -11,11 +11,11 @@
 namespace tests\aik099\PHPUnit\TestSuite;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use Mockery as m;
-use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
 
-class RegularTestSuiteTest extends EventDispatcherAwareTestCase
+class RegularTestSuiteTest extends AbstractPHPUnitCompatibilityTestCase
 {
 
 	/**
@@ -44,7 +44,6 @@ class RegularTestSuiteTest extends EventDispatcherAwareTestCase
 		$helper = m::mock('aik099\\PHPUnit\\RemoteCoverage\\RemoteCoverageHelper');
 
 		$test = m::mock('\\aik099\\PHPUnit\\Framework\\Test');
-		$test->shouldReceive('setEventDispatcher')->with($this->eventDispatcher)->once();
 		$test->shouldReceive('setSessionStrategyManager')->with($manager)->once();
 		$test->shouldReceive('setBrowserConfigurationFactory')->with($factory)->once();
 		$test->shouldReceive('setRemoteCoverageHelper')->with($helper)->once();
@@ -69,8 +68,6 @@ class RegularTestSuiteTest extends EventDispatcherAwareTestCase
 		else {
 			$suite = new RegularTestSuite();
 		}
-
-		$suite->setEventDispatcher($this->eventDispatcher);
 
 		return $suite;
 	}

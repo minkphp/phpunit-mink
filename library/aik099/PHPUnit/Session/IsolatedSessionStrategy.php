@@ -13,9 +13,7 @@ namespace aik099\PHPUnit\Session;
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\Event\TestEvent;
 use Behat\Mink\Session;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Produces a new Session object shared for each test.
@@ -43,30 +41,6 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	}
 
 	/**
-	 * Returns an array of event names this subscriber wants to listen to.
-	 *
-	 * @return array The event names to listen to
-	 */
-	public static function getSubscribedEvents()
-	{
-		return array(
-			BrowserTestCase::TEST_ENDED_EVENT => array('onTestEnd', 0),
-		);
-	}
-
-	/**
-	 * Sets event dispatcher.
-	 *
-	 * @param EventDispatcherInterface $event_dispatcher Event dispatcher.
-	 *
-	 * @return void
-	 */
-	public function setEventDispatcher(EventDispatcherInterface $event_dispatcher)
-	{
-		$event_dispatcher->addSubscriber($this);
-	}
-
-	/**
 	 * Returns Mink session with given browser configuration.
 	 *
 	 * @param BrowserConfiguration $browser Browser configuration for a session.
@@ -79,19 +53,11 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	}
 
 	/**
-	 * Called, when test ends.
-	 *
-	 * @param TestEvent $event Test event.
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
-	public function onTestEnd(TestEvent $event)
+	public function onTestEnded(BrowserTestCase $test_case)
 	{
-		if ( !$this->_isEventForMe($event) ) {
-			return;
-		}
-
-		$session = $event->getSession();
+		$session = $test_case->getSession(false);
 
 		if ( $session !== null && $session->isStarted() ) {
 			$session->stop();
@@ -99,15 +65,19 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	}
 
 	/**
-	 * Checks, that event can be handled by this class.
-	 *
-	 * @param TestEvent $event Test event.
-	 *
-	 * @return boolean
+	 * @inheritDoc
 	 */
-	private function _isEventForMe(TestEvent $event)
+	public function onTestFailed(BrowserTestCase $test_case, $exception)
 	{
-		return $event->getTestCase()->getSessionStrategy() instanceof self;
+
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function onTestSuiteEnded(BrowserTestCase $test_case)
+	{
+
 	}
 
 }

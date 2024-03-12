@@ -14,27 +14,18 @@ namespace aik099\PHPUnit\TestSuite;
 use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestSuite;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\IEventDispatcherAware;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use aik099\PHPUnit\Framework\DataProviderTestSuite;
 use PHPUnit\Util\Test as TestUtil;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Base Test Suite class for browser tests.
  *
  * @method \Mockery\Expectation shouldReceive(string $name)
  */
-abstract class AbstractTestSuite extends AbstractPHPUnitCompatibilityTestSuite implements IEventDispatcherAware
+abstract class AbstractTestSuite extends AbstractPHPUnitCompatibilityTestSuite
 {
-
-	/**
-	 * Event dispatcher.
-	 *
-	 * @var EventDispatcherInterface
-	 */
-	private $_eventDispatcher;
 
 	/**
 	 * Overriding the default: Selenium suites are always built from a TestCase class.
@@ -42,18 +33,6 @@ abstract class AbstractTestSuite extends AbstractPHPUnitCompatibilityTestSuite i
 	 * @var boolean
 	 */
 	protected $testCase = true;
-
-	/**
-	 * Sets event dispatcher.
-	 *
-	 * @param EventDispatcherInterface $event_dispatcher Event dispatcher.
-	 *
-	 * @return void
-	 */
-	public function setEventDispatcher(EventDispatcherInterface $event_dispatcher)
-	{
-		$this->_eventDispatcher = $event_dispatcher;
-	}
 
 	/**
 	 * Adds test methods to the suite.
@@ -115,7 +94,6 @@ abstract class AbstractTestSuite extends AbstractPHPUnitCompatibilityTestSuite i
 			}
 			else {
 				/** @var BrowserTestCase $test */
-				$test->setEventDispatcher($this->_eventDispatcher);
 				$test->setSessionStrategyManager($session_strategy_manager);
 				$test->setBrowserConfigurationFactory($browser_configuration_factory);
 				$test->setRemoteCoverageHelper($remote_coverage_helper);

@@ -11,14 +11,14 @@
 namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfigurationFactory;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use Mockery as m;
-use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
+class BrowserConfigurationFactoryTest extends AbstractPHPUnitCompatibilityTestCase
 {
 
 	use ExpectException;
@@ -42,8 +42,6 @@ class BrowserConfigurationFactoryTest extends EventDispatcherAwareTestCase
 	 */
 	protected function setUpTest()
 	{
-		parent::setUpTest();
-
 		$this->_factory = new BrowserConfigurationFactory();
 		$this->_driverFactoryRegistry = $this->createDriverFactoryRegistry();
 	}

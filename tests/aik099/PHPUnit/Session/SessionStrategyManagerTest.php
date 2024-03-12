@@ -136,7 +136,9 @@ class SessionStrategyManagerTest extends AbstractPHPUnitCompatibilityTestCase
 		$browser->shouldReceive('getSessionStrategy')->once()->andReturn($strategy_type);
 		$browser->shouldReceive('getSessionStrategyHash')->once()->andReturn($strategy_hash);
 
-		return $this->manager->getSessionStrategy($browser);
+		$test_case = m::mock('aik099\\PHPUnit\\BrowserTestCase');
+
+		return $this->manager->getSessionStrategy($browser, $test_case);
 	}
 
 }

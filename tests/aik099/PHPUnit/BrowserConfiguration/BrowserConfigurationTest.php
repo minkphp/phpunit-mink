@@ -11,6 +11,7 @@
 namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\BrowserConfiguration\ApiBrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
@@ -21,10 +22,9 @@ use Mockery\Generator\MockConfigurationBuilder;
 use aik099\PHPUnit\Framework\TestResult;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
-use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class BrowserConfigurationTest extends EventDispatcherAwareTestCase
+class BrowserConfigurationTest extends AbstractPHPUnitCompatibilityTestCase
 {
 
 	use ExpectException;
@@ -85,19 +85,10 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	protected $driverFactoryRegistry;
 
 	/**
-	 * Tests names, that require subscriber.
-	 *
-	 * @var array
-	 */
-	protected $testsRequireSubscriber = array();
-
-	/**
 	 * @before
 	 */
 	protected function setUpTest()
 	{
-		parent::setUpTest();
-
 		if ( !$this->browserConfigurationClass ) {
 			$this->browserConfigurationClass = 'aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
 		}
@@ -118,7 +109,6 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 
 		$this->browser = $this->createBrowserConfiguration(
 			array(),
-			in_array($this->getName(false), $this->testsRequireSubscriber),
 			$this->mockBrowserMethods
 		);
 	}
@@ -247,34 +237,6 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 		$this->expectException('InvalidArgumentException');
 
 		$this->browser->setup(array('alias' => 'not_found'));
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testAttachToTestCase()
-	{
-		$browser = $this->createBrowserConfiguration(array(), true);
-
-		/* @var $test_case BrowserTestCase */
-		$test_case = m::mock(self::TEST_CASE_CLASS);
-
-		$this->assertSame($browser, $browser->attachToTestCase($test_case));
-		$this->assertSame($test_case, $browser->getTestCase());
-	}
-
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
-	public function testGetTestCaseException()
-	{
-		$this->expectException('RuntimeException');
-
-		$this->browser->getTestCase();
 	}
 
 	/**
@@ -550,13 +512,16 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 		/* @var $test_case BrowserTestCase */
 		$test_case = m::mock(self::TEST_CASE_CLASS);
 
-		$browser1 = $this->createBrowserConfiguration(array(), true);
-		$browser1->setSessionStrategy($session_strategy)->attachToTestCase($test_case);
+		$browser1 = $this->createBrowserConfiguration();
+		$browser1->setSessionStrategy($session_strategy);
 
-		$browser2 = $this->createBrowserConfiguration(array(), true);
-		$browser2->setSessionStrategy($session_strategy)->attachToTestCase($test_case);
+		$browser2 = $this->createBrowserConfiguration();
+		$browser2->setSessionStrategy($session_strategy);
 
-		$this->assertSame($browser1->getSessionStrategyHash(), $browser2->getSessionStrategyHash());
+		$this->assertSame(
+			$browser1->getSessionStrategyHash($test_case),
+			$browser2->getSessionStrategyHash($test_case)
+		);
 	}
 
 	/**
@@ -580,14 +545,17 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	public function testGetSessionStrategyHashNotSharing()
 	{
 		$test_case1 = new WithBrowserConfig();
-		$browser1 = $this->createBrowserConfiguration(array(), true);
-		$browser1->setSessionStrategy(ISessionStrategyFactory::TYPE_SHARED)->attachToTestCase($test_case1);
+		$browser1 = $this->createBrowserConfiguration();
+		$browser1->setSessionStrategy(ISessionStrategyFactory::TYPE_SHARED);
 
 		$test_case2 = new WithoutBrowserConfig();
-		$browser2 = $this->createBrowserConfiguration(array(), true);
-		$browser2->setSessionStrategy(ISessionStrategyFactory::TYPE_SHARED)->attachToTestCase($test_case2);
+		$browser2 = $this->createBrowserConfiguration();
+		$browser2->setSessionStrategy(ISessionStrategyFactory::TYPE_SHARED);
 
-		$this->assertNotSame($browser1->getSessionStrategyHash(), $browser2->getSessionStrategyHash());
+		$this->assertNotSame(
+			$browser1->getSessionStrategyHash($test_case1),
+			$browser2->getSessionStrategyHash($test_case2)
+		);
 	}
 
 	/**
@@ -644,33 +612,27 @@ class BrowserConfigurationTest extends EventDispatcherAwareTestCase
 	/**
 	 * Creates instance of browser configuration.
 	 *
-	 * @param array   $aliases        Aliases.
-	 * @param boolean $add_subscriber Expect addition of subscriber to event dispatcher.
-	 * @param array   $mock_methods   Mock methods.
+	 * @param array $aliases      Aliases.
+	 * @param array $mock_methods Mock methods.
 	 *
 	 * @return BrowserConfiguration
 	 */
-	protected function createBrowserConfiguration(
-		array $aliases = array(),
-		$add_subscriber = false,
-		$mock_methods = array()
-	) {
+	protected function createBrowserConfiguration(array $aliases = array(), $mock_methods = array())
+	{
 		if ( $mock_methods ) {
 			/** @var BrowserConfiguration $browser */
 			$browser = m::mock(
 				$this->browserConfigurationClass . '[' . implode(',', $mock_methods) . ']',
-				array($this->eventDispatcher, $this->driverFactoryRegistry),
+				array($this->driverFactoryRegistry),
 				array('getSessionStrategy' => 'isolated')
 			);
 		}
 		else {
 			/** @var BrowserConfiguration $browser */
-			$browser = new $this->browserConfigurationClass($this->eventDispatcher, $this->driverFactoryRegistry);
+			$browser = new $this->browserConfigurationClass($this->driverFactoryRegistry);
 		}
 
 		$browser->setAliases($aliases);
-
-		$this->eventDispatcher->shouldReceive('addSubscriber')->with($browser)->times($add_subscriber ? 1 : 0);
 
 		return $browser;
 	}

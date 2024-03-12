@@ -15,9 +15,7 @@ use aik099\PHPUnit\BrowserConfiguration\ApiBrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\BrowserStackBrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\Event\TestEvent;
 use Mockery as m;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ApiIntegrationFixture extends BrowserTestCase
 {
@@ -40,63 +38,47 @@ class ApiIntegrationFixture extends BrowserTestCase
 	private $_sessionIds = array();
 
 	/**
-	 * Sets event dispatcher.
+	 * @inheritDoc
 	 *
-	 * @param EventDispatcherInterface $event_dispatcher Event dispatcher.
-	 *
-	 * @return void
+	 * @after
 	 */
-	public function setEventDispatcher(EventDispatcherInterface $event_dispatcher)
+	protected function tearDownTest()
 	{
-		parent::setEventDispatcher($event_dispatcher);
+		$this->recordSessionId();
 
-		// Use priority for this listener to be called before one, that stops the session.
-		$event_dispatcher->addListener(self::TEST_ENDED_EVENT, array($this, 'recordSessionId'), 200);
-		$event_dispatcher->addListener(self::TEST_ENDED_EVENT, array($this, 'verifyRemoteAPICalls'));
+		parent::tearDownTest();
+
+		$this->verifyRemoteAPICalls();
 	}
 
 	/**
 	 * Record WebDriver session ID of the test.
 	 *
-	 * @param TestEvent $event Event.
-	 *
 	 * @return void
 	 */
-	public function recordSessionId(TestEvent $event)
+	public function recordSessionId()
 	{
-		$test_case = $event->getTestCase();
-
-		if ( get_class($test_case) !== get_class($this)
-			|| $test_case->getName() !== $this->getName()
-			|| $this->_getTestSkipMessage()
-		) {
+		if ( $this->_getTestSkipMessage() ) {
 			return;
 		}
 
-		$session = $event->getSession();
+		$session = $this->getSession(false);
 
 		if ( $session === null ) {
 			$this->markTestSkipped('Unable to connect to SauceLabs/BrowserStack. Please check Internet connection.');
 		}
 
-		$this->_sessionIds[$test_case->getName(false)] = $session->getDriver()->getWebDriverSessionId();
+		$this->_sessionIds[$this->getName(false)] = $session->getDriver()->getWebDriverSessionId();
 	}
 
 	/**
 	 * Verify how the API calls were made.
 	 *
-	 * @param TestEvent $event Event.
-	 *
 	 * @return void
 	 */
-	public function verifyRemoteAPICalls(TestEvent $event)
+	public function verifyRemoteAPICalls()
 	{
-		if ( !$event->validateSubscriber($this) ) {
-			return;
-		}
-
-		$test_case = $event->getTestCase();
-		$test_name = $test_case->getName(false);
+		$test_name = $this->getName(false);
 
 		if ( !isset($this->_sessionIds[$test_name]) ) {
 			return;
@@ -110,7 +92,7 @@ class ApiIntegrationFixture extends BrowserTestCase
 
 			if ( $browser instanceof SauceLabsBrowserConfiguration ) {
 				$this->assertEquals(
-					get_class($test_case) . '::' . $test_name,
+					get_class($this) . '::' . $test_name,
 					$session_info['name'],
 					'SauceLabs remote session name matches test name'
 				);
@@ -141,7 +123,7 @@ class ApiIntegrationFixture extends BrowserTestCase
 			}
 			elseif ( $browser instanceof BrowserStackBrowserConfiguration ) {
 				$this->assertEquals(
-					\str_replace('\\', '-', get_class($test_case) . '::' . $test_name),
+					\str_replace('\\', '-', get_class($this) . '::' . $test_name),
 					$session_info['name'],
 					'BrowserStack remote session name matches test name'
 				);

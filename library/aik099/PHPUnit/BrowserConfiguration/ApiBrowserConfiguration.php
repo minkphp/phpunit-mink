@@ -13,12 +13,10 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 
 use aik099\PHPUnit\APIClient\IAPIClient;
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\Event\TestEndedEvent;
-use aik099\PHPUnit\Event\TestEvent;
+use aik099\PHPUnit\Framework\TestResult;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Session;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Browser configuration tailored to use with API-based service.
@@ -42,18 +40,15 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 	/**
 	 * Creates browser configuration.
 	 *
-	 * @param EventDispatcherInterface $event_dispatcher        Event dispatcher.
-	 * @param DriverFactoryRegistry    $driver_factory_registry Driver factory registry.
+	 * @param DriverFactoryRegistry $driver_factory_registry Driver factory registry.
 	 */
-	public function __construct(
-		EventDispatcherInterface $event_dispatcher,
-		DriverFactoryRegistry $driver_factory_registry
-	) {
+	public function __construct(DriverFactoryRegistry $driver_factory_registry)
+	{
 		$this->defaults['driver'] = 'selenium2';
 		$this->defaults['apiUsername'] = '';
 		$this->defaults['apiKey'] = '';
 
-		parent::__construct($event_dispatcher, $driver_factory_registry);
+		parent::__construct($driver_factory_registry);
 	}
 
 	/**
@@ -137,22 +132,14 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 	}
 
 	/**
-	 * Hook, called from "BrowserTestCase::setUp" method.
-	 *
-	 * @param TestEvent $event Test event.
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
-	public function onTestSetup(TestEvent $event)
+	public function onTestSetup(BrowserTestCase $test_case)
 	{
-		if ( !$event->validateSubscriber($this->getTestCase()) ) {
-			return;
-		}
-
-		parent::onTestSetup($event);
+		parent::onTestSetup($test_case);
 
 		$desired_capabilities = $this->getDesiredCapabilities();
-		$desired_capabilities[self::NAME_CAPABILITY] = $this->getJobName($event->getTestCase());
+		$desired_capabilities[self::NAME_CAPABILITY] = $this->getJobName($test_case);
 
 		if ( getenv('BUILD_NUMBER') ) {
 			$desired_capabilities[self::BUILD_NUMBER_CAPABILITY] = getenv('BUILD_NUMBER'); // Jenkins.
@@ -181,33 +168,23 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 	}
 
 	/**
-	 * Hook, called from "BrowserTestCase::run" method.
-	 *
-	 * @param TestEndedEvent $event Test ended event.
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
-	public function onTestEnded(TestEndedEvent $event)
+	public function onTestEnded(BrowserTestCase $test_case, TestResult $test_result)
 	{
-		if ( !$event->validateSubscriber($this->getTestCase()) ) {
-			return;
-		}
+		parent::onTestEnded($test_case, $test_result);
 
-		parent::onTestEnded($event);
-
-		$session = $event->getSession();
+		$session = $test_case->getSession(false);
 
 		if ( $session === null || !$session->isStarted() ) {
 			// Session wasn't used in particular test.
 			return;
 		}
 
-		$test_case = $event->getTestCase();
-
 		$this->getAPIClient()->updateStatus(
 			$this->getSessionId($session),
-			$this->getTestStatus($test_case, $event->getTestResult()),
-			$this->getTestStatusMessage($test_case, $event->getTestResult())
+			$this->getTestStatus($test_case, $test_result),
+			$this->getTestStatusMessage($test_case, $test_result)
 		);
 	}
 

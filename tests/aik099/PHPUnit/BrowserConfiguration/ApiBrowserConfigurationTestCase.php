@@ -13,11 +13,8 @@ namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 use aik099\PHPUnit\APIClient\IAPIClient;
 use aik099\PHPUnit\BrowserConfiguration\ApiBrowserConfiguration;
-use aik099\PHPUnit\Event\TestEndedEvent;
-use aik099\PHPUnit\Event\TestEvent;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use aik099\PHPUnit\Framework\TestResult;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use aik099\PHPUnit\BrowserTestCase;
 use Mockery as m;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
@@ -50,12 +47,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 */
 	protected function setUpTest()
 	{
-		$this->testsRequireSubscriber[] = 'testTestSetupEvent';
-		$this->testsRequireSubscriber[] = 'testTestEndedEvent';
-		$this->testsRequireSubscriber[] = 'testTestEndedWithoutSession';
-		$this->testsRequireSubscriber[] = 'testTunnelIdentifier';
-
-		if ( $this->getName(false) === 'testTestEndedEvent' ) {
+		if ( $this->getName(false) === 'testOnTestEnded' ) {
 			$this->mockBrowserMethods[] = 'getAPIClient';
 		}
 
@@ -201,9 +193,9 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 * @param string $build_number     Build number.
 	 *
 	 * @return void
-	 * @dataProvider setupEventDataProvider
+	 * @dataProvider setupProcessDataProvider
 	 */
-	public function testTestSetupEvent($session_strategy, $test_name, $build_env_name = null, $build_number = null)
+	public function testTestSetupProcess($session_strategy, $test_name, $build_env_name = null, $build_number = null)
 	{
 		// Reset any global env vars that might be left from previous tests.
 		$hhvm_hack = defined('HHVM_VERSION') ? '=' : '';
@@ -221,17 +213,11 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 			->times($this->_isAutomaticTestName($test_name) ? 0 : 1)
 			->andReturn($test_name);
 
-		$event_dispatcher = new EventDispatcher();
-		$event_dispatcher->addSubscriber($this->browser);
-
 		if ( $this->_isAutomaticTestName($test_name) ) {
 			$test_name = get_class($test_case);
 		}
 
-		$event_dispatcher->dispatch(
-			BrowserTestCase::TEST_SETUP_EVENT,
-			new TestEvent($test_case, m::mock('Behat\\Mink\\Session'))
-		);
+		$this->browser->onTestSetup($test_case);
 
 		$desired_capabilities = $this->browser->getDesiredCapabilities();
 
@@ -260,11 +246,11 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	}
 
 	/**
-	 * Data provider for TestSetup event handler.
+	 * Data provider for setup process test.
 	 *
 	 * @return array
 	 */
-	public function setupEventDataProvider()
+	public function setupProcessDataProvider()
 	{
 		$seed = uniqid();
 
@@ -295,9 +281,9 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 * @param string $driver_type Driver.
 	 *
 	 * @return void
-	 * @dataProvider theTestEndedEventDataProvider
+	 * @dataProvider onTestEndedDataProvider
 	 */
-	public function testTestEndedEvent($driver_type)
+	public function testOnTestEnded($driver_type)
 	{
 		$test_case = $this->createTestCase('TEST_NAME');
 
@@ -321,19 +307,11 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$session->shouldReceive('getDriver')->once()->andReturn($driver);
 		$session->shouldReceive('isStarted')->once()->andReturn(true);
 
-		$event_dispatcher = new EventDispatcher();
-		$event_dispatcher->addSubscriber($this->browser);
+		$test_case->shouldReceive('getSession')->with(false)->once()->andReturn($session);
 
 		$test_result = new TestResult(); // Can't mock, because it's a final class.
 
-		$this->eventDispatcher->shouldReceive('removeSubscriber')->with($this->browser)->once();
-
-		$event = $event_dispatcher->dispatch(
-			BrowserTestCase::TEST_ENDED_EVENT,
-			new TestEndedEvent($test_case, $test_result, $session)
-		);
-
-		$this->assertInstanceOf('aik099\\PHPUnit\\Event\\TestEndedEvent', $event);
+		$this->browser->onTestEnded($test_case, $test_result);
 	}
 
 	/**
@@ -341,7 +319,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 *
 	 * @return array
 	 */
-	public function theTestEndedEventDataProvider()
+	public function onTestEndedDataProvider()
 	{
 		return array(
 			array('selenium'),
@@ -354,36 +332,20 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 */
 	public function testTestEndedWithoutSession($stopped_or_missing)
 	{
-		$test_case = $this->createTestCase('TEST_NAME', false);
-
-		$event_dispatcher = new EventDispatcher();
-		$event_dispatcher->addSubscriber($this->browser);
-
-		$event = m::mock('aik099\\PHPUnit\\Event\\TestEndedEvent');
+		$test_case = $this->createTestCase('TEST_NAME');
 
 		if ( $stopped_or_missing ) {
 			$session = m::mock('Behat\\Mink\\Session');
 			$session->shouldReceive('isStarted')->once()->andReturn(false);
-			$event->shouldReceive('getSession')->once()->andReturn($session);
+			$test_case->shouldReceive('getSession')->with(false)->once()->andReturn($session);
 		}
 		else {
-			$event->shouldReceive('getSession')->once();
+			$test_case->shouldReceive('getSession')->with(false)->once();
 		}
 
-		// Below methods were removed in Symfony 3.0.
-		if ( \method_exists('\Symfony\Component\EventDispatcher\Event', 'setDispatcher') ) {
-			$event->shouldReceive('setDispatcher')->once();
-			$event->shouldReceive('setName')->once();
-		}
+		$test_result = new TestResult(); // Can't mock, because it's a final class.
 
-		$event->shouldReceive('isPropagationStopped')->once()->andReturn(false);
-		$event->shouldReceive('getTestCase')->andReturn($test_case);
-		$event->shouldReceive('validateSubscriber')->with($test_case)->atLeast()->once()->andReturn(true);
-
-		$this->eventDispatcher->shouldReceive('removeSubscriber')->with($this->browser)->once();
-		$returned_event = $event_dispatcher->dispatch(BrowserTestCase::TEST_ENDED_EVENT, $event);
-
-		$this->assertInstanceOf('aik099\\PHPUnit\\Event\\TestEndedEvent', $returned_event);
+		$this->browser->onTestEnded($test_case, $test_result);
 	}
 
 	public function sessionStateDataProvider()
@@ -397,21 +359,14 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	/**
 	 * Create TestCase with Browser.
 	 *
-	 * @param string  $name        Test case name.
-	 * @param boolean $get_browser Create browser expectation.
+	 * @param string $name Test case name.
 	 *
-	 * @return BrowserTestCase
+	 * @return BrowserTestCase|m\MockInterface
 	 */
-	protected function createTestCase($name, $get_browser = true)
+	protected function createTestCase($name)
 	{
 		$test_case = m::mock(self::TEST_CASE_CLASS);
 		$test_case->shouldReceive('getName')->andReturn($name);
-
-		if ( $get_browser ) {
-			$test_case->shouldReceive('getBrowser')->atLeast()->once()->andReturn($this->browser);
-		}
-
-		$this->browser->attachToTestCase($test_case);
 
 		return $test_case;
 	}
@@ -440,13 +395,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$test_case = $this->createTestCase('TEST_NAME');
 		$test_case->shouldReceive('toString')->andReturn('TEST_NAME');
 
-		$event_dispatcher = new EventDispatcher();
-		$event_dispatcher->addSubscriber($this->browser);
-
-		$event_dispatcher->dispatch(
-			BrowserTestCase::TEST_SETUP_EVENT,
-			new TestEvent($test_case, m::mock('Behat\\Mink\\Session'))
-		);
+		$this->browser->onTestSetup($test_case);
 
 		$desired_capabilities = $this->browser->getDesiredCapabilities();
 

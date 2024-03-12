@@ -11,6 +11,7 @@
 namespace tests\aik099\PHPUnit;
 
 
+use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserTestCase;
@@ -28,10 +29,9 @@ use SebastianBergmann\CodeCoverage\ProcessedCodeCoverageData;
 use SebastianBergmann\CodeCoverage\RawCodeCoverageData;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
-use tests\aik099\PHPUnit\TestCase\EventDispatcherAwareTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class BrowserTestCaseTest extends EventDispatcherAwareTestCase
+class BrowserTestCaseTest extends AbstractPHPUnitCompatibilityTestCase
 {
 
 	use ExpectException;
@@ -54,8 +54,6 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 */
 	protected function setUpTest()
 	{
-		parent::setUpTest();
-
 		// Define the constant because this test is running PHPUnit testcases manually.
 		if ( $this->isInIsolation() ) {
 			define('PHPUNIT_TESTSUITE', true);
@@ -97,8 +95,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 
 		$test_case = $this->getFixture($session_strategy);
 
-		$browser = new BrowserConfiguration($this->eventDispatcher, $this->createDriverFactoryRegistry());
-		$this->eventDispatcher->shouldReceive('addSubscriber')->with($browser)->once();
+		$browser = new BrowserConfiguration($this->createDriverFactoryRegistry());
 
 		$this->assertSame($test_case, $test_case->setBrowser($browser));
 		$this->assertSame($browser, $test_case->getBrowser());
@@ -261,7 +258,6 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$browser = m::mock(self::BROWSER_CLASS);
 		$browser->shouldReceive('getHost')->times($times);
 		$browser->shouldReceive('getPort')->times($times);
-		$browser->shouldReceive('attachToTestCase')->once()->andReturn($browser);
 
 		return $browser;
 	}
@@ -339,7 +335,7 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	{
 		/* @var $test_case BrowserTestCase */
 		/* @var $session_strategy ISessionStrategy */
-		list($test_case, $session_strategy) = $this->prepareForRun(array());
+		list($test_case, $session_strategy) = $this->prepareForRun();
 		$test_case->setName('getTestId');
 		$test_case->setRemoteCoverageHelper($this->getRemoteCoverageHelperMock());
 
@@ -576,14 +572,13 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 */
 	public function testEndOfTestCase()
 	{
-		$this->expectEvent(BrowserTestCase::TEST_SUITE_ENDED_EVENT);
-
 		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 
 		$test_case = new WithoutBrowserConfig();
-		$test_case->setEventDispatcher($this->eventDispatcher);
 		$test_case->setSessionStrategy($session_strategy);
+
+		$session_strategy->shouldReceive('onTestSuiteEnded')->with($test_case)->once();
 
 		$this->assertSame($test_case, $test_case->onTestSuiteEnded());
 	}
@@ -598,18 +593,19 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 		$this->expectException('Exception');
 		$this->expectExceptionMessage('MSG_TEST');
 
-		$this->expectEvent(BrowserTestCase::TEST_FAILED_EVENT);
-
 		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 
 		$test_case = $this->getFixture($session_strategy);
 		$test_case->setSessionStrategy($session_strategy);
 
+		$exception = new \Exception('MSG_TEST');
+		$session_strategy->shouldReceive('onTestFailed')->with($test_case, $exception)->once();
+
 		$reflection_method = new \ReflectionMethod($test_case, 'onNotSuccessfulTest');
 		$reflection_method->setAccessible(true);
 
-		$reflection_method->invokeArgs($test_case, array(new \Exception('MSG_TEST')));
+		$reflection_method->invokeArgs($test_case, array($exception));
 	}
 
 	/**
@@ -633,18 +629,19 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 	 */
 	protected function prepareForRun(array $mock_methods = array())
 	{
-		$this->expectEvent(BrowserTestCase::TEST_SETUP_EVENT);
-
 		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 
 		$test_case = $this->getFixture($session_strategy, $mock_methods);
 		$test_case->setName('testSuccess');
 
-		$browser = $this->getBrowser(0);
-		$test_case->setBrowser($browser);
+		$session_strategy->shouldReceive('onTestEnded')->with($test_case)->once();
 
-		$this->expectEvent(\aik099\PHPUnit\BrowserTestCase::TEST_ENDED_EVENT);
+		$browser = $this->getBrowser(0);
+		$browser->shouldReceive('onTestSetup')->with($test_case)->once();
+		$browser->shouldReceive('onTestEnded')->with($test_case, m::type(TestResult::class))->once();
+
+		$test_case->setBrowser($browser);
 
 		return array($test_case, $session_strategy);
 	}
@@ -674,7 +671,6 @@ class BrowserTestCaseTest extends EventDispatcherAwareTestCase
 			$test_case = new WithoutBrowserConfig();
 		}
 
-		$test_case->setEventDispatcher($this->eventDispatcher);
 		$test_case->setBrowserConfigurationFactory($this->browserConfigurationFactory);
 		$test_case->setSessionStrategyManager($manager);
 

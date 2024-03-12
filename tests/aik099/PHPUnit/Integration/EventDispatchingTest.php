@@ -13,7 +13,7 @@ namespace tests\aik099\PHPUnit\Integration;
 
 use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\Framework\TestResult;
-use tests\aik099\PHPUnit\Fixture\SetupEventFixture;
+use tests\aik099\PHPUnit\Fixture\SetupFixture;
 
 class EventDispatchingTest extends AbstractPHPUnitCompatibilityTestCase
 {
@@ -55,7 +55,7 @@ class EventDispatchingTest extends AbstractPHPUnitCompatibilityTestCase
 
 		$result = new TestResult();
 
-		$suite = SetupEventFixture::suite('tests\\aik099\\PHPUnit\\Fixture\\SetupEventFixture');
+		$suite = SetupFixture::suite('tests\\aik099\\PHPUnit\\Fixture\\SetupFixture');
 		$suite->run($result);
 
 		$this->assertTrue($result->wasSuccessful(), 'All sub-tests passed');

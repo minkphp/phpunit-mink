@@ -13,7 +13,7 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 
 use aik099\PHPUnit\APIClient\IAPIClient;
 use aik099\PHPUnit\APIClient\SauceLabsAPIClient;
-use aik099\PHPUnit\Event\TestEvent;
+use aik099\PHPUnit\BrowserTestCase;
 use WebDriver\SauceLabs\SauceRest;
 
 /**
@@ -38,19 +38,11 @@ class SauceLabsBrowserConfiguration extends ApiBrowserConfiguration
 	}
 
 	/**
-	 * Hook, called from "BrowserTestCase::setUp" method.
-	 *
-	 * @param TestEvent $event Test event.
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
-	public function onTestSetup(TestEvent $event)
+	public function onTestSetup(BrowserTestCase $test_case)
 	{
-		if ( !$event->validateSubscriber($this->getTestCase()) ) {
-			return;
-		}
-
-		parent::onTestSetup($event);
+		parent::onTestSetup($test_case);
 
 		$desired_capabilities = $this->getDesiredCapabilities();
 
