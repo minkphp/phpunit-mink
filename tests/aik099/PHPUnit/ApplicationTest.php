@@ -13,7 +13,6 @@ namespace tests\aik099\PHPUnit;
 
 use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\Application;
-use Mockery as m;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class ApplicationTest extends AbstractPHPUnitCompatibilityTestCase

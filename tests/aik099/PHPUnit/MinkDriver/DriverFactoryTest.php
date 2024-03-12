@@ -16,7 +16,6 @@ use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\DIContainer;
 use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
-use Mockery as m;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class DriverFactoryTest extends AbstractPHPUnitCompatibilityTestCase

@@ -16,7 +16,6 @@ use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
 use Mockery as m;
 use Mockery\MockInterface;
-use SebastianBergmann\CodeCoverage\RawCodeCoverageData;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertIsType;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
