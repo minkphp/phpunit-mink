@@ -168,9 +168,12 @@ class ApiIntegrationFixture extends BrowserTestCase
 	/**
 	 * Test description.
 	 *
-	 * @return void
+	 * @param boolean $data Data.
+	 *
+	 * @return       void
+	 * @dataProvider successDataProvider
 	 */
-	public function testSuccess()
+	public function testSuccess($data)
 	{
 		$skip_message = $this->_getTestSkipMessage();
 
@@ -182,6 +185,14 @@ class ApiIntegrationFixture extends BrowserTestCase
 		$session->visit('http://www.google.com');
 
 		$this->assertTrue(true);
+	}
+
+	public function successDataProvider()
+	{
+		return array(
+			'true' => array(true),
+			'false' => array(false),
+		);
 	}
 
 	/**
