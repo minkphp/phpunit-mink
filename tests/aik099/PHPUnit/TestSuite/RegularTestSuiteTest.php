@@ -11,11 +11,11 @@
 namespace tests\aik099\PHPUnit\TestSuite;
 
 
-use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use Mockery as m;
+use tests\aik099\PHPUnit\AbstractTestCase;
 
-class RegularTestSuiteTest extends AbstractPHPUnitCompatibilityTestCase
+class RegularTestSuiteTest extends AbstractTestCase
 {
 
 	/**
@@ -43,7 +43,7 @@ class RegularTestSuiteTest extends AbstractPHPUnitCompatibilityTestCase
 		$factory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
 		$helper = m::mock('aik099\\PHPUnit\\RemoteCoverage\\RemoteCoverageHelper');
 
-		$test = m::mock('\\aik099\\PHPUnit\\Framework\\Test');
+		$test = m::mock('\\ConsoleHelpers\\PHPUnitCompat\\Framework\\Test');
 		$test->shouldReceive('setSessionStrategyManager')->with($manager)->once();
 		$test->shouldReceive('setBrowserConfigurationFactory')->with($factory)->once();
 		$test->shouldReceive('setRemoteCoverageHelper')->with($helper)->once();

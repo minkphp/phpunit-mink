@@ -11,17 +11,17 @@
 namespace tests\aik099\PHPUnit\Integration;
 
 
-use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\Framework\TestResult;
 use aik099\PHPUnit\TestSuite\BrowserTestSuite;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
+use ConsoleHelpers\PHPUnitCompat\Framework\TestResult;
 use Mockery as m;
 use PHPUnit\Runner\Version;
+use tests\aik099\PHPUnit\AbstractTestCase;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 
-class SuiteBuildingTest extends AbstractPHPUnitCompatibilityTestCase
+class SuiteBuildingTest extends AbstractTestCase
 {
 
 	const SUITE_CLASS = '\\aik099\\PHPUnit\\TestSuite\\RegularTestSuite';

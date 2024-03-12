@@ -11,11 +11,11 @@
 namespace tests\aik099\PHPUnit\Integration;
 
 
-use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
-use aik099\PHPUnit\Framework\TestResult;
+use ConsoleHelpers\PHPUnitCompat\Framework\TestResult;
+use tests\aik099\PHPUnit\AbstractTestCase;
 use tests\aik099\PHPUnit\Fixture\SetupFixture;
 
-class EventDispatchingTest extends AbstractPHPUnitCompatibilityTestCase
+class EventDispatchingTest extends AbstractTestCase
 {
 
 	/**

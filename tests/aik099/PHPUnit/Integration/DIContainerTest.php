@@ -11,11 +11,11 @@
 namespace tests\aik099\PHPUnit\Integration;
 
 
-use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\Application;
 use aik099\PHPUnit\DIContainer;
+use tests\aik099\PHPUnit\AbstractTestCase;
 
-class DIContainerTest extends AbstractPHPUnitCompatibilityTestCase
+class DIContainerTest extends AbstractTestCase
 {
 
 	/**

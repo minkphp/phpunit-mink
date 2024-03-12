@@ -13,10 +13,10 @@ namespace aik099\PHPUnit\BrowserConfiguration;
 
 use aik099\PHPUnit\APIClient\IAPIClient;
 use aik099\PHPUnit\BrowserTestCase;
-use aik099\PHPUnit\Framework\TestResult;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Session;
+use ConsoleHelpers\PHPUnitCompat\Framework\TestResult;
 
 /**
  * Browser configuration tailored to use with API-based service.

@@ -11,15 +11,15 @@
 namespace tests\aik099\PHPUnit\RemoteCoverage;
 
 
-use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
 use Mockery as m;
 use Mockery\MockInterface;
+use tests\aik099\PHPUnit\AbstractTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertIsType;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class RemoteCoverageHelperTest extends AbstractPHPUnitCompatibilityTestCase
+class RemoteCoverageHelperTest extends AbstractTestCase
 {
 
 	use ExpectException, AssertIsType;

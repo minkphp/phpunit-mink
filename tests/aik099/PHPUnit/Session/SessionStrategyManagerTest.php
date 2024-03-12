@@ -11,14 +11,14 @@
 namespace tests\aik099\PHPUnit\Session;
 
 
-use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\Session\ISessionStrategy;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use aik099\PHPUnit\Session\SessionStrategyFactory;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use Mockery as m;
+use tests\aik099\PHPUnit\AbstractTestCase;
 
-class SessionStrategyManagerTest extends AbstractPHPUnitCompatibilityTestCase
+class SessionStrategyManagerTest extends AbstractTestCase
 {
 
 	/**

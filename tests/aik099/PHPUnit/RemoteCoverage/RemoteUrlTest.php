@@ -11,10 +11,10 @@
 namespace tests\aik099\PHPUnit\RemoteCoverage;
 
 
-use aik099\PHPUnit\AbstractPHPUnitCompatibilityTestCase;
 use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
+use tests\aik099\PHPUnit\AbstractTestCase;
 
-class RemoteUrlTest extends AbstractPHPUnitCompatibilityTestCase
+class RemoteUrlTest extends AbstractTestCase
 {
 
 	/**

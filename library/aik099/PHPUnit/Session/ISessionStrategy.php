@@ -43,7 +43,7 @@ interface ISessionStrategy
 	public function onTestEnded(BrowserTestCase $test_case);
 
 	/**
-	 * Hook, called from "BrowserTestCase::onNotSuccessfulTestCompatibilized" method.
+	 * Hook, called from "BrowserTestCase::onNotSuccessfulTestCompat" method.
 	 *
 	 * @param BrowserTestCase       $test_case Test case.
 	 * @param \Exception|\Throwable $exception Exception.
