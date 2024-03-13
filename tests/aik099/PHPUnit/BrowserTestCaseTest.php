@@ -30,17 +30,20 @@ use SebastianBergmann\CodeCoverage\RawCodeCoverageData;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
+use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
+use Behat\Mink\Session;
+use ConsoleHelpers\CodeCoverageCompat\Driver\Driver;
 
 class BrowserTestCaseTest extends AbstractTestCase
 {
 
 	use ExpectException;
 
-	const BROWSER_CLASS = '\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
+	const BROWSER_CLASS = BrowserConfiguration::class;
 
-	const MANAGER_CLASS = '\\aik099\\PHPUnit\\Session\\SessionStrategyManager';
+	const MANAGER_CLASS = SessionStrategyManager::class;
 
-	const SESSION_STRATEGY_INTERFACE = '\\aik099\\PHPUnit\\Session\\ISessionStrategy';
+	const SESSION_STRATEGY_INTERFACE = ISessionStrategy::class;
 
 	/**
 	 *  Browser configuration factory.
@@ -59,9 +62,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 			define('PHPUNIT_TESTSUITE', true);
 		}
 
-		$this->browserConfigurationFactory = m::mock(
-			'aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory'
-		);
+		$this->browserConfigurationFactory = m::mock(IBrowserConfigurationFactory::class);
 	}
 
 	/**
@@ -109,9 +110,9 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	protected function createDriverFactoryRegistry()
 	{
-		$registry = m::mock('\\aik099\\PHPUnit\\MinkDriver\\DriverFactoryRegistry');
+		$registry = m::mock(DriverFactoryRegistry::class);
 
-		$driver_factory = m::mock('\\aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$driver_factory = m::mock(IMinkDriverFactory::class);
 		$driver_factory->shouldReceive('getDriverDefaults')->andReturn(array());
 
 		$registry
@@ -203,8 +204,8 @@ class BrowserTestCaseTest extends AbstractTestCase
 	{
 		$browser = $this->getBrowser(0);
 
-		$expected_session1 = m::mock('\\Behat\\Mink\\Session');
-		$expected_session2 = m::mock('\\Behat\\Mink\\Session');
+		$expected_session1 = m::mock(Session::class);
+		$expected_session2 = m::mock(Session::class);
 
 		/** @var ISessionStrategy $session_strategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
@@ -291,10 +292,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 			);
 		}
 		else {
-			$code_coverage = new CodeCoverage(
-				m::mock('\\ConsoleHelpers\\CodeCoverageCompat\\Driver\\Driver'),
-				new Filter()
-			);
+			$code_coverage = new CodeCoverage(m::mock(Driver::class), new Filter());
 		}
 
 		$test_result->setCodeCoverage($code_coverage);
@@ -331,7 +329,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 		/** @var BrowserTestCase $test_case */
 		list($test_case,) = $this->prepareForRun();
 
-		$this->assertInstanceOf('\\ConsoleHelpers\\PHPUnitCompat\\Framework\\TestResult', $test_case->run());
+		$this->assertInstanceOf(TestResult::class, $test_case->run());
 	}
 
 	/**
@@ -368,7 +366,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 		$browser = $test_case->getBrowser();
 		$browser->shouldReceive('getBaseUrl')->once()->andReturn('A');
 
-		$session = m::mock('\\Behat\\Mink\\Session');
+		$session = m::mock(Session::class);
 		$session->shouldReceive('visit')->with('A')->once();
 		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, null)->once();
 		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, m::not(''))->once();
@@ -377,7 +375,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 
 		$test_case->run($result);
 
-		if ( \class_exists('\SebastianBergmann\CodeCoverage\ProcessedCodeCoverageData') ) {
+		if ( \class_exists(ProcessedCodeCoverageData::class) ) {
 			$actual_coverage = $code_coverage->getData();
 			$expected_coverage = new ProcessedCodeCoverageData();
 			$expected_coverage->setLineCoverage(array(
@@ -443,7 +441,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 		$browser = $test_case->getBrowser();
 		$browser->shouldReceive('getBaseUrl')->once()->andReturn('A');
 
-		$session = m::mock('\\Behat\\Mink\\Session');
+		$session = m::mock(Session::class);
 		$session->shouldReceive('visit')->with('A')->once();
 		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, null)->once();
 		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, m::not(''))->once();
@@ -454,7 +452,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 
 		$covered_by_test = 'tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig::getTestId';
 
-		if ( \class_exists('\SebastianBergmann\CodeCoverage\ProcessedCodeCoverageData') ) {
+		if ( \class_exists(ProcessedCodeCoverageData::class) ) {
 			$expected_coverage = new ProcessedCodeCoverageData();
 			$expected_coverage->setLineCoverage(array(
 				$this->getCoverageFixtureFile() => array(
@@ -502,10 +500,10 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	protected function getRemoteCoverageHelperMock(array $expected_coverage = null)
 	{
-		$remote_coverage_helper = m::mock('aik099\\PHPUnit\\RemoteCoverage\\RemoteCoverageHelper');
+		$remote_coverage_helper = m::mock(RemoteCoverageHelper::class);
 
 		if ( $expected_coverage !== null ) {
-			if ( \class_exists('\SebastianBergmann\CodeCoverage\RawCodeCoverageData') ) {
+			if ( \class_exists(RawCodeCoverageData::class) ) {
 				$remote_coverage_helper
 					->shouldReceive('get')
 					->with('some-url', 'tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig__getTestId')
@@ -519,7 +517,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 			}
 		}
 
-		if ( \class_exists('\SebastianBergmann\CodeCoverage\RawCodeCoverageData') ) {
+		if ( \class_exists(RawCodeCoverageData::class) ) {
 			$remote_coverage_helper
 				->shouldReceive('getEmpty')
 				->andReturn(RawCodeCoverageData::fromXdebugWithoutPathCoverage(array()));
@@ -546,13 +544,13 @@ class BrowserTestCaseTest extends AbstractTestCase
 			$driver = m::mock('\PHP_CodeCoverage_Driver');
 		}
 		else {
-			$driver = m::mock('\\ConsoleHelpers\\CodeCoverageCompat\\Driver\\Driver');
+			$driver = m::mock(Driver::class);
 		}
 
 		$driver->shouldReceive('start')->once();
 
 		// Can't assert call count, because expectations are verified prior to coverage being queried.
-		if ( \class_exists('\SebastianBergmann\CodeCoverage\RawCodeCoverageData') ) {
+		if ( \class_exists(RawCodeCoverageData::class) ) {
 			$driver->shouldReceive('stop')
 				/*->once()*/
 				->andReturn(

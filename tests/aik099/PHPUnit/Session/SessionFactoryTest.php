@@ -14,6 +14,9 @@ namespace tests\aik099\PHPUnit\Session;
 use aik099\PHPUnit\Session\SessionFactory;
 use Mockery as m;
 use tests\aik099\PHPUnit\AbstractTestCase;
+use Behat\Mink\Driver\DriverInterface;
+use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
+use Behat\Mink\Session;
 
 class SessionFactoryTest extends AbstractTestCase
 {
@@ -40,15 +43,15 @@ class SessionFactoryTest extends AbstractTestCase
 	 */
 	public function testCreateSession()
 	{
-		$driver = m::mock('Behat\\Mink\\Driver\\DriverInterface');
+		$driver = m::mock(DriverInterface::class);
 		$driver->shouldReceive('setSession')->with(m::any())->once();
 
-		$browser = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration');
+		$browser = m::mock(BrowserConfiguration::class);
 		$browser->shouldReceive('createDriver')->once()->andReturn($driver);
 
 		$session = $this->_factory->createSession($browser);
 
-		$this->assertInstanceOf('Behat\\Mink\\Session', $session);
+		$this->assertInstanceOf(Session::class, $session);
 		$this->assertSame($driver, $session->getDriver());
 	}
 

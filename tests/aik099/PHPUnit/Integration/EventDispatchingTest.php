@@ -56,7 +56,7 @@ class EventDispatchingTest extends AbstractTestCase
 
 		$result = new TestResult();
 
-		$suite = SetupFixture::suite('tests\\aik099\\PHPUnit\\Fixture\\SetupFixture');
+		$suite = SetupFixture::suite(SetupFixture::class);
 		$suite->run($result);
 
 		$error_msgs = array();

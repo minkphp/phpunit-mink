@@ -31,7 +31,7 @@ class ApplicationAwareTestCase extends AbstractTestCase
 	 */
 	protected function setUpTest()
 	{
-		$this->application = m::mock('aik099\\PHPUnit\\Application');
+		$this->application = m::mock(Application::class);
 	}
 
 	/**

@@ -14,6 +14,11 @@ namespace tests\aik099\PHPUnit\TestSuite;
 use aik099\PHPUnit\TestSuite\RegularTestSuite;
 use Mockery as m;
 use tests\aik099\PHPUnit\AbstractTestCase;
+use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
+use aik099\PHPUnit\Session\SessionStrategyManager;
+use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
+use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
+use ConsoleHelpers\PHPUnitCompat\Framework\Test;
 
 class RegularTestSuiteTest extends AbstractTestCase
 {
@@ -27,7 +32,7 @@ class RegularTestSuiteTest extends AbstractTestCase
 	{
 		$suite = $this->_createSuite();
 
-		$actual = $suite->addTestMethods('tests\\aik099\\PHPUnit\\Fixture\\WithoutBrowserConfig');
+		$actual = $suite->addTestMethods(WithoutBrowserConfig::class);
 		$this->assertSame($suite, $actual, 'The fluid interface doesn\'t work.');
 
 		$this->assertCount(2, $actual->tests(), 'Not all tests were added.');
@@ -40,11 +45,11 @@ class RegularTestSuiteTest extends AbstractTestCase
 	 */
 	public function testSetTestDependencies()
 	{
-		$manager = m::mock('aik099\\PHPUnit\\Session\\SessionStrategyManager');
-		$factory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
-		$helper = m::mock('aik099\\PHPUnit\\RemoteCoverage\\RemoteCoverageHelper');
+		$manager = m::mock(SessionStrategyManager::class);
+		$factory = m::mock(IBrowserConfigurationFactory::class);
+		$helper = m::mock(RemoteCoverageHelper::class);
 
-		$test = m::mock('\\ConsoleHelpers\\PHPUnitCompat\\Framework\\Test');
+		$test = m::mock(Test::class);
 		$test->shouldReceive('setSessionStrategyManager')->with($manager)->once();
 		$test->shouldReceive('setBrowserConfigurationFactory')->with($factory)->once();
 		$test->shouldReceive('setRemoteCoverageHelper')->with($helper)->once();

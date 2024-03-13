@@ -14,6 +14,17 @@ namespace tests\aik099\PHPUnit\Integration;
 use aik099\PHPUnit\Application;
 use aik099\PHPUnit\DIContainer;
 use tests\aik099\PHPUnit\AbstractTestCase;
+use aik099\PHPUnit\TestSuite\RegularTestSuite;
+use aik099\PHPUnit\TestSuite\BrowserTestSuite;
+use aik099\PHPUnit\APIClient\APIClientFactory;
+use aik099\PHPUnit\TestSuite\TestSuiteFactory;
+use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
+use aik099\PHPUnit\Session\SessionStrategyManager;
+use aik099\PHPUnit\Session\SessionStrategyFactory;
+use aik099\PHPUnit\Session\SessionFactory;
+use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
+use aik099\PHPUnit\BrowserConfiguration\BrowserConfigurationFactory;
+use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 
 class DIContainerTest extends AbstractTestCase
 {
@@ -58,21 +69,18 @@ class DIContainerTest extends AbstractTestCase
 	public static function serviceDefinitionsDataProvider()
 	{
 		return array(
-			array('application', 'aik099\\PHPUnit\\Application'),
-			array('session_factory', 'aik099\\PHPUnit\\Session\\SessionFactory'),
-			array('session_strategy_factory', 'aik099\\PHPUnit\\Session\\SessionStrategyFactory'),
-			array('session_strategy_manager', 'aik099\\PHPUnit\\Session\\SessionStrategyManager'),
-			array('remote_url', 'aik099\\PHPUnit\\RemoteCoverage\\RemoteUrl'),
-			array('remote_coverage_helper', 'aik099\\PHPUnit\\RemoteCoverage\\RemoteCoverageHelper'),
-			array('test_suite_factory', 'aik099\\PHPUnit\\TestSuite\\TestSuiteFactory'),
-			array('regular_test_suite', 'aik099\\PHPUnit\\TestSuite\\RegularTestSuite'),
-			array('browser_test_suite', 'aik099\\PHPUnit\\TestSuite\\BrowserTestSuite'),
-			array('api_client_factory',	'aik099\\PHPUnit\\APIClient\\APIClientFactory'),
-			array(
-				'browser_configuration_factory',
-				'aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfigurationFactory',
-			),
-			array('driver_factory_registry', 'aik099\\PHPUnit\\MinkDriver\\DriverFactoryRegistry'),
+			array('application', Application::class),
+			array('session_factory', SessionFactory::class),
+			array('session_strategy_factory', SessionStrategyFactory::class),
+			array('session_strategy_manager', SessionStrategyManager::class),
+			array('remote_url', RemoteUrl::class),
+			array('remote_coverage_helper', RemoteCoverageHelper::class),
+			array('test_suite_factory', TestSuiteFactory::class),
+			array('regular_test_suite', RegularTestSuite::class),
+			array('browser_test_suite', BrowserTestSuite::class),
+			array('api_client_factory', APIClientFactory::class),
+			array('browser_configuration_factory', BrowserConfigurationFactory::class),
+			array('driver_factory_registry', DriverFactoryRegistry::class),
 		);
 	}
 

@@ -20,17 +20,18 @@ use PHPUnit\Runner\Version;
 use tests\aik099\PHPUnit\AbstractTestCase;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
+use aik099\PHPUnit\Session\ISessionStrategy;
 
 class SuiteBuildingTest extends AbstractTestCase
 {
 
-	const SUITE_CLASS = '\\aik099\\PHPUnit\\TestSuite\\RegularTestSuite';
+	const SUITE_CLASS = RegularTestSuite::class;
 
-	const BROWSER_SUITE_CLASS = '\\aik099\\PHPUnit\\TestSuite\\BrowserTestSuite';
+	const BROWSER_SUITE_CLASS = BrowserTestSuite::class;
 
-	const TEST_CASE_WITH_CONFIG = '\\tests\\aik099\\PHPUnit\\Fixture\\WithBrowserConfig';
+	const TEST_CASE_WITH_CONFIG = WithBrowserConfig::class;
 
-	const TEST_CASE_WITHOUT_CONFIG = '\\tests\\aik099\\PHPUnit\\Fixture\\WithoutBrowserConfig';
+	const TEST_CASE_WITHOUT_CONFIG = WithoutBrowserConfig::class;
 
 	/**
 	 * Tests, that suite is built correctly in case, when static $browsers array is filled-in in test case class.
@@ -53,7 +54,7 @@ class SuiteBuildingTest extends AbstractTestCase
 			$suite_tests = $test_suite->tests();
 			$this->checkArray($suite_tests, 2, self::TEST_CASE_WITH_CONFIG);
 
-			$this->assertInstanceOf('aik099\PHPUnit\Session\ISessionStrategy', $suite_tests[0]->getSessionStrategy());
+			$this->assertInstanceOf(ISessionStrategy::class, $suite_tests[0]->getSessionStrategy());
 		}
 	}
 
@@ -134,7 +135,7 @@ class SuiteBuildingTest extends AbstractTestCase
 	 */
 	protected function getPhpUnitVersion()
 	{
-		if ( \class_exists('PHPUnit\Runner\Version') ) {
+		if ( \class_exists(Version::class) ) {
 			return Version::id();
 		}
 

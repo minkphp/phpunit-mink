@@ -18,6 +18,7 @@ use Mockery\MockInterface;
 use tests\aik099\PHPUnit\AbstractTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertIsType;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
+use SebastianBergmann\CodeCoverage\RawCodeCoverageData;
 
 class RemoteCoverageHelperTest extends AbstractTestCase
 {
@@ -45,7 +46,7 @@ class RemoteCoverageHelperTest extends AbstractTestCase
 	 */
 	protected function setUpTest()
 	{
-		$this->_remoteUrl = m::mock('aik099\\PHPUnit\\RemoteCoverage\\RemoteUrl');
+		$this->_remoteUrl = m::mock(RemoteUrl::class);
 		$this->_remoteCoverageHelper = new RemoteCoverageHelper($this->_remoteUrl);
 	}
 
@@ -99,8 +100,8 @@ class RemoteCoverageHelperTest extends AbstractTestCase
 
 		$result = $this->_remoteCoverageHelper->get($coverage_script_url, $test_id);
 
-		if ( \class_exists('\SebastianBergmann\CodeCoverage\RawCodeCoverageData') ) {
-			$this->assertInstanceOf('\SebastianBergmann\CodeCoverage\RawCodeCoverageData', $result);
+		if ( \class_exists(RawCodeCoverageData::class) ) {
+			$this->assertInstanceOf(RawCodeCoverageData::class, $result);
 			$this->assertCount(0, $result->lineCoverage());
 		}
 		else {
@@ -165,7 +166,7 @@ class RemoteCoverageHelperTest extends AbstractTestCase
 			14 => 1,
 		);
 
-		if ( \class_exists('\SebastianBergmann\CodeCoverage\RawCodeCoverageData') ) {
+		if ( \class_exists(RawCodeCoverageData::class) ) {
 			$this->assertEquals(array($class_source_file => $expected), $content->lineCoverage());
 		}
 		else {

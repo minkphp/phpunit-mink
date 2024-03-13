@@ -18,6 +18,9 @@ use aik099\PHPUnit\TestSuite\BrowserTestSuite;
 use aik099\PHPUnit\TestSuite\TestSuiteFactory;
 use Mockery as m;
 use tests\aik099\PHPUnit\TestCase\ApplicationAwareTestCase;
+use aik099\PHPUnit\TestSuite\RegularTestSuite;
+use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
+use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 
 class TestSuiteFactoryTest extends ApplicationAwareTestCase
 {
@@ -57,9 +60,9 @@ class TestSuiteFactoryTest extends ApplicationAwareTestCase
 	{
 		parent::setUpTest();
 
-		$this->_manager = m::mock('aik099\\PHPUnit\\Session\\SessionStrategyManager');
-		$this->_browserFactory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
-		$this->_remoteCoverageHelper = m::mock('aik099\\PHPUnit\\RemoteCoverage\\RemoteCoverageHelper');
+		$this->_manager = m::mock(SessionStrategyManager::class);
+		$this->_browserFactory = m::mock(IBrowserConfigurationFactory::class);
+		$this->_remoteCoverageHelper = m::mock(RemoteCoverageHelper::class);
 
 		$this->_factory = new TestSuiteFactory($this->_manager, $this->_browserFactory, $this->_remoteCoverageHelper);
 		$this->_factory->setApplication($this->application);
@@ -72,8 +75,8 @@ class TestSuiteFactoryTest extends ApplicationAwareTestCase
 	 */
 	public function testCreateSuiteFromTestCaseWithoutBrowsers()
 	{
-		$suite_class_name = 'aik099\\PHPUnit\\TestSuite\\RegularTestSuite';
-		$test_case_class_name = 'tests\\aik099\\PHPUnit\\Fixture\\WithoutBrowserConfig';
+		$suite_class_name = RegularTestSuite::class;
+		$test_case_class_name = WithoutBrowserConfig::class;
 
 		$suite = m::mock($suite_class_name);
 		$suite->shouldReceive('setName')->with($test_case_class_name)->once();
@@ -95,8 +98,8 @@ class TestSuiteFactoryTest extends ApplicationAwareTestCase
 	 */
 	public function testCreateSuiteFromTestCaseWithBrowsers()
 	{
-		$suite_class_name = 'aik099\\PHPUnit\\TestSuite\\RegularTestSuite';
-		$test_case_class_name = 'tests\\aik099\\PHPUnit\\Fixture\\WithBrowserConfig';
+		$suite_class_name = RegularTestSuite::class;
+		$test_case_class_name = WithBrowserConfig::class;
 
 		$browser_suite1 = $this->_createBrowserTestSuiteMock($test_case_class_name, array(
 			'browserName' => 'firefox', 'host' => 'localhost',
@@ -126,7 +129,7 @@ class TestSuiteFactoryTest extends ApplicationAwareTestCase
 	 */
 	private function _createBrowserTestSuiteMock($class_name, array $browser)
 	{
-		$suite = m::mock('aik099\\PHPUnit\\TestSuite\\BrowserTestSuite');
+		$suite = m::mock(BrowserTestSuite::class);
 		$suite->shouldReceive('nameFromBrowser')->with($browser)->once()->andReturn('OK');
 		$suite->shouldReceive('setName')->with($class_name . ': OK')->once();
 		$suite->shouldReceive('addTestMethods')->with($class_name)->once();

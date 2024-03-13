@@ -31,7 +31,7 @@ class IsolatedSessionStrategyTest extends SessionStrategyTestCase
 	 */
 	protected function setUpTest()
 	{
-		$this->_factory = m::mock('aik099\\PHPUnit\\Session\\ISessionFactory');
+		$this->_factory = m::mock(ISessionFactory::class);
 		$this->strategy = new IsolatedSessionStrategy($this->_factory);
 	}
 
