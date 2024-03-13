@@ -35,6 +35,7 @@ use PimpleCopy\Pimple\Container;
  */
 class PimpleServiceProviderInterfaceTest extends TestCase
 {
+
 	public function testProvider()
 	{
 		$pimple = new Container();

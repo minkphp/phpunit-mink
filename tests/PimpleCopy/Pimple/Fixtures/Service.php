@@ -28,7 +28,7 @@ namespace tests\PimpleCopy\Pimple\Fixtures;
 
 
 /**
- * @author  Igor Wiedler <igor@wiedler.ch>
+ * @author Igor Wiedler <igor@wiedler.ch>
  */
 class Service
 {

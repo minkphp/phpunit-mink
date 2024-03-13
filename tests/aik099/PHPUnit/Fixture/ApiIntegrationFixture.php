@@ -110,7 +110,7 @@ class ApiIntegrationFixture extends BrowserTestCase
 				$custom_data_mapping = array(
 					'testSuccess' => null,
 					'testFailure' => array(
-						'status_message' => "This test is expected to fail.\nFailed asserting that false is true."
+						'status_message' => "This test is expected to fail.\nFailed asserting that false is true.",
 					),
 				);
 
@@ -153,10 +153,7 @@ class ApiIntegrationFixture extends BrowserTestCase
 	}
 
 	/**
-	 * Whatever or not code coverage information should be gathered.
-	 *
-	 * @return boolean
-	 * @throws \RuntimeException When used before test is started.
+	 * @inheritDoc
 	 */
 	public function getCollectCodeCoverageInformation()
 	{

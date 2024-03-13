@@ -351,7 +351,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 
 		$result = new TestResult();
 		$code_coverage = $this->getCodeCoverageMock(array(
-			$this->getCoverageFixtureFile() => array (
+			$this->getCoverageFixtureFile() => array(
 				7 => -1, // Means line not executed.
 				8 => -1,
 				9 => -1,
@@ -391,7 +391,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 		else {
 			$actual_coverage = $code_coverage->getData();
 			$expected_coverage = array(
-				$this->getCoverageFixtureFile() => array (
+				$this->getCoverageFixtureFile() => array(
 					7 => array(), // Means, that this test hasn't executed a tested code.
 					8 => array(),
 					9 => array(),
@@ -416,7 +416,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 	public function testRunWithCoverage()
 	{
 		$expected_coverage = array(
-			$this->getCoverageFixtureFile() => array (
+			$this->getCoverageFixtureFile() => array(
 				7 => 1, // Means line executed.
 				8 => -1, // Means, that this test hasn't executed a tested code.
 				9 => 1,
@@ -468,7 +468,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 		else {
 			$actual_coverage = $code_coverage->getData();
 			$expected_coverage = array(
-				$this->getCoverageFixtureFile() => array (
+				$this->getCoverageFixtureFile() => array(
 					7 => array($covered_by_test), // Means, covered by this test.
 					8 => array(), // Means, that this test hasn't executed a tested code.
 					9 => array($covered_by_test),
