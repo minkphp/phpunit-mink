@@ -55,7 +55,7 @@ class DIContainerTest extends AbstractTestCase
 	 *
 	 * @return array
 	 */
-	public function serviceDefinitionsDataProvider()
+	public static function serviceDefinitionsDataProvider()
 	{
 		return array(
 			array('application', 'aik099\\PHPUnit\\Application'),

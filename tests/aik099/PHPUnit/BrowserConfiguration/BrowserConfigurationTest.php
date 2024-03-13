@@ -166,7 +166,7 @@ class BrowserConfigurationTest extends AbstractTestCase
 	 *
 	 * @return array
 	 */
-	public function aliasResolutionDataProvider()
+	public static function aliasResolutionDataProvider()
 	{
 		return array(
 			'single alias' => array(
@@ -525,7 +525,7 @@ class BrowserConfigurationTest extends AbstractTestCase
 	 *
 	 * @return array
 	 */
-	public function sessionSharingDataProvider()
+	public static function sessionSharingDataProvider()
 	{
 		return array(
 			array(ISessionStrategyFactory::TYPE_ISOLATED),

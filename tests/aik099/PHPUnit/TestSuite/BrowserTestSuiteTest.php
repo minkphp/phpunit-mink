@@ -52,7 +52,7 @@ class BrowserTestSuiteTest extends AbstractTestCase
 	 *
 	 * @return array
 	 */
-	public function nameFromBrowserDataProvider()
+	public static function nameFromBrowserDataProvider()
 	{
 		return array(
 			array(array('alias' => 'match'), 'match'),

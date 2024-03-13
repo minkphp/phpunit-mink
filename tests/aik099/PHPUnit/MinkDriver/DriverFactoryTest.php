@@ -75,7 +75,7 @@ class DriverFactoryTest extends AbstractTestCase
 		return $browser_configuration;
 	}
 
-	public function driverDataProvider()
+	public static function driverDataProvider()
 	{
 		return array(
 			'goutte' => array(

@@ -26,7 +26,7 @@ class DataProviderTest extends BrowserStackAwareTestCase
 		),
 	);
 
-	public function sampleDataProvider()
+	public static function sampleDataProvider()
 	{
 		return array(
 			array('case1'),

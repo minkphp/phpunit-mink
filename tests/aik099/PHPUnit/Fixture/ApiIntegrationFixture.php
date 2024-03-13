@@ -183,7 +183,7 @@ class ApiIntegrationFixture extends BrowserTestCase
 		$this->assertTrue(true);
 	}
 
-	public function successDataProvider()
+	public static function successDataProvider()
 	{
 		return array(
 			'true' => array(true),
