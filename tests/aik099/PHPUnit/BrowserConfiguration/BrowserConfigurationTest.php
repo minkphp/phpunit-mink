@@ -505,7 +505,7 @@ class BrowserConfigurationTest extends AbstractTestCase
 	 */
 	public function testGetSessionStrategyHashBrowserSharing($session_strategy)
 	{
-		/* @var $test_case BrowserTestCase */
+		/** @var BrowserTestCase $test_case */
 		$test_case = m::mock(self::TEST_CASE_CLASS);
 
 		$browser1 = $this->createBrowserConfiguration();

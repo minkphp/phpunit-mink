@@ -71,7 +71,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	public function testSetSessionStrategyManager()
 	{
-		/* @var $manager SessionStrategyManager */
+		/** @var SessionStrategyManager $manager */
 		$manager = m::mock(self::MANAGER_CLASS);
 
 		$test_case = new WithoutBrowserConfig('test name');
@@ -90,8 +90,8 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	public function testSetBrowserCorrect()
 	{
+		/** @var ISessionStrategy $session_strategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
-		/* @var $session_strategy ISessionStrategy */
 
 		$test_case = $this->getFixture($session_strategy);
 
@@ -164,7 +164,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	public function testSetSessionStrategy()
 	{
-		/* @var $session_strategy ISessionStrategy */
+		/** @var ISessionStrategy $session_strategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 
 		$test_case = new WithoutBrowserConfig('test name');
@@ -180,7 +180,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	public function testGetSessionStrategySharing()
 	{
-		/* @var $manager SessionStrategyManager */
+		/** @var SessionStrategyManager $manager */
 		$manager = m::mock(self::MANAGER_CLASS);
 
 		$manager->shouldReceive('getDefaultSessionStrategy')->twice()->andReturn('STRATEGY');
@@ -206,7 +206,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 		$expected_session1 = m::mock('\\Behat\\Mink\\Session');
 		$expected_session2 = m::mock('\\Behat\\Mink\\Session');
 
-		/* @var $session_strategy ISessionStrategy */
+		/** @var ISessionStrategy $session_strategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 		$session_strategy->shouldReceive('session')->with($browser)->andReturn($expected_session1, $expected_session2);
 
@@ -232,7 +232,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 	{
 		$browser = $this->getBrowser(1);
 
-		/* @var $session_strategy ISessionStrategy */
+		/** @var ISessionStrategy $session_strategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 		$session_strategy->shouldReceive('session')->andThrow('\Behat\Mink\Exception\DriverException');
 
@@ -312,7 +312,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	public function testRun()
 	{
-		/* @var $test_case BrowserTestCase */
+		/** @var BrowserTestCase $test_case */
 		list($test_case,) = $this->prepareForRun();
 		$result = new TestResult();
 
@@ -328,7 +328,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	public function testRunCreateResult()
 	{
-		/* @var $test_case BrowserTestCase */
+		/** @var BrowserTestCase $test_case */
 		list($test_case,) = $this->prepareForRun();
 
 		$this->assertInstanceOf('\\ConsoleHelpers\\PHPUnitCompat\\Framework\\TestResult', $test_case->run());
@@ -343,8 +343,8 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	public function testRunWithCoverageWithoutRemoteUrl()
 	{
-		/* @var $test_case BrowserTestCase */
-		/* @var $session_strategy ISessionStrategy */
+		/** @var BrowserTestCase $test_case */
+		/** @var ISessionStrategy $session_strategy */
 		list($test_case, $session_strategy) = $this->prepareForRun();
 		$test_case->setName('getTestId');
 		$test_case->setRemoteCoverageHelper($this->getRemoteCoverageHelperMock());
@@ -426,8 +426,8 @@ class BrowserTestCaseTest extends AbstractTestCase
 			),
 		);
 
-		/* @var $test_case BrowserTestCase */
-		/* @var $session_strategy ISessionStrategy */
+		/** @var BrowserTestCase $test_case */
+		/** @var ISessionStrategy $session_strategy */
 		list($test_case, $session_strategy) = $this->prepareForRun();
 		$test_case->setName('getTestId');
 		$test_case->setRemoteCoverageHelper($this->getRemoteCoverageHelperMock($expected_coverage));
@@ -582,7 +582,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	public function testEndOfTestCase()
 	{
-		/* @var $session_strategy ISessionStrategy */
+		/** @var ISessionStrategy $session_strategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 
 		$test_case = new WithoutBrowserConfig('test name');
@@ -603,7 +603,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 		$this->expectException('Exception');
 		$this->expectExceptionMessage('MSG_TEST');
 
-		/* @var $session_strategy ISessionStrategy */
+		/** @var ISessionStrategy $session_strategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 
 		$test_case = $this->getFixture($session_strategy);
@@ -637,7 +637,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	protected function prepareForRun()
 	{
-		/* @var $session_strategy ISessionStrategy */
+		/** @var ISessionStrategy $session_strategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 
 		$test_case = $this->getFixture($session_strategy);
@@ -667,7 +667,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 			$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 		}
 
-		/* @var $manager SessionStrategyManager */
+		/** @var SessionStrategyManager $manager */
 		$manager = m::mock(self::MANAGER_CLASS);
 		$manager->shouldReceive('getSessionStrategy')->andReturn($session_strategy);
 

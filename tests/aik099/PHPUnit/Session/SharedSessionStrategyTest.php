@@ -66,7 +66,7 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 	 */
 	public function testSessionSharing(\Exception $e = null)
 	{
-		/* @var $browser BrowserConfiguration */
+		/** @var BrowserConfiguration $browser */
 		$browser = m::mock(self::BROWSER_CLASS);
 		$this->_isolatedStrategy->shouldReceive('session')->once()->with($browser)->andReturn($this->_session1);
 
@@ -102,7 +102,7 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 	 */
 	public function testSessionResetOnFailure()
 	{
-		/* @var $browser BrowserConfiguration */
+		/** @var BrowserConfiguration $browser */
 		$browser = m::mock(self::BROWSER_CLASS);
 
 		$this->_isolatedStrategy
