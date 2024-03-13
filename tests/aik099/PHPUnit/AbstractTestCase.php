@@ -16,24 +16,6 @@ use PHPUnit\Framework\TestCase;
 abstract class AbstractTestCase extends TestCase
 {
 
-	/**
-	 * @after
-	 */
-	protected function verifyMockeryExpectations()
-	{
-		if ( !\class_exists('Mockery') ) {
-			return;
-		}
-
-		// Add Mockery expectations to assertion count.
-		$container = \Mockery::getContainer();
-
-		if ( $container !== null ) {
-			$this->addToAssertionCount($container->mockery_getExpectationCount());
-		}
-
-		// Verify Mockery expectations.
-		\Mockery::close();
-	}
+	use TVerifyTestExpectations;
 
 }
