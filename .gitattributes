@@ -1,0 +1,8 @@
+/.github export-ignore
+/docs export-ignore
+/tests export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+CONTRIBUTING.md export-ignore
+.readthedocs.yaml export-ignore
+phpunit.xml.dist export-ignore
