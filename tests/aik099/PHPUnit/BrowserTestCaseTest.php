@@ -21,6 +21,7 @@ use aik099\PHPUnit\Session\ISessionStrategy;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use ConsoleHelpers\CodeCoverageCompat\CodeCoverage;
 use ConsoleHelpers\CodeCoverageCompat\Filter;
+use ConsoleHelpers\PHPUnitCompat\Framework\SkippedTestError;
 use ConsoleHelpers\PHPUnitCompat\Framework\TestResult;
 use Mockery as m;
 use Mockery\MockInterface;
@@ -229,8 +230,8 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	public function testGetSessionDriverError()
 	{
-		$this->expectException('Exception');
-		$this->expectExceptionMessage('MSG_SKIP');
+		$this->expectException(SkippedTestError::class);
+		$this->expectExceptionMessage('The Selenium Server is not active on host {hostname} at port {port}');
 
 		$browser = $this->getBrowser(1);
 
@@ -238,10 +239,9 @@ class BrowserTestCaseTest extends AbstractTestCase
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 		$session_strategy->shouldReceive('session')->andThrow('\Behat\Mink\Exception\DriverException');
 
-		$test_case = $this->getFixture($session_strategy, array('markTestSkipped'));
+		$test_case = $this->getFixture($session_strategy);
 		$test_case->setBrowser($browser);
 
-		$test_case->shouldReceive('markTestSkipped')->once()->andThrow('\Exception', 'MSG_SKIP');
 		$test_case->getSession();
 	}
 
@@ -255,8 +255,8 @@ class BrowserTestCaseTest extends AbstractTestCase
 	protected function getBrowser($times)
 	{
 		$browser = m::mock(self::BROWSER_CLASS);
-		$browser->shouldReceive('getHost')->times($times);
-		$browser->shouldReceive('getPort')->times($times);
+		$browser->shouldReceive('getHost')->times($times)->andReturn('{hostname}');
+		$browser->shouldReceive('getPort')->times($times)->andReturn('{port}');
 
 		return $browser;
 	}
@@ -622,16 +622,14 @@ class BrowserTestCaseTest extends AbstractTestCase
 	/**
 	 * Prepares test case to be used by "run" method.
 	 *
-	 * @param array $mock_methods Method names to mock.
-	 *
 	 * @return array
 	 */
-	protected function prepareForRun(array $mock_methods = array())
+	protected function prepareForRun()
 	{
 		/* @var $session_strategy ISessionStrategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 
-		$test_case = $this->getFixture($session_strategy, $mock_methods);
+		$test_case = $this->getFixture($session_strategy);
 		$test_case->setName('testSuccess');
 
 		$session_strategy->shouldReceive('onTestEnded')->with($test_case)->once();
@@ -649,11 +647,10 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 * Returns test case fixture.
 	 *
 	 * @param ISessionStrategy|null $session_strategy Session strategy.
-	 * @param array                 $mock_methods     Method names to mock.
 	 *
 	 * @return WithoutBrowserConfig
 	 */
-	protected function getFixture(ISessionStrategy $session_strategy = null, array $mock_methods = array())
+	protected function getFixture(ISessionStrategy $session_strategy = null)
 	{
 		if ( !isset($session_strategy) ) {
 			$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
@@ -663,13 +660,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 		$manager = m::mock(self::MANAGER_CLASS);
 		$manager->shouldReceive('getSessionStrategy')->andReturn($session_strategy);
 
-		if ( $mock_methods ) {
-			$test_case = m::mock('\\aik099\\PHPUnit\\BrowserTestCase[' . implode(',', $mock_methods) . ']');
-		}
-		else {
-			$test_case = new WithoutBrowserConfig('test name');
-		}
-
+		$test_case = new WithoutBrowserConfig('test name');
 		$test_case->setBrowserConfigurationFactory($this->browserConfigurationFactory);
 		$test_case->setSessionStrategyManager($manager);
 
