@@ -70,7 +70,7 @@ class RemoteCoverageHelperTest extends AbstractTestCase
 	 *
 	 * @return array
 	 */
-	public function createUrlErrorDataProvider()
+	public static function createUrlErrorDataProvider()
 	{
 		return array(
 			array('', 'test-id'),
@@ -114,7 +114,7 @@ class RemoteCoverageHelperTest extends AbstractTestCase
 	 *
 	 * @return array
 	 */
-	public function createUrlDataProvider()
+	public static function createUrlDataProvider()
 	{
 		return array(
 			array('http://host', 'test-id', 'http://host?rct_mode=output&PHPUNIT_MINK_TEST_ID=test-id'),

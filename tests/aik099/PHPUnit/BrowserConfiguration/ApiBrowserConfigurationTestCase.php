@@ -198,8 +198,12 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 * Desired capability data provider.
 	 *
 	 * @return array
+	 * @throws \RuntimeException When not overridden in a subclass.
 	 */
-	abstract public function desiredCapabilitiesDataProvider();
+	public static function desiredCapabilitiesDataProvider()
+	{
+		throw new \RuntimeException('Not overridden in a subclass');
+	}
 
 	/**
 	 * Test description.
@@ -267,7 +271,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 *
 	 * @return array
 	 */
-	public function setupProcessDataProvider()
+	public static function setupProcessDataProvider()
 	{
 		$seed = uniqid();
 
@@ -333,7 +337,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 *
 	 * @return array
 	 */
-	public function onTestEndedDataProvider()
+	public static function onTestEndedDataProvider()
 	{
 		return array(
 			array('selenium'),
@@ -362,7 +366,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$this->browser->onTestEnded($test_case, $test_result);
 	}
 
-	public function sessionStateDataProvider()
+	public static function sessionStateDataProvider()
 	{
 		return array(
 			'session stopped/missing' => array(true),
@@ -435,7 +439,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	 *
 	 * @return array
 	 */
-	public function tunnelIdentifierDataProvider()
+	public static function tunnelIdentifierDataProvider()
 	{
 		return array(
 			array('AAA'),

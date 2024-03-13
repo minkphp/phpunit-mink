@@ -86,7 +86,7 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 	 *
 	 * @return array
 	 */
-	public function ignoreExceptionDataProvider()
+	public static function ignoreExceptionDataProvider()
 	{
 		return array(
 			array(null),

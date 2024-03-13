@@ -56,11 +56,9 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 	}
 
 	/**
-	 * Desired capability data provider.
-	 *
-	 * @return array
+	 * @inheritDoc
 	 */
-	public function desiredCapabilitiesDataProvider()
+	public static function desiredCapabilitiesDataProvider()
 	{
 		return array(
 			array(

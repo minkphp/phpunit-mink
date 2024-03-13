@@ -80,7 +80,7 @@ class BrowserConfigurationFactoryTest extends AbstractTestCase
 	 *
 	 * @return array
 	 */
-	public function createBrowserConfigurationDataProvider()
+	public static function createBrowserConfigurationDataProvider()
 	{
 		return array(
 			array(array('type' => 'test'), 'test'),
