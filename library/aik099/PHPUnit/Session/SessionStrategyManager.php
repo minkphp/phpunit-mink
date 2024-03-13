@@ -30,11 +30,11 @@ class SessionStrategyManager
 	protected $lastUsedSessionStrategyHash;
 
 	/**
-	 * Session strategy, that was requested in browser configuration.
+	 * Session strategy, that was last requested in the browser configuration.
 	 *
-	 * @var ISessionStrategy[]
+	 * @var ISessionStrategy
 	 */
-	protected $sessionStrategiesInUse = array();
+	protected $lastUsedSessionStrategy;
 
 	/**
 	 * Session strategy, that will be used by default.
@@ -94,15 +94,14 @@ class SessionStrategyManager
 		$strategy_type = $browser->getSessionStrategy();
 		$strategy_hash = $browser->getSessionStrategyHash($test_case);
 
-		if ( $strategy_hash !== $this->lastUsedSessionStrategyHash ) {
-			$this->sessionStrategiesInUse[$strategy_hash] = $this->_sessionStrategyFactory->createStrategy(
-				$strategy_type
-			);
+		if ( $strategy_hash === $this->lastUsedSessionStrategyHash ) {
+			return $this->lastUsedSessionStrategy;
 		}
 
+		$this->lastUsedSessionStrategy = $this->_sessionStrategyFactory->createStrategy($strategy_type);
 		$this->lastUsedSessionStrategyHash = $strategy_hash;
 
-		return $this->sessionStrategiesInUse[$strategy_hash];
+		return $this->lastUsedSessionStrategy;
 	}
 
 }
