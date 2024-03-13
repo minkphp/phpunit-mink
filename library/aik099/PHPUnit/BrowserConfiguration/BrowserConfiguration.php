@@ -482,7 +482,6 @@ class BrowserConfiguration
 			}
 
 			return $test_failures ? reset($test_failures)->exceptionMessage() : '';
-
 		}
 
 		// Each test in a test case are using it's own session -> failed if test fails.

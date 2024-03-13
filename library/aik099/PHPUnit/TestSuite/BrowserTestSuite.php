@@ -59,7 +59,7 @@ class BrowserTestSuite extends AbstractTestSuite
 				$this->setBrowserFromConfiguration($browser, $test->tests());
 			}
 			else {
-				/* @var $test BrowserTestCase */
+				/** @var BrowserTestCase $test */
 				$test->setBrowserFromConfiguration($browser);
 			}
 		}

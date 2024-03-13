@@ -141,7 +141,7 @@ class GoutteDriverFactory implements IMinkDriverFactory
 
 		return false;
 	}
-	
+
 	/**
 	 * Determines Guzzle version.
 	 *
@@ -149,7 +149,7 @@ class GoutteDriverFactory implements IMinkDriverFactory
 	 */
 	private function _isGuzzle6()
 	{
-		return interface_exists('GuzzleHttp\ClientInterface') && 
+		return interface_exists('GuzzleHttp\ClientInterface') &&
 		version_compare(\GuzzleHttp\ClientInterface::VERSION, '6.0.0', '>=');
 	}
 

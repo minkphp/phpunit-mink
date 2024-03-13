@@ -157,7 +157,7 @@ abstract class AbstractTestSuite extends PHPUnitCompatAbstractTestSuite
 				/*
 				 * Once browser test suite ends the shared sessions strategy can stop the browser.
 				 */
-				/* @var $test BrowserTestCase|AbstractTestSuite */
+				/** @var BrowserTestCase|AbstractTestSuite $test */
 				$test->onTestSuiteEnded();
 			}
 		}
