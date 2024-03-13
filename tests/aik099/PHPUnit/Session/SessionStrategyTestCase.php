@@ -13,15 +13,18 @@ namespace tests\aik099\PHPUnit\Session;
 
 use aik099\PHPUnit\Session\ISessionStrategy;
 use tests\aik099\PHPUnit\AbstractTestCase;
+use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
+use Behat\Mink\Session;
+use aik099\PHPUnit\BrowserTestCase;
 
 class SessionStrategyTestCase extends AbstractTestCase
 {
 
-	const BROWSER_CLASS = '\\aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
+	const BROWSER_CLASS = BrowserConfiguration::class;
 
-	const SESSION_CLASS = '\\Behat\\Mink\\Session';
+	const SESSION_CLASS = Session::class;
 
-	const TEST_CASE_CLASS = 'aik099\\PHPUnit\\BrowserTestCase';
+	const TEST_CASE_CLASS = BrowserTestCase::class;
 
 	/**
 	 * Session strategy.

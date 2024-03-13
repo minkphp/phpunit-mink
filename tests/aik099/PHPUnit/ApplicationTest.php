@@ -13,6 +13,7 @@ namespace tests\aik099\PHPUnit;
 
 use aik099\PHPUnit\Application;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
+use aik099\PHPUnit\TestSuite\TestSuiteFactory;
 
 class ApplicationTest extends AbstractTestCase
 {
@@ -51,10 +52,7 @@ class ApplicationTest extends AbstractTestCase
 	 */
 	public function testGetTestSuiteFactory()
 	{
-		$this->assertInstanceOf(
-			'aik099\\PHPUnit\\TestSuite\\TestSuiteFactory',
-			$this->_application->getTestSuiteFactory()
-		);
+		$this->assertInstanceOf(TestSuiteFactory::class, $this->_application->getTestSuiteFactory());
 	}
 
 	/**
@@ -64,7 +62,7 @@ class ApplicationTest extends AbstractTestCase
 	 */
 	public function testGetObject()
 	{
-		$this->assertInstanceOf('aik099\\PHPUnit\\Application', $this->_application->getObject('application'));
+		$this->assertInstanceOf(Application::class, $this->_application->getObject('application'));
 	}
 
 	/**

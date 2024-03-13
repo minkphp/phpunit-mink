@@ -11,6 +11,8 @@
 namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 
+use aik099\PHPUnit\BrowserConfiguration\BrowserStackBrowserConfiguration;
+
 class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 {
 
@@ -21,7 +23,7 @@ class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCa
 	 */
 	protected function setUpTest()
 	{
-		$this->browserConfigurationClass = 'aik099\\PHPUnit\\BrowserConfiguration\\BrowserStackBrowserConfiguration';
+		$this->browserConfigurationClass = BrowserStackBrowserConfiguration::class;
 
 		$this->tunnelCapabilities = array(
 			'browserstack.local' => 'true',

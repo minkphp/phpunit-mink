@@ -19,6 +19,9 @@ use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use ConsoleHelpers\PHPUnitCompat\Framework\TestResult;
 use Mockery as m;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
+use Behat\Mink\Driver\Selenium2Driver;
+use Behat\Mink\Driver\DriverInterface;
+use Behat\Mink\Session;
 
 abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 {
@@ -56,10 +59,10 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	protected function setUpTest()
 	{
 		if ( $this->needsAPIClient() ) {
-			$this->apiClient = m::mock('\\aik099\\PHPUnit\\APIClient\\IAPIClient');
+			$this->apiClient = m::mock(IAPIClient::class);
 		}
 
-		$this->apiClientFactory = m::mock('\\aik099\\PHPUnit\\APIClient\\APIClientFactory');
+		$this->apiClientFactory = m::mock(APIClientFactory::class);
 
 		parent::setUpTest();
 
@@ -309,7 +312,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$test_case = $this->createTestCase('TEST_NAME');
 
 		if ( $driver_type == 'selenium' ) {
-			$driver = m::mock('\\Behat\\Mink\\Driver\\Selenium2Driver');
+			$driver = m::mock(Selenium2Driver::class);
 			$driver->shouldReceive('getWebDriverSessionId')->once()->andReturn('SID');
 
 			$this->apiClient->shouldReceive('updateStatus')->with('SID', true, 'test status message')->once();
@@ -317,11 +320,11 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 			$test_case->shouldReceive('getStatusMessage')->once()->andReturn('test status message'); // For shared strategy.
 		}
 		else {
-			$driver = m::mock('\\Behat\\Mink\\Driver\\DriverInterface');
+			$driver = m::mock(DriverInterface::class);
 			$this->expectException('RuntimeException');
 		}
 
-		$session = m::mock('Behat\\Mink\\Session');
+		$session = m::mock(Session::class);
 		$session->shouldReceive('getDriver')->once()->andReturn($driver);
 		$session->shouldReceive('isStarted')->once()->andReturn(true);
 
@@ -353,7 +356,7 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 		$test_case = $this->createTestCase('TEST_NAME');
 
 		if ( $stopped_or_missing ) {
-			$session = m::mock('Behat\\Mink\\Session');
+			$session = m::mock(Session::class);
 			$session->shouldReceive('isStarted')->once()->andReturn(false);
 			$test_case->shouldReceive('getSession')->with(false)->once()->andReturn($session);
 		}

@@ -17,6 +17,10 @@ use aik099\PHPUnit\Session\SessionStrategyFactory;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use Mockery as m;
 use tests\aik099\PHPUnit\AbstractTestCase;
+use aik099\PHPUnit\Session\IsolatedSessionStrategy;
+use aik099\PHPUnit\Session\SharedSessionStrategy;
+use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
+use aik099\PHPUnit\BrowserTestCase;
 
 class SessionStrategyManagerTest extends AbstractTestCase
 {
@@ -40,7 +44,7 @@ class SessionStrategyManagerTest extends AbstractTestCase
 	 */
 	protected function setUpTest()
 	{
-		$this->factory = m::mock('aik099\\PHPUnit\\Session\\ISessionStrategyFactory');
+		$this->factory = m::mock(ISessionStrategyFactory::class);
 		$this->manager = new SessionStrategyManager($this->factory);
 	}
 
@@ -79,7 +83,7 @@ class SessionStrategyManagerTest extends AbstractTestCase
 		$this->factory
 			->shouldReceive('createStrategy')
 			->andReturnUsing(function () {
-				return m::mock('aik099\\PHPUnit\\Session\\ISessionStrategy');
+				return m::mock(ISessionStrategy::class);
 			});
 
 		// Sequential identical browser configurations share strategy.
@@ -103,7 +107,7 @@ class SessionStrategyManagerTest extends AbstractTestCase
 	 */
 	public function testGetSessionStrategyIsolated()
 	{
-		$expected = '\\aik099\\PHPUnit\\Session\\IsolatedSessionStrategy';
+		$expected = IsolatedSessionStrategy::class;
 		$this->factory->shouldReceive('createStrategy')->andReturn(m::mock($expected));
 
 		$this->assertInstanceOf($expected, $this->_getStrategy(ISessionStrategyFactory::TYPE_ISOLATED, 'IS1'));
@@ -116,7 +120,7 @@ class SessionStrategyManagerTest extends AbstractTestCase
 	 */
 	public function testGetSessionStrategyShared()
 	{
-		$expected = '\\aik099\\PHPUnit\\Session\\SharedSessionStrategy';
+		$expected = SharedSessionStrategy::class;
 		$this->factory->shouldReceive('createStrategy')->andReturn(m::mock($expected));
 
 		$this->assertInstanceOf($expected, $this->_getStrategy(ISessionStrategyFactory::TYPE_SHARED, 'SH1'));
@@ -132,11 +136,11 @@ class SessionStrategyManagerTest extends AbstractTestCase
 	 */
 	private function _getStrategy($strategy_type, $strategy_hash)
 	{
-		$browser = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration');
+		$browser = m::mock(BrowserConfiguration::class);
 		$browser->shouldReceive('getSessionStrategy')->once()->andReturn($strategy_type);
 		$browser->shouldReceive('getSessionStrategyHash')->once()->andReturn($strategy_hash);
 
-		$test_case = m::mock('aik099\\PHPUnit\\BrowserTestCase');
+		$test_case = m::mock(BrowserTestCase::class);
 
 		return $this->manager->getSessionStrategy($browser, $test_case);
 	}

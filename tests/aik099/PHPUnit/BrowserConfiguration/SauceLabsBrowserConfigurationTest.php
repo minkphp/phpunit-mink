@@ -11,6 +11,8 @@
 namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 
+use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
+
 class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 {
 
@@ -21,7 +23,7 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 	 */
 	protected function setUpTest()
 	{
-		$this->browserConfigurationClass = 'aik099\\PHPUnit\\BrowserConfiguration\\SauceLabsBrowserConfiguration';
+		$this->browserConfigurationClass = SauceLabsBrowserConfiguration::class;
 
 		$this->tunnelCapabilities = array(
 			'tunnel-identifier' => 'env:PHPUNIT_MINK_TUNNEL_ID',

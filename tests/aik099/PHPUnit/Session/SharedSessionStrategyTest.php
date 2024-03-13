@@ -52,7 +52,7 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 		$this->_session1 = $this->createSession();
 		$this->_session2 = $this->createSession();
 
-		$this->_isolatedStrategy = m::mock('\\aik099\\PHPUnit\\Session\\IsolatedSessionStrategy');
+		$this->_isolatedStrategy = m::mock(IsolatedSessionStrategy::class);
 		$this->strategy = new SharedSessionStrategy($this->_isolatedStrategy);
 	}
 

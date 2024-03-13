@@ -22,13 +22,14 @@ use tests\aik099\PHPUnit\AbstractTestCase;
 use tests\aik099\PHPUnit\Fixture\WithBrowserConfig;
 use tests\aik099\PHPUnit\Fixture\WithoutBrowserConfig;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
+use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
 
 class BrowserConfigurationTest extends AbstractTestCase
 {
 
 	use ExpectException;
 
-	const TEST_CASE_CLASS = '\\aik099\\PHPUnit\\BrowserTestCase';
+	const TEST_CASE_CLASS = BrowserTestCase::class;
 
 	const HOST = 'example_host';
 
@@ -89,7 +90,7 @@ class BrowserConfigurationTest extends AbstractTestCase
 	protected function setUpTest()
 	{
 		if ( !$this->browserConfigurationClass ) {
-			$this->browserConfigurationClass = 'aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration';
+			$this->browserConfigurationClass = BrowserConfiguration::class;
 		}
 
 		$this->setup = array(
@@ -116,9 +117,9 @@ class BrowserConfigurationTest extends AbstractTestCase
 	 */
 	protected function createDriverFactoryRegistry()
 	{
-		$registry = m::mock('\\aik099\\PHPUnit\\MinkDriver\\DriverFactoryRegistry');
+		$registry = m::mock(DriverFactoryRegistry::class);
 
-		$selenium2_driver_factory = m::mock('\\aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$selenium2_driver_factory = m::mock(IMinkDriverFactory::class);
 		$selenium2_driver_factory->shouldReceive('getDriverDefaults')->andReturn(array(
 			'baseUrl' => 'http://www.super-url.com',
 			'driverOptions' => array(
@@ -130,7 +131,7 @@ class BrowserConfigurationTest extends AbstractTestCase
 			->with('selenium2')
 			->andReturn($selenium2_driver_factory);
 
-		$zombie_driver_factory = m::mock('\\aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$zombie_driver_factory = m::mock(IMinkDriverFactory::class);
 		$zombie_driver_factory->shouldReceive('getDriverDefaults')->andReturn(array());
 		$registry
 			->shouldReceive('get')

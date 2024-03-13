@@ -16,6 +16,7 @@ use aik099\PHPUnit\BrowserConfiguration\BrowserConfigurationFactory;
 use Mockery as m;
 use tests\aik099\PHPUnit\AbstractTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
+use aik099\PHPUnit\BrowserTestCase;
 
 class BrowserConfigurationFactoryTest extends AbstractTestCase
 {
@@ -51,7 +52,7 @@ class BrowserConfigurationFactoryTest extends AbstractTestCase
 	{
 		$browser_aliases = array('alias-one' => array());
 
-		$test_case = m::mock('aik099\\PHPUnit\\BrowserTestCase');
+		$test_case = m::mock(BrowserTestCase::class);
 		$test_case->shouldReceive('getBrowserAliases')->once()->andReturn($browser_aliases);
 
 		$cleaned_browser_config = $browser_config;
@@ -72,7 +73,7 @@ class BrowserConfigurationFactoryTest extends AbstractTestCase
 
 		$actual_browser = $this->_factory->createBrowserConfiguration($browser_config, $test_case);
 		$this->assertEquals($type, $actual_browser->getType());
-		$this->assertInstanceOf('aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration', $actual_browser);
+		$this->assertInstanceOf(BrowserConfiguration::class, $actual_browser);
 	}
 
 	/**
@@ -99,7 +100,7 @@ class BrowserConfigurationFactoryTest extends AbstractTestCase
 
 		$browser_aliases = array('alias-one' => array());
 
-		$test_case = m::mock('aik099\\PHPUnit\\BrowserTestCase');
+		$test_case = m::mock(BrowserTestCase::class);
 		$test_case->shouldReceive('getBrowserAliases')->once()->andReturn($browser_aliases);
 
 		$this->_factory->createBrowserConfiguration(array('type' => 'test'), $test_case);
@@ -128,7 +129,7 @@ class BrowserConfigurationFactoryTest extends AbstractTestCase
 	 */
 	private function _createBrowserConfiguration($type)
 	{
-		$browser_configuration = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfiguration');
+		$browser_configuration = m::mock(BrowserConfiguration::class);
 		$browser_configuration->shouldReceive('getType')->andReturn($type);
 
 		return $browser_configuration;

@@ -17,6 +17,10 @@ use aik099\PHPUnit\DIContainer;
 use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
 use tests\aik099\PHPUnit\AbstractTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
+use aik099\PHPUnit\MinkDriver\GoutteDriverFactory;
+use aik099\PHPUnit\MinkDriver\SahiDriverFactory;
+use aik099\PHPUnit\MinkDriver\Selenium2DriverFactory;
+use aik099\PHPUnit\MinkDriver\ZombieDriverFactory;
 
 class DriverFactoryTest extends AbstractTestCase
 {
@@ -79,20 +83,20 @@ class DriverFactoryTest extends AbstractTestCase
 	{
 		return array(
 			'goutte' => array(
-				'Behat\\Mink\\Driver\\GoutteDriver',
-				'aik099\PHPUnit\MinkDriver\GoutteDriverFactory',
+				'\Behat\Mink\Driver\GoutteDriver',
+				GoutteDriverFactory::class,
 			),
 			'sahi' => array(
-				'Behat\\Mink\\Driver\\SahiDriver',
-				'aik099\PHPUnit\MinkDriver\SahiDriverFactory',
+				'\Behat\Mink\Driver\SahiDriver',
+				SahiDriverFactory::class,
 			),
 			'selenium2' => array(
-				'Behat\\Mink\\Driver\\Selenium2Driver',
-				'aik099\PHPUnit\MinkDriver\Selenium2DriverFactory',
+				'\Behat\Mink\Driver\Selenium2Driver',
+				Selenium2DriverFactory::class,
 			),
 			'zombie' => array(
-				'Behat\\Mink\\Driver\\ZombieDriver',
-				'aik099\PHPUnit\MinkDriver\ZombieDriverFactory',
+				'\Behat\Mink\Driver\ZombieDriver',
+				ZombieDriverFactory::class,
 			),
 		);
 	}

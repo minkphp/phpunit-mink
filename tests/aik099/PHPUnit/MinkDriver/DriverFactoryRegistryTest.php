@@ -16,6 +16,7 @@ use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use Mockery as m;
 use tests\aik099\PHPUnit\AbstractTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
+use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
 
 class DriverFactoryRegistryTest extends AbstractTestCase
 {
@@ -39,7 +40,7 @@ class DriverFactoryRegistryTest extends AbstractTestCase
 
 	public function testAddingAndGetting()
 	{
-		$factory = m::mock('aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$factory = m::mock(IMinkDriverFactory::class);
 		$factory->shouldReceive('getDriverName')->andReturn('test');
 
 		$this->_driverFactoryRegistry->add($factory);
@@ -52,7 +53,7 @@ class DriverFactoryRegistryTest extends AbstractTestCase
 		$this->expectException('LogicException');
 		$this->expectExceptionMessage('Driver factory for "test" driver is already registered.');
 
-		$factory = m::mock('aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
+		$factory = m::mock(IMinkDriverFactory::class);
 		$factory->shouldReceive('getDriverName')->andReturn('test');
 
 		$this->_driverFactoryRegistry->add($factory);

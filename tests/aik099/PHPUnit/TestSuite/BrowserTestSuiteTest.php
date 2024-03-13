@@ -14,6 +14,7 @@ namespace tests\aik099\PHPUnit\TestSuite;
 use aik099\PHPUnit\TestSuite\BrowserTestSuite;
 use Mockery as m;
 use tests\aik099\PHPUnit\AbstractTestCase;
+use ConsoleHelpers\PHPUnitCompat\Framework\Test;
 
 class BrowserTestSuiteTest extends AbstractTestCase
 {
@@ -72,7 +73,7 @@ class BrowserTestSuiteTest extends AbstractTestCase
 	public function testSetBrowserFromConfiguration()
 	{
 		$browser = array('name' => 'safari');
-		$test = m::mock('\\ConsoleHelpers\\PHPUnitCompat\\Framework\\Test');
+		$test = m::mock(Test::class);
 		$test->shouldReceive('setBrowserFromConfiguration')->with($browser)->once();
 
 		$this->_suite->addTest($test);
