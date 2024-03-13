@@ -11,6 +11,7 @@
 namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 
+use aik099\PHPUnit\APIClient\APIClientFactory;
 use aik099\PHPUnit\APIClient\IAPIClient;
 use aik099\PHPUnit\BrowserConfiguration\ApiBrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
@@ -43,15 +44,31 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	protected $apiClient;
 
 	/**
+	 * Driver factory registry.
+	 *
+	 * @var APIClientFactory|m\MockInterface
+	 */
+	protected $apiClientFactory;
+
+	/**
 	 * @before
 	 */
 	protected function setUpTest()
 	{
-		if ( $this->getName(false) === 'testOnTestEnded' ) {
-			$this->mockBrowserMethods[] = 'getAPIClient';
+		if ( $this->needsAPIClient() ) {
+			$this->apiClient = m::mock('\\aik099\\PHPUnit\\APIClient\\IAPIClient');
 		}
 
+		$this->apiClientFactory = m::mock('\\aik099\\PHPUnit\\APIClient\\APIClientFactory');
+
 		parent::setUpTest();
+
+		if ( $this->needsAPIClient() ) {
+			$this->apiClientFactory->shouldReceive('getAPIClient')
+				->with($this->browser)
+				->once()
+				->andReturn($this->apiClient);
+		}
 
 		$this->setup['port'] = 80;
 		$this->setup['apiUsername'] = 'UN';
@@ -287,14 +304,11 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 	{
 		$test_case = $this->createTestCase('TEST_NAME');
 
-		$api_client = m::mock('aik099\\PHPUnit\\APIClient\\IAPIClient');
-		$this->browser->shouldReceive('getAPIClient')->andReturn($api_client);
-
 		if ( $driver_type == 'selenium' ) {
 			$driver = m::mock('\\Behat\\Mink\\Driver\\Selenium2Driver');
 			$driver->shouldReceive('getWebDriverSessionId')->once()->andReturn('SID');
 
-			$api_client->shouldReceive('updateStatus')->with('SID', true, 'test status message')->once();
+			$this->apiClient->shouldReceive('updateStatus')->with('SID', true, 'test status message')->once();
 			$test_case->shouldReceive('hasFailed')->once()->andReturn(false); // For shared strategy.
 			$test_case->shouldReceive('getStatusMessage')->once()->andReturn('test status message'); // For shared strategy.
 		}
@@ -427,6 +441,35 @@ abstract class ApiBrowserConfigurationTestCase extends BrowserConfigurationTest
 			array('AAA'),
 			array(null),
 		);
+	}
+
+	public function testGetAPIClient()
+	{
+		$this->assertSame($this->apiClient, $this->browser->getAPIClient());
+	}
+
+	/**
+	 * Creates instance of browser configuration.
+	 *
+	 * @return ApiBrowserConfiguration
+	 */
+	protected function createBrowserConfiguration()
+	{
+		/** @var ApiBrowserConfiguration $browser */
+		$browser = new $this->browserConfigurationClass($this->driverFactoryRegistry, $this->apiClientFactory);
+		$browser->setAliases();
+
+		return $browser;
+	}
+
+	/**
+	 * Determines if test needs an API client.
+	 *
+	 * @return boolean
+	 */
+	protected function needsAPIClient()
+	{
+		return in_array($this->getName(false), array('testOnTestEnded', 'testGetAPIClient'));
 	}
 
 }

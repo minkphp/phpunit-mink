@@ -11,6 +11,7 @@
 namespace aik099\PHPUnit;
 
 
+use aik099\PHPUnit\APIClient\APIClientFactory;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfigurationFactory;
 use aik099\PHPUnit\BrowserConfiguration\BrowserStackBrowserConfiguration;
@@ -119,6 +120,10 @@ class DIContainer extends Container implements IApplicationAware
 			return $registry;
 		};
 
+		$this['api_client_factory'] = function ($c) {
+			return new APIClientFactory();
+		};
+
 		$this['browser_configuration_factory'] = function ($c) {
 			$browser_configuration_factory = new BrowserConfigurationFactory();
 
@@ -126,10 +131,10 @@ class DIContainer extends Container implements IApplicationAware
 				new BrowserConfiguration($c['driver_factory_registry'])
 			);
 			$browser_configuration_factory->register(
-				new SauceLabsBrowserConfiguration($c['driver_factory_registry'])
+				new SauceLabsBrowserConfiguration($c['driver_factory_registry'], $c['api_client_factory'])
 			);
 			$browser_configuration_factory->register(
-				new BrowserStackBrowserConfiguration($c['driver_factory_registry'])
+				new BrowserStackBrowserConfiguration($c['driver_factory_registry'], $c['api_client_factory'])
 			);
 
 			return $browser_configuration_factory;

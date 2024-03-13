@@ -76,9 +76,4 @@ class BrowserStackBrowserConfigurationTest extends ApiBrowserConfigurationTestCa
 		);
 	}
 
-	public function testGetAPIClient()
-	{
-		$this->assertInstanceOf('aik099\\PHPUnit\\APIClient\\BrowserStackAPIClient', $this->browser->getAPIClient());
-	}
-
 }

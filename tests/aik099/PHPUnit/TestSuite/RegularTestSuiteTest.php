@@ -25,11 +25,12 @@ class RegularTestSuiteTest extends AbstractTestCase
 	 */
 	public function testAddTestMethods()
 	{
-		$suite = $this->_createSuite(array('addTest'));
-		$suite->shouldReceive('addTest')->twice();
+		$suite = $this->_createSuite();
 
 		$actual = $suite->addTestMethods('tests\\aik099\\PHPUnit\\Fixture\\WithoutBrowserConfig');
-		$this->assertSame($suite, $actual);
+		$this->assertSame($suite, $actual, 'The fluid interface doesn\'t work.');
+
+		$this->assertCount(2, $actual->tests(), 'Not all tests were added.');
 	}
 
 	/**
@@ -50,26 +51,21 @@ class RegularTestSuiteTest extends AbstractTestCase
 
 		$suite = $this->_createSuite();
 		$suite->addTest($test);
-		$this->assertSame($suite, $suite->setTestDependencies($manager, $factory, $helper));
+		$this->assertSame(
+			$suite,
+			$suite->setTestDependencies($manager, $factory, $helper),
+			'The fluid interface doesn\'t work.'
+		);
 	}
 
 	/**
 	 * Creates suite.
 	 *
-	 * @param array $mock_methods Mock methods.
-	 *
 	 * @return RegularTestSuite
 	 */
-	private function _createSuite(array $mock_methods = array())
+	private function _createSuite()
 	{
-		if ( $mock_methods ) {
-			$suite = m::mock('aik099\\PHPUnit\\TestSuite\\RegularTestSuite[' . implode(',', $mock_methods) . ']');
-		}
-		else {
-			$suite = new RegularTestSuite();
-		}
-
-		return $suite;
+		return new RegularTestSuite();
 	}
 
 }
