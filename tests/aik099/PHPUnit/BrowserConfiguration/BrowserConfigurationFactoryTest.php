@@ -13,7 +13,6 @@ namespace tests\aik099\PHPUnit\BrowserConfiguration;
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfigurationFactory;
-use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use Mockery as m;
 use tests\aik099\PHPUnit\AbstractTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
@@ -31,39 +30,11 @@ class BrowserConfigurationFactoryTest extends AbstractTestCase
 	private $_factory;
 
 	/**
-	 * Driver factory registry.
-	 *
-	 * @var DriverFactoryRegistry|m\MockInterface
-	 */
-	private $_driverFactoryRegistry;
-
-	/**
 	 * @before
 	 */
 	protected function setUpTest()
 	{
 		$this->_factory = new BrowserConfigurationFactory();
-		$this->_driverFactoryRegistry = $this->createDriverFactoryRegistry();
-	}
-
-	/**
-	 * Creates driver factory registry.
-	 *
-	 * @return DriverFactoryRegistry
-	 */
-	protected function createDriverFactoryRegistry()
-	{
-		$registry = m::mock('\\aik099\\PHPUnit\\MinkDriver\\DriverFactoryRegistry');
-
-		$driver_factory = m::mock('\\aik099\\PHPUnit\\MinkDriver\\IMinkDriverFactory');
-		$driver_factory->shouldReceive('getDriverDefaults')->andReturn(array());
-
-		$registry
-			->shouldReceive('get')
-			->with('selenium2')
-			->andReturn($driver_factory);
-
-		return $registry;
 	}
 
 	/**
