@@ -230,9 +230,6 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	public function testGetSessionDriverError()
 	{
-		$this->expectException(SkippedTestError::class);
-		$this->expectExceptionMessage('The Selenium Server is not active on host {hostname} at port {port}');
-
 		$browser = $this->getBrowser(1);
 
 		/* @var $session_strategy ISessionStrategy */
@@ -242,7 +239,21 @@ class BrowserTestCaseTest extends AbstractTestCase
 		$test_case = $this->getFixture($session_strategy);
 		$test_case->setBrowser($browser);
 
-		$test_case->getSession();
+		// On PHPUnit 5.x usage of expectException/expectExceptionMessage results in this test being marked as skipped.
+		try {
+			$test_case->getSession();
+		}
+		catch ( \Exception $e ) {
+			$this->assertInstanceOf(SkippedTestError::class, $e);
+			$this->assertEquals(
+				'The Selenium Server is not active on host {hostname} at port {port}',
+				$e->getMessage()
+			);
+		}
+
+		if ( !isset($e) ) {
+			$this->fail('No exception about non-working Selenium server was thrown.');
+		}
 	}
 
 	/**
