@@ -17,7 +17,7 @@ use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use Behat\Mink\Session;
 use Mockery as m;
-use tests\aik099\PHPUnit\TVerifyAssertions;
+use tests\aik099\PHPUnit\TVerifyTestExpectations;
 
 class SetupFixture extends BrowserTestCase
 {
