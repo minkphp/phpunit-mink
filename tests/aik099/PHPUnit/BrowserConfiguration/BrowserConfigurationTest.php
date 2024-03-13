@@ -106,10 +106,7 @@ class BrowserConfigurationTest extends AbstractTestCase
 
 		$this->driverFactoryRegistry = $this->createDriverFactoryRegistry();
 
-		$this->browser = $this->createBrowserConfiguration(
-			array(),
-			$this->mockBrowserMethods
-		);
+		$this->browser = $this->createBrowserConfiguration();
 	}
 
 	/**
@@ -611,27 +608,13 @@ class BrowserConfigurationTest extends AbstractTestCase
 	/**
 	 * Creates instance of browser configuration.
 	 *
-	 * @param array $aliases      Aliases.
-	 * @param array $mock_methods Mock methods.
-	 *
 	 * @return BrowserConfiguration
 	 */
-	protected function createBrowserConfiguration(array $aliases = array(), $mock_methods = array())
+	protected function createBrowserConfiguration()
 	{
-		if ( $mock_methods ) {
-			/** @var BrowserConfiguration $browser */
-			$browser = m::mock(
-				$this->browserConfigurationClass . '[' . implode(',', $mock_methods) . ']',
-				array($this->driverFactoryRegistry),
-				array('getSessionStrategy' => 'isolated')
-			);
-		}
-		else {
-			/** @var BrowserConfiguration $browser */
-			$browser = new $this->browserConfigurationClass($this->driverFactoryRegistry);
-		}
-
-		$browser->setAliases($aliases);
+		/** @var BrowserConfiguration $browser */
+		$browser = new $this->browserConfigurationClass($this->driverFactoryRegistry);
+		$browser->setAliases();
 
 		return $browser;
 	}

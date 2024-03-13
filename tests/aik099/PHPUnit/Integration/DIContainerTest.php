@@ -69,6 +69,7 @@ class DIContainerTest extends AbstractTestCase
 			array('test_suite_factory', 'aik099\\PHPUnit\\TestSuite\\TestSuiteFactory'),
 			array('regular_test_suite', 'aik099\\PHPUnit\\TestSuite\\RegularTestSuite'),
 			array('browser_test_suite', 'aik099\\PHPUnit\\TestSuite\\BrowserTestSuite'),
+			array('api_client_factory',	'aik099\\PHPUnit\\APIClient\\APIClientFactory'),
 			array(
 				'browser_configuration_factory',
 				'aik099\\PHPUnit\\BrowserConfiguration\\BrowserConfigurationFactory',

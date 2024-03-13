@@ -11,8 +11,9 @@
 namespace tests\aik099\PHPUnit\Fixture;
 
 
+use aik099\PHPUnit\APIClient\APIClientFactory;
 use aik099\PHPUnit\BrowserConfiguration\ApiBrowserConfiguration;
-use aik099\PHPUnit\BrowserConfiguration\IBrowserConfigurationFactory;
+use aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use Behat\Mink\Session;
@@ -32,23 +33,21 @@ class SetupFixture extends BrowserTestCase
 		$api_client = m::mock('aik099\\PHPUnit\\APIClient\\IAPIClient');
 		$api_client->shouldReceive('updateStatus')->withAnyArgs()->once();
 
-		/** @var IBrowserConfigurationFactory $factory */
-		$factory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
+		/** @var APIClientFactory $api_client_factory */
+		$api_client_factory = m::mock('\\aik099\\PHPUnit\\APIClient\\APIClientFactory');
+
+		$browser = new SauceLabsBrowserConfiguration($this->createDriverFactoryRegistry(), $api_client_factory);
+
+		$desired_capabilities = $browser->getDesiredCapabilities();
+		$desired_capabilities[ApiBrowserConfiguration::NAME_CAPABILITY] = 'something';
+		$browser->setDesiredCapabilities($desired_capabilities);
+
+		$api_client_factory->shouldReceive('getAPIClient')->with($browser)->once()->andReturn($api_client);
 
 		$browser_config = array('apiUsername' => 'a', 'apiKey' => 'b');
 
-		$browser = m::mock(
-			'aik099\PHPUnit\BrowserConfiguration\SauceLabsBrowserConfiguration[getAPIClient]',
-			array($this->createDriverFactoryRegistry())
-		);
-
-		// These magic methods can't be properly passed through to mocked object otherwise.
-		$browser->shouldReceive('getSessionStrategy')->andReturn('isolated');
-		$browser->shouldReceive('getDesiredCapabilities')->andReturn(array(
-			ApiBrowserConfiguration::NAME_CAPABILITY => 'something',
-		));
-
-		$browser->shouldReceive('getAPIClient')->once()->andReturn($api_client);
+		/** @var IBrowserConfigurationFactory $factory */
+		$factory = m::mock('aik099\\PHPUnit\\BrowserConfiguration\\IBrowserConfigurationFactory');
 
 		$factory->shouldReceive('createBrowserConfiguration')
 			->with($browser_config, $this)

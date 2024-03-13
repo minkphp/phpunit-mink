@@ -11,10 +11,7 @@
 namespace aik099\PHPUnit\BrowserConfiguration;
 
 
-use aik099\PHPUnit\APIClient\IAPIClient;
-use aik099\PHPUnit\APIClient\SauceLabsAPIClient;
 use aik099\PHPUnit\BrowserTestCase;
-use WebDriver\SauceLabs\SauceRest;
 
 /**
  * Browser configuration tailored to use with "Sauce Labs" service.
@@ -24,18 +21,6 @@ use WebDriver\SauceLabs\SauceRest;
 class SauceLabsBrowserConfiguration extends ApiBrowserConfiguration
 {
 	const TYPE = 'saucelabs';
-
-	/**
-	 * Returns API class for service interaction.
-	 *
-	 * @return IAPIClient
-	 */
-	public function getAPIClient()
-	{
-		$sauce_rest = new SauceRest($this->getApiUsername(), $this->getApiKey());
-
-		return new SauceLabsAPIClient($sauce_rest);
-	}
 
 	/**
 	 * @inheritDoc

@@ -74,9 +74,4 @@ class SauceLabsBrowserConfigurationTest extends ApiBrowserConfigurationTestCase
 		);
 	}
 
-	public function testGetAPIClient()
-	{
-		$this->assertInstanceOf('aik099\\PHPUnit\\APIClient\\SauceLabsAPIClient', $this->browser->getAPIClient());
-	}
-
 }

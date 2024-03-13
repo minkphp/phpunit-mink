@@ -11,6 +11,7 @@
 namespace aik099\PHPUnit\BrowserConfiguration;
 
 
+use aik099\PHPUnit\APIClient\APIClientFactory;
 use aik099\PHPUnit\APIClient\IAPIClient;
 use aik099\PHPUnit\BrowserTestCase;
 use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
@@ -38,15 +39,25 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 	const NAME_CAPABILITY = 'name';
 
 	/**
+	 * API client factory.
+	 *
+	 * @var APIClientFactory
+	 */
+	protected $apiClientFactory;
+
+	/**
 	 * Creates browser configuration.
 	 *
 	 * @param DriverFactoryRegistry $driver_factory_registry Driver factory registry.
+	 * @param APIClientFactory      $api_client_factory      API client factory.
 	 */
-	public function __construct(DriverFactoryRegistry $driver_factory_registry)
+	public function __construct(DriverFactoryRegistry $driver_factory_registry, APIClientFactory $api_client_factory)
 	{
 		$this->defaults['driver'] = 'selenium2';
 		$this->defaults['apiUsername'] = '';
 		$this->defaults['apiKey'] = '';
+
+		$this->apiClientFactory = $api_client_factory;
 
 		parent::__construct($driver_factory_registry);
 	}
@@ -193,7 +204,10 @@ abstract class ApiBrowserConfiguration extends BrowserConfiguration
 	 *
 	 * @return IAPIClient
 	 */
-	public abstract function getAPIClient();
+	public function getAPIClient()
+	{
+		return $this->apiClientFactory->getAPIClient($this);
+	}
 
 	/**
 	 * Get Selenium2 current session id.
