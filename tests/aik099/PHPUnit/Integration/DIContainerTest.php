@@ -62,8 +62,6 @@ class DIContainerTest extends AbstractTestCase
 			array('session_factory', 'aik099\\PHPUnit\\Session\\SessionFactory'),
 			array('session_strategy_factory', 'aik099\\PHPUnit\\Session\\SessionStrategyFactory'),
 			array('session_strategy_manager', 'aik099\\PHPUnit\\Session\\SessionStrategyManager'),
-			array('isolated_session_strategy', 'aik099\\PHPUnit\\Session\\IsolatedSessionStrategy'),
-			array('shared_session_strategy', 'aik099\\PHPUnit\\Session\\SharedSessionStrategy'),
 			array('remote_url', 'aik099\\PHPUnit\\RemoteCoverage\\RemoteUrl'),
 			array('remote_coverage_helper', 'aik099\\PHPUnit\\RemoteCoverage\\RemoteCoverageHelper'),
 			array('test_suite_factory', 'aik099\\PHPUnit\\TestSuite\\TestSuiteFactory'),

@@ -23,6 +23,7 @@ use aik099\PHPUnit\MinkDriver\Selenium2DriverFactory;
 use aik099\PHPUnit\MinkDriver\ZombieDriverFactory;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
+use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use aik099\PHPUnit\Session\IsolatedSessionStrategy;
 use aik099\PHPUnit\Session\SessionFactory;
 use aik099\PHPUnit\Session\SessionStrategyFactory;
@@ -65,7 +66,18 @@ class DIContainer extends Container implements IApplicationAware
 
 		$this['session_strategy_factory'] = function ($c) {
 			$session_strategy_factory = new SessionStrategyFactory();
-			$session_strategy_factory->setApplication($c['application']);
+
+			$session_strategy_factory->register(
+				ISessionStrategyFactory::TYPE_ISOLATED,
+				new IsolatedSessionStrategy($c['session_factory'])
+			);
+
+			$session_strategy_factory->register(
+				ISessionStrategyFactory::TYPE_SHARED,
+				new SharedSessionStrategy(
+					new IsolatedSessionStrategy($c['session_factory'])
+				)
+			);
 
 			return $session_strategy_factory;
 		};
@@ -73,14 +85,6 @@ class DIContainer extends Container implements IApplicationAware
 		$this['session_strategy_manager'] = function ($c) {
 			return new SessionStrategyManager($c['session_strategy_factory']);
 		};
-
-		$this['isolated_session_strategy'] = $this->factory(function ($c) {
-			return new IsolatedSessionStrategy($c['session_factory']);
-		});
-
-		$this['shared_session_strategy'] = $this->factory(function ($c) {
-			return new SharedSessionStrategy($c['isolated_session_strategy']);
-		});
 
 		$this['remote_url'] = function () {
 			return new RemoteUrl();

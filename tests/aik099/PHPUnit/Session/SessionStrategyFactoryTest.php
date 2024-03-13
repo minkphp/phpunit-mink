@@ -11,12 +11,13 @@
 namespace tests\aik099\PHPUnit\Session;
 
 
-use aik099\PHPUnit\Session\ISessionStrategyFactory;
+use aik099\PHPUnit\Session\ISessionStrategy;
 use aik099\PHPUnit\Session\SessionStrategyFactory;
-use tests\aik099\PHPUnit\TestCase\ApplicationAwareTestCase;
+use Mockery as m;
+use tests\aik099\PHPUnit\AbstractTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class SessionStrategyFactoryTest extends ApplicationAwareTestCase
+class SessionStrategyFactoryTest extends AbstractTestCase
 {
 
 	use ExpectException;
@@ -33,49 +34,31 @@ class SessionStrategyFactoryTest extends ApplicationAwareTestCase
 	 */
 	protected function setUpTest()
 	{
-		parent::setUpTest();
-
 		$this->_factory = new SessionStrategyFactory();
-		$this->_factory->setApplication($this->application);
 	}
 
-	/**
-	 * Test description.
-	 *
-	 * @param string $strategy_type Strategy type.
-	 * @param string $service_id    Service ID.
-	 *
-	 * @return void
-	 * @dataProvider createStrategyDataProvider
-	 */
-	public function testCreateStrategySuccess($strategy_type, $service_id)
+	public function testRegisterSuccess()
 	{
-		$expected = 'OK';
-		$this->expectFactoryCall($service_id, $expected);
-		$this->assertEquals($expected, $this->_factory->createStrategy($strategy_type));
+		$session_strategy = m::mock(ISessionStrategy::class);
+		$this->_factory->register('strategy-type', $session_strategy);
+
+		$this->assertInstanceOf(ISessionStrategy::class, $this->_factory->createStrategy('strategy-type'));
 	}
 
-	/**
-	 * Returns possible strategies.
-	 *
-	 * @return array
-	 */
-	public function createStrategyDataProvider()
+	public function testRegisterFailure()
 	{
-		return array(
-			array(ISessionStrategyFactory::TYPE_ISOLATED, 'isolated_session_strategy'),
-			array(ISessionStrategyFactory::TYPE_SHARED, 'shared_session_strategy'),
-		);
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('Session strategy with type "strategy-type" is already registered');
+
+		$session_strategy = m::mock(ISessionStrategy::class);
+		$this->_factory->register('strategy-type', $session_strategy);
+		$this->_factory->register('strategy-type', $session_strategy);
 	}
 
-	/**
-	 * Test description.
-	 *
-	 * @return void
-	 */
 	public function testCreateStrategyFailure()
 	{
 		$this->expectException('InvalidArgumentException');
+		$this->expectExceptionMessage('Session strategy type "wrong" not registered');
 
 		$this->_factory->createStrategy('wrong');
 	}

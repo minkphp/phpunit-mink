@@ -11,34 +11,39 @@
 namespace aik099\PHPUnit\Session;
 
 
-use aik099\PHPUnit\Application;
-use aik099\PHPUnit\IApplicationAware;
-
 /**
  * Produces sessions.
  *
  * @method \Mockery\Expectation shouldReceive(string $name)
  */
-class SessionStrategyFactory implements ISessionStrategyFactory, IApplicationAware
+class SessionStrategyFactory implements ISessionStrategyFactory
 {
 
 	/**
-	 * Application.
+	 * Session strategies.
 	 *
-	 * @var Application
+	 * @var ISessionStrategy[]
 	 */
-	protected $application;
+	protected $sessionStrategies = array();
 
 	/**
-	 * Sets application.
+	 * Registers a browser configuration.
 	 *
-	 * @param Application $application The application.
+	 * @param string           $strategy_type    Session strategy type.
+	 * @param ISessionStrategy $session_strategy Session strategy.
 	 *
 	 * @return void
+	 * @throws \InvalidArgumentException When session strategy is already registered.
 	 */
-	public function setApplication(Application $application)
+	public function register($strategy_type, ISessionStrategy $session_strategy)
 	{
-		$this->application = $application;
+		if ( isset($this->sessionStrategies[$strategy_type]) ) {
+			throw new \InvalidArgumentException(
+				'Session strategy with type "' . $strategy_type . '" is already registered'
+			);
+		}
+
+		$this->sessionStrategies[$strategy_type] = $session_strategy;
 	}
 
 	/**
@@ -51,14 +56,11 @@ class SessionStrategyFactory implements ISessionStrategyFactory, IApplicationAwa
 	 */
 	public function createStrategy($strategy_type)
 	{
-		if ( $strategy_type == ISessionStrategyFactory::TYPE_ISOLATED ) {
-			return $this->application->getObject('isolated_session_strategy');
-		}
-		elseif ( $strategy_type == ISessionStrategyFactory::TYPE_SHARED ) {
-			return $this->application->getObject('shared_session_strategy');
+		if ( !isset($this->sessionStrategies[$strategy_type]) ) {
+			throw new \InvalidArgumentException('Session strategy type "' . $strategy_type . '" not registered');
 		}
 
-		throw new \InvalidArgumentException('Incorrect session strategy type');
+		return clone $this->sessionStrategies[$strategy_type];
 	}
 
 }

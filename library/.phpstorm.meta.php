@@ -5,8 +5,6 @@ namespace PHPSTORM_META {
 		'session_factory' => \aik099\PHPUnit\Session\SessionFactory::class,
 		'session_strategy_factory' => \aik099\PHPUnit\Session\SessionStrategyFactory::class,
 		'session_strategy_manager' => \aik099\PHPUnit\Session\SessionStrategyManager::class,
-		'isolated_session_strategy' => \aik099\PHPUnit\Session\IsolatedSessionStrategy::class,
-		'shared_session_strategy' => \aik099\PHPUnit\Session\SharedSessionStrategy::class,
 		'remote_url' => \aik099\PHPUnit\RemoteCoverage\RemoteUrl::class,
 		'remote_coverage_helper' => \aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper::class,
 		'test_suite_factory' => \aik099\PHPUnit\TestSuite\TestSuiteFactory::class,
