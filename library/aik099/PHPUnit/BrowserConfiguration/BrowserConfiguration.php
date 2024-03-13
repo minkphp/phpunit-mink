@@ -411,9 +411,7 @@ class BrowserConfiguration
 	 */
 	public function createDriver()
 	{
-		$factory = $this->_driverFactoryRegistry->get($this->getDriver());
-
-		return $factory->createDriver($this);
+		return $this->_driverFactory->createDriver($this);
 	}
 
 	/**
