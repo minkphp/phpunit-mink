@@ -12,6 +12,7 @@ namespace tests\aik099\PHPUnit\Integration;
 
 
 use ConsoleHelpers\PHPUnitCompat\Framework\TestResult;
+use PHPUnit\Framework\TestFailure;
 use tests\aik099\PHPUnit\AbstractTestCase;
 use tests\aik099\PHPUnit\Fixture\SetupFixture;
 
@@ -58,7 +59,42 @@ class EventDispatchingTest extends AbstractTestCase
 		$suite = SetupFixture::suite('tests\\aik099\\PHPUnit\\Fixture\\SetupFixture');
 		$suite->run($result);
 
-		$this->assertTrue($result->wasSuccessful(), 'All sub-tests passed');
+		$error_msgs = array();
+
+		if ( $result->errorCount() > 0 ) {
+			foreach ( $result->errors() as $error ) {
+				$error_msgs[] = $this->prepareErrorMsg($error);
+			}
+		}
+
+		if ( $result->failureCount() > 0 ) {
+			foreach ( $result->failures() as $failure ) {
+				$error_msgs[] = $this->prepareErrorMsg($failure);
+			}
+		}
+
+		if ( $error_msgs ) {
+			$this->fail(
+				'The "SetupFixture" tests failed:' . \PHP_EOL . \PHP_EOL . implode(\PHP_EOL . ' * ', $error_msgs)
+			);
+		}
+
+		$this->assertTrue(true);
+	}
+
+	/**
+	 * Prepares an error msg.
+	 *
+	 * @param TestFailure $test_failure Exception.
+	 *
+	 * @return string
+	 */
+	protected function prepareErrorMsg(TestFailure $test_failure)
+	{
+		$ret = $test_failure->toString() . \PHP_EOL;
+		$ret .= 'Trace:' . \PHP_EOL . $test_failure->thrownException()->getTraceAsString();
+
+		return $ret;
 	}
 
 }
