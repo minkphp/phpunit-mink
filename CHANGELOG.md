@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Specify failed PHPUnit assertion text to the BrowserStack ("reason" field)/SauceLabs("custom-data" field) test.
+- Added the `$auto_create` parameter to the `BrowserTestCase::getSession` method, which allows to verify is session is already started.
 
 ### Changed
 - Bumped minimum PHP version to 5.6.
