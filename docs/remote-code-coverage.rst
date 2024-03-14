@@ -1,6 +1,6 @@
 Remote Code Coverage
 ====================
-Browser tests are executed on different machine, then one, where code coverage information is collected
+Browser tests are executed on the different machine, than one, where the code coverage information is collected
 (and tests are executed). To solve that problem this library uses remote coverage collection. Following
 steps needs to be performed before using this feature:
 
@@ -8,8 +8,8 @@ On Remote Server
 ^^^^^^^^^^^^^^^^
 This is web-server, where website used in tests is located.
 
-#. Install `Xdebug <http://xdebug.org/>`_ PHP extension on web-server
-#. Copy ``library/aik099/PHPUnit/RemoteCoverage/RemoteCoverageTool.php`` into web-server's DocumentRoot directory.
+#. Install the `Xdebug`_ PHP extension on the web-server
+#. Copy the ``library/aik099/PHPUnit/RemoteCoverage/RemoteCoverageTool.php`` file into the web-server's DocumentRoot directory.
 #. Include following code before your application bootstraps:
 
 .. code-block:: php
@@ -21,9 +21,9 @@ This is web-server, where website used in tests is located.
 
 On Test Machine
 ^^^^^^^^^^^^^^^
-This is machine, where PHPUnit tests are being executed.
+This is machine, where the PHPUnit tests are being executed.
 
-Following code needs to be placed in the ``setUpTest`` method of the test case class (that extends ``BrowserTestCase``
+Following code needs to be placed in the ``setUpTest`` method of the test case class (that extends the ``BrowserTestCase``
 class) to enable remote coverage information collection:
 
 .. code-block:: php
@@ -35,7 +35,9 @@ class) to enable remote coverage information collection:
 
 How This Works
 ^^^^^^^^^^^^^^
-#. each test sets a special cookie on website under test
-#. when cookie is present, then ``RemoteCoverageTool.php`` script collects coverage information and stores it on disk
-#. once test finishes, then ``http://host/?rct_mode=output`` url is accessed on remote server, which in turn returns collected coverage information
+#. each test sets a special cookie on the website under test
+#. when cookie is present, then the ``RemoteCoverageTool.php`` script collects coverage information and stores it on disk
+#. once test finishes, then the ``http://host/?rct_mode=output`` url is accessed on remote server, which in turn returns collected coverage information
 #. remote coverage information is then joined with coverage information collected locally on test machine
+
+.. _`Xdebug`: https://xdebug.org/

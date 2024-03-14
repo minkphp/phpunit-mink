@@ -27,7 +27,7 @@ Service Integrations
 .. |BrowserStack| image:: /assets/images/browserstack_logo.png
 .. _BrowserStack: https://www.browserstack.com/
 
-.. _`Mink`: https://github.com/Behat/Mink
+.. _`Mink`: https://github.com/minkphp/Mink
 
 .. toctree::
    :maxdepth: 2
