@@ -274,11 +274,11 @@ class BrowserTestCaseTest extends AbstractTestCase
 	}
 
 	/**
-	 * Test description.
+	 * @param string $remote_coverage_script_url Remote coverage script URL.
 	 *
-	 * @return void
+	 * @dataProvider getCollectCodeCoverageInformationSuccessDataProvider
 	 */
-	public function testGetCollectCodeCoverageInformationSuccess()
+	public function testGetCollectCodeCoverageInformationSuccess($remote_coverage_script_url)
 	{
 		$test_case = $this->getFixture();
 
@@ -298,7 +298,22 @@ class BrowserTestCaseTest extends AbstractTestCase
 		$test_result->setCodeCoverage($code_coverage);
 		$test_case->setTestResultObject($test_result);
 
-		$this->assertTrue($test_case->getCollectCodeCoverageInformation());
+		// Failed.
+		if ( $remote_coverage_script_url ) {
+			$test_case->setRemoteCoverageScriptUrl($remote_coverage_script_url);
+			$this->assertTrue($test_case->getCollectCodeCoverageInformation());
+		}
+		else {
+			$this->assertFalse($test_case->getCollectCodeCoverageInformation());
+		}
+	}
+
+	public function getCollectCodeCoverageInformationSuccessDataProvider()
+	{
+		return array(
+			'with remote coverage url' => array('http://localhost/'),
+			'without remote coverage url' => array(''),
+		);
 	}
 
 	/**
@@ -360,18 +375,12 @@ class BrowserTestCaseTest extends AbstractTestCase
 		));
 		$result->setCodeCoverage($code_coverage);
 
-		$test_id = $test_case->getTestId();
-		$this->assertEmpty($test_id);
+		$this->assertEmpty($test_case->getTestId());
 
 		$browser = $test_case->getBrowser();
-		$browser->shouldReceive('getBaseUrl')->once()->andReturn('A');
+		$browser->shouldReceive('getBaseUrl')->never();
 
-		$session = m::mock(Session::class);
-		$session->shouldReceive('visit')->with('A')->once();
-		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, null)->once();
-		$session->shouldReceive('setCookie')->with(RemoteCoverageTool::TEST_ID_VARIABLE, m::not(''))->once();
-
-		$session_strategy->shouldReceive('session')->once()->andReturn($session);
+		$session_strategy->shouldReceive('session')->never();
 
 		$test_case->run($result);
 
@@ -401,7 +410,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 			$this->assertEquals($expected_coverage, $actual_coverage);
 		}
 
-		$this->assertNotEmpty($test_case->getTestId());
+		$this->assertEmpty($test_case->getTestId());
 	}
 
 	/**
