@@ -31,6 +31,9 @@ use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use PimpleCopy\Pimple\Container;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
+use tests\PimpleCopy\Pimple\Fixtures\Service;
+use PimpleCopy\Pimple\ServiceProviderInterface;
+use tests\PimpleCopy\Pimple\Fixtures\NonInvokable;
 
 /**
  * @author  Igor Wiedler <igor@wiedler.ch>
@@ -54,7 +57,7 @@ class PimpleTest extends TestCase
 			return new Fixtures\Service();
 		};
 
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\Service', $pimple['service']);
+		$this->assertInstanceOf(Service::class, $pimple['service']);
 	}
 
 	public function testServicesShouldBeDifferent()
@@ -65,10 +68,10 @@ class PimpleTest extends TestCase
 		});
 
 		$service_one = $pimple['service'];
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\Service', $service_one);
+		$this->assertInstanceOf(Service::class, $service_one);
 
 		$service_two = $pimple['service'];
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\Service', $service_two);
+		$this->assertInstanceOf(Service::class, $service_two);
 
 		$this->assertNotSame($service_one, $service_two);
 	}
@@ -149,10 +152,10 @@ class PimpleTest extends TestCase
 		$pimple['shared_service'] = $service;
 
 		$service_one = $pimple['shared_service'];
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\Service', $service_one);
+		$this->assertInstanceOf(Service::class, $service_one);
 
 		$service_two = $pimple['shared_service'];
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\Service', $service_two);
+		$this->assertInstanceOf(Service::class, $service_two);
 
 		$this->assertSame($service_one, $service_two);
 	}
@@ -194,7 +197,7 @@ class PimpleTest extends TestCase
 	public function testFluentRegister()
 	{
 		$pimple = new Container();
-		$serviceProviderMock = m::mock('PimpleCopy\Pimple\ServiceProviderInterface');
+		$serviceProviderMock = m::mock(ServiceProviderInterface::class);
 		$serviceProviderMock->shouldReceive('register');
 
 		$this->assertSame($pimple, $pimple->register($serviceProviderMock));
@@ -224,17 +227,17 @@ class PimpleTest extends TestCase
 
 		$pimple->extend('shared_service', $service);
 		$service_one = $pimple['shared_service'];
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\Service', $service_one);
+		$this->assertInstanceOf(Service::class, $service_one);
 		$service_two = $pimple['shared_service'];
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\Service', $service_two);
+		$this->assertInstanceOf(Service::class, $service_two);
 		$this->assertSame($service_one, $service_two);
 		$this->assertSame($service_one->value, $service_two->value);
 
 		$pimple->extend('factory_service', $service);
 		$service_one = $pimple['factory_service'];
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\Service', $service_one);
+		$this->assertInstanceOf(Service::class, $service_one);
 		$service_two = $pimple['factory_service'];
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\Service', $service_two);
+		$this->assertInstanceOf(Service::class, $service_two);
 		$this->assertNotSame($service_one, $service_two);
 		$this->assertNotSame($service_one->value, $service_two->value);
 	}
@@ -288,7 +291,7 @@ class PimpleTest extends TestCase
 		$pimple = new Container();
 		$pimple['invokable'] = new Fixtures\Invokable();
 
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\Service', $pimple['invokable']);
+		$this->assertInstanceOf(Service::class, $pimple['invokable']);
 	}
 
 	/** @test */
@@ -297,7 +300,7 @@ class PimpleTest extends TestCase
 		$pimple = new Container();
 		$pimple['non_invokable'] = new Fixtures\NonInvokable();
 
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\NonInvokable', $pimple['non_invokable']);
+		$this->assertInstanceOf(NonInvokable::class, $pimple['non_invokable']);
 	}
 
 	/**

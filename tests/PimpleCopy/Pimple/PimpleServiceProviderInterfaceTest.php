@@ -29,6 +29,7 @@ namespace tests\PimpleCopy\Pimple;
 
 use PHPUnit\Framework\TestCase;
 use PimpleCopy\Pimple\Container;
+use tests\PimpleCopy\Pimple\Fixtures\Service;
 
 /**
  * @author  Dominik Zogg <dominik.zogg@gmail.com>
@@ -44,13 +45,13 @@ class PimpleServiceProviderInterfaceTest extends TestCase
 		$pimple_service_provider->register($pimple);
 
 		$this->assertEquals('value', $pimple['param']);
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\Service', $pimple['service']);
+		$this->assertInstanceOf(Service::class, $pimple['service']);
 
 		$service_one = $pimple['factory'];
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\Service', $service_one);
+		$this->assertInstanceOf(Service::class, $service_one);
 
 		$service_two = $pimple['factory'];
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\Service', $service_two);
+		$this->assertInstanceOf(Service::class, $service_two);
 
 		$this->assertNotSame($service_one, $service_two);
 	}
@@ -66,13 +67,13 @@ class PimpleServiceProviderInterfaceTest extends TestCase
 		$this->assertEquals('value', $pimple['param']);
 		$this->assertEquals('anotherValue', $pimple['anotherParameter']);
 
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\Service', $pimple['service']);
+		$this->assertInstanceOf(Service::class, $pimple['service']);
 
 		$service_one = $pimple['factory'];
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\Service', $service_one);
+		$this->assertInstanceOf(Service::class, $service_one);
 
 		$service_two = $pimple['factory'];
-		$this->assertInstanceOf('tests\PimpleCopy\Pimple\Fixtures\Service', $service_two);
+		$this->assertInstanceOf(Service::class, $service_two);
 
 		$this->assertNotSame($service_one, $service_two);
 	}
