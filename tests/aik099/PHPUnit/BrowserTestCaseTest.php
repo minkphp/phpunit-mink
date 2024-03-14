@@ -314,7 +314,6 @@ class BrowserTestCaseTest extends BrowserTestCase
 		$test_result->setCodeCoverage($code_coverage);
 		$test_case->setTestResultObject($test_result);
 
-		// Failed.
 		if ( $remote_coverage_script_url ) {
 			$test_case->setRemoteCoverageScriptUrl($remote_coverage_script_url);
 			$this->assertTrue($test_case->getCollectCodeCoverageInformation());
