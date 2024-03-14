@@ -14,14 +14,16 @@ class BrowserConfigExampleTest extends BrowserTestCase
             'browserName' => 'firefox',
             'baseUrl' => 'http://www.google.com',
         ),
+
         // BrowserStack browser configuration.
         array(
             'type' => 'browserstack',
-            'api_username' => '...',
-            'api_key' => '...',
+            'apiUsername' => '...',
+            'apiKey' => '...',
             'browserName' => 'firefox',
             'baseUrl' => 'http://www.google.com',
         ),
+
         // Regular browser configuration.
         array(
             'driver' => 'selenium2',

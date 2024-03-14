@@ -10,12 +10,12 @@ class PerTestBrowserConfigTest extends BrowserTestCase
      */
     protected function setUpTest()
     {
-        // To create regular browser configuration via BrowserConfigurationFactory.
+        // Creates the regular browser configuration using "BrowserConfigurationFactory".
         $browser = $this->createBrowserConfiguration(array(
             // options goes here (optional)
         ));
 
-        // To create "Sauce Labs" browser configuration via BrowserConfigurationFactory.
+        // Creates the "Sauce Labs" browser configuration using "BrowserConfigurationFactory".
         $browser = $this->createBrowserConfiguration(array(
             // required
             'type' => 'saucelabs',
@@ -24,12 +24,12 @@ class PerTestBrowserConfigTest extends BrowserTestCase
             // optional options goes here
         ));
 
-        // To create "BrowserStack" browser configuration via BrowserConfigurationFactory.
+        // Creates the "BrowserStack" browser configuration using "BrowserConfigurationFactory".
         $browser = $this->createBrowserConfiguration(array(
             // required
             'type' => 'browserstack',
-            'api_username' => 'bs_username',
-            'api_key' => 'bs_api_key',
+            'apiUsername' => 'bs_username',
+            'apiKey' => 'bs_api_key',
             // optional options goes here
         ));
 
@@ -40,7 +40,7 @@ class PerTestBrowserConfigTest extends BrowserTestCase
         ));
         $browser->setBaseUrl('http://www.test-host.com');
 
-        // Set browser configuration to test case.
+        // Set browser configuration to the test case.
         $this->setBrowser($browser);
 
         parent::setUpTest();
