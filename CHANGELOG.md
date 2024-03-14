@@ -14,7 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Reduce memory consumption by rewriting `SessionStrategyFactory` and `SessionStrategyManager` classes.
 
 ### Fixed
-...
+- Don't set remote code coverage collection cookies, when the remote code coverage script URL isn't specified.
 
 ## [2.3.0] - 2022-11-24
 ### Changed
