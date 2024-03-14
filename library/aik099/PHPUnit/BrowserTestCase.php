@@ -71,21 +71,21 @@ abstract class BrowserTestCase extends AbstractTestCase
 	 *
 	 * @var SessionStrategyManager
 	 */
-	protected $sessionStrategyManager;
+	private $_sessionStrategyManager;
 
 	/**
 	 * Remote coverage helper.
 	 *
 	 * @var RemoteCoverageHelper
 	 */
-	protected $remoteCoverageHelper;
+	private $_remoteCoverageHelper;
 
 	/**
 	 * Session strategy, used currently.
 	 *
 	 * @var ISessionStrategy
 	 */
-	protected $sessionStrategy;
+	private $_sessionStrategy;
 
 	/**
 	 * Test ID.
@@ -115,7 +115,7 @@ abstract class BrowserTestCase extends AbstractTestCase
 	 */
 	public function setSessionStrategyManager(SessionStrategyManager $session_strategy_manager)
 	{
-		$this->sessionStrategyManager = $session_strategy_manager;
+		$this->_sessionStrategyManager = $session_strategy_manager;
 
 		return $this;
 	}
@@ -129,7 +129,7 @@ abstract class BrowserTestCase extends AbstractTestCase
 	 */
 	public function setRemoteCoverageHelper(RemoteCoverageHelper $remote_coverage_helper)
 	{
-		$this->remoteCoverageHelper = $remote_coverage_helper;
+		$this->_remoteCoverageHelper = $remote_coverage_helper;
 	}
 
 	/**
@@ -139,7 +139,7 @@ abstract class BrowserTestCase extends AbstractTestCase
 	 *
 	 * @return void
 	 */
-	public function setRemoteCoverageScriptUrl($url)
+	protected function setRemoteCoverageScriptUrl($url)
 	{
 		$this->_remoteCoverageScriptUrl = $url;
 	}
@@ -164,14 +164,16 @@ abstract class BrowserTestCase extends AbstractTestCase
 	 *
 	 * @return self
 	 */
-	public function setBrowser(BrowserConfiguration $browser)
+	protected function setBrowser(BrowserConfiguration $browser)
 	{
 		$this->_browser = $browser;
 
 		// Configure session strategy.
-		return $this->setSessionStrategy(
-			$this->sessionStrategyManager->getSessionStrategy($browser, $this)
+		$this->setSessionStrategy(
+			$this->_sessionStrategyManager->getSessionStrategy($browser, $this)
 		);
+
+		return $this;
 	}
 
 	/**
@@ -180,7 +182,7 @@ abstract class BrowserTestCase extends AbstractTestCase
 	 * @return BrowserConfiguration
 	 * @throws \RuntimeException When browser configuration isn't defined.
 	 */
-	public function getBrowser()
+	protected function getBrowser()
 	{
 		if ( !is_object($this->_browser) ) {
 			throw new \RuntimeException('Browser configuration not defined');
@@ -198,7 +200,9 @@ abstract class BrowserTestCase extends AbstractTestCase
 	 */
 	public function setBrowserFromConfiguration(array $browser_config)
 	{
-		return $this->setBrowser($this->createBrowserConfiguration($browser_config));
+		return $this->setBrowser(
+			$this->createBrowserConfiguration($browser_config)
+		);
 	}
 
 	/**
@@ -220,9 +224,9 @@ abstract class BrowserTestCase extends AbstractTestCase
 	 *
 	 * @return self
 	 */
-	public function setSessionStrategy(ISessionStrategy $session_strategy = null)
+	protected function setSessionStrategy(ISessionStrategy $session_strategy = null)
 	{
-		$this->sessionStrategy = $session_strategy;
+		$this->_sessionStrategy = $session_strategy;
 
 		return $this;
 	}
@@ -233,14 +237,14 @@ abstract class BrowserTestCase extends AbstractTestCase
 	 * @return ISessionStrategy
 	 * @see    setSessionStrategy()
 	 */
-	public function getSessionStrategy()
+	protected function getSessionStrategy()
 	{
-		if ( $this->sessionStrategy ) {
-			return $this->sessionStrategy;
+		if ( $this->_sessionStrategy !== null ) {
+			return $this->_sessionStrategy;
 		}
 
 		// Default session strategy (not session itself) shared across all test cases.
-		return $this->sessionStrategyManager->getDefaultSessionStrategy();
+		return $this->_sessionStrategyManager->getDefaultSessionStrategy();
 	}
 
 	/**
@@ -290,8 +294,8 @@ abstract class BrowserTestCase extends AbstractTestCase
 			$this->_browser->onTestEnded($this, $result);
 		}
 
-		if ( $this->sessionStrategy !== null ) {
-			$this->sessionStrategy->onTestEnded($this);
+		if ( $this->_sessionStrategy !== null ) {
+			$this->_sessionStrategy->onTestEnded($this);
 		}
 	}
 
@@ -301,7 +305,7 @@ abstract class BrowserTestCase extends AbstractTestCase
 	 * @return boolean
 	 * @throws \RuntimeException When used before test is started.
 	 */
-	public function getCollectCodeCoverageInformation()
+	protected function getCollectCodeCoverageInformation()
 	{
 		if ( !$this->_remoteCoverageScriptUrl ) {
 			return false;
@@ -341,8 +345,8 @@ abstract class BrowserTestCase extends AbstractTestCase
 	 */
 	public function onTestSuiteEnded()
 	{
-		if ( $this->sessionStrategy !== null ) {
-			$this->sessionStrategy->onTestSuiteEnded($this);
+		if ( $this->_sessionStrategy !== null ) {
+			$this->_sessionStrategy->onTestSuiteEnded($this);
 		}
 
 		return $this;
@@ -353,13 +357,13 @@ abstract class BrowserTestCase extends AbstractTestCase
 	 *
 	 * @return array|RawCodeCoverageData
 	 */
-	public function getRemoteCodeCoverageInformation()
+	protected function getRemoteCodeCoverageInformation()
 	{
 		if ( $this->_remoteCoverageScriptUrl ) {
-			return $this->remoteCoverageHelper->get($this->_remoteCoverageScriptUrl, $this->_testId);
+			return $this->_remoteCoverageHelper->get($this->_remoteCoverageScriptUrl, $this->_testId);
 		}
 
-		return $this->remoteCoverageHelper->getEmpty();
+		return $this->_remoteCoverageHelper->getEmpty();
 	}
 
 	/**
@@ -381,8 +385,8 @@ abstract class BrowserTestCase extends AbstractTestCase
 	 */
 	protected function onNotSuccessfulTestCompat($e)
 	{
-		if ( $this->sessionStrategy !== null ) {
-			$this->sessionStrategy->onTestFailed($this, $e);
+		if ( $this->_sessionStrategy !== null ) {
+			$this->_sessionStrategy->onTestFailed($this, $e);
 		}
 	}
 

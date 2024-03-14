@@ -12,6 +12,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Allow using self-signed/invalid SSL certificates during testing on the SauceLabs by default.
 - Rewritten library object communication mechanism (the event dispatcher is no longer used). Update any custom session strategy/browser configuration implementations.
 - Reduce memory consumption by rewriting `SessionStrategyFactory` and `SessionStrategyManager` classes.
+- (Not a BC break) Some public methods of the `BrowserTestCase` class are protected now. Affected methods: `setRemoteCoverageScriptUrl`, `setBrowser`, `getBrowser`, `setSessionStrategy`, `getSessionStrategy`, `getCollectCodeCoverageInformation`, `getRemoteCodeCoverageInformation`.
+- (Not a BC break) Some protected properties of the `BrowserTestCase` class are private now. Affected properties: `sessionStrategyManager`, `remoteCoverageHelper`, `sessionStrategy`.
 
 ### Fixed
 - Don't set remote code coverage collection cookies, when the remote code coverage script URL isn't specified.

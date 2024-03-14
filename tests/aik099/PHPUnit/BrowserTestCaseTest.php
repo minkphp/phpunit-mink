@@ -33,11 +33,13 @@ use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
 use Behat\Mink\Session;
 use ConsoleHelpers\CodeCoverageCompat\Driver\Driver;
+use Behat\Mink\Exception\DriverException;
 
-class BrowserTestCaseTest extends AbstractTestCase
+class BrowserTestCaseTest extends BrowserTestCase
 {
 
 	use ExpectException;
+	use TVerifyTestExpectations;
 
 	const BROWSER_CLASS = BrowserConfiguration::class;
 
@@ -76,9 +78,14 @@ class BrowserTestCaseTest extends AbstractTestCase
 		$manager = m::mock(self::MANAGER_CLASS);
 
 		$test_case = new WithoutBrowserConfig('test name');
-		$test_case->setSessionStrategyManager($manager);
 
-		$property = new \ReflectionProperty($test_case, 'sessionStrategyManager');
+		$this->assertSame(
+			$test_case,
+			$test_case->setSessionStrategyManager($manager),
+			'The fluid interface doesn\'t work.'
+		);
+
+		$property = new \ReflectionProperty(BrowserTestCase::class, '_sessionStrategyManager');
 		$property->setAccessible(true);
 
 		$this->assertSame($manager, $property->getValue($test_case));
@@ -94,7 +101,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 		/** @var ISessionStrategy $session_strategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 
-		$test_case = $this->getFixture($session_strategy);
+		$test_case = $this->getFixture(true, $session_strategy);
 
 		$browser = new BrowserConfiguration($this->createDriverFactoryRegistry());
 
@@ -118,6 +125,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 		$registry
 			->shouldReceive('get')
 			->with('selenium2')
+			->once()
 			->andReturn($driver_factory);
 
 		return $registry;
@@ -143,9 +151,10 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	public function testSetBrowserFromConfigurationDefault()
 	{
-		$test_case = $this->getFixture();
+		$test_case = $this->getFixture(true);
+		$test_case->setBrowserConfigurationFactory($this->browserConfigurationFactory);
 
-		$browser = $this->getBrowser(0);
+		$browser = $this->getBrowserMock(0);
 		$browser_config = array('browserName' => 'safari');
 
 		$this->browserConfigurationFactory
@@ -200,9 +209,9 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 *
 	 * @return void
 	 */
-	public function testGetSession()
+	public function testGetSessionWithAutoCreate()
 	{
-		$browser = $this->getBrowser(0);
+		$browser = $this->getBrowserMock(0);
 
 		$expected_session1 = m::mock(Session::class);
 		$expected_session2 = m::mock(Session::class);
@@ -211,7 +220,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 		$session_strategy->shouldReceive('session')->with($browser)->andReturn($expected_session1, $expected_session2);
 
-		$test_case = $this->getFixture($session_strategy);
+		$test_case = $this->getFixture(true, $session_strategy);
 		$test_case->setBrowser($browser);
 		$test_case->setTestResultObject(new TestResult());
 
@@ -224,6 +233,13 @@ class BrowserTestCaseTest extends AbstractTestCase
 		$this->assertSame($session1, $session2);
 	}
 
+	public function testGetSessionWithoutAutoCreate()
+	{
+		$test_case = $this->getFixture(false);
+
+		$this->assertNull($test_case->getSession(false), 'The session was created upon request.');
+	}
+
 	/**
 	 * Test description.
 	 *
@@ -231,13 +247,13 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	public function testGetSessionDriverError()
 	{
-		$browser = $this->getBrowser(1);
+		$browser = $this->getBrowserMock(1);
 
 		/** @var ISessionStrategy $session_strategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
-		$session_strategy->shouldReceive('session')->andThrow('\Behat\Mink\Exception\DriverException');
+		$session_strategy->shouldReceive('session')->andThrow(DriverException::class);
 
-		$test_case = $this->getFixture($session_strategy);
+		$test_case = $this->getFixture(true, $session_strategy);
 		$test_case->setBrowser($browser);
 
 		// On PHPUnit 5.x usage of expectException/expectExceptionMessage results in this test being marked as skipped.
@@ -264,7 +280,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 *
 	 * @return BrowserConfiguration
 	 */
-	protected function getBrowser($times)
+	protected function getBrowserMock($times)
 	{
 		$browser = m::mock(self::BROWSER_CLASS);
 		$browser->shouldReceive('getHost')->times($times)->andReturn('{hostname}');
@@ -280,7 +296,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	public function testGetCollectCodeCoverageInformationSuccess($remote_coverage_script_url)
 	{
-		$test_case = $this->getFixture();
+		$test_case = $this->getFixture(false);
 
 		$test_result = new TestResult();
 
@@ -613,7 +629,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 		/** @var ISessionStrategy $session_strategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 
-		$test_case = $this->getFixture($session_strategy);
+		$test_case = $this->getFixture(false, $session_strategy);
 		$test_case->setSessionStrategy($session_strategy);
 
 		$exception = new \Exception('MSG_TEST');
@@ -632,7 +648,7 @@ class BrowserTestCaseTest extends AbstractTestCase
 	 */
 	public function testGetBrowserAliases()
 	{
-		$test_case = $this->getFixture();
+		$test_case = $this->getFixture(false);
 
 		$this->assertEmpty($test_case->getBrowserAliases(), 'Browser configuration aliases are empty by default');
 	}
@@ -647,12 +663,12 @@ class BrowserTestCaseTest extends AbstractTestCase
 		/** @var ISessionStrategy $session_strategy */
 		$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
 
-		$test_case = $this->getFixture($session_strategy);
+		$test_case = $this->getFixture(true, $session_strategy);
 		$test_case->setName('testSuccess');
 
 		$session_strategy->shouldReceive('onTestEnded')->with($test_case)->once();
 
-		$browser = $this->getBrowser(0);
+		$browser = $this->getBrowserMock(0);
 		$browser->shouldReceive('onTestSetup')->with($test_case)->once();
 		$browser->shouldReceive('onTestEnded')->with($test_case, m::type(TestResult::class))->once();
 
@@ -664,11 +680,12 @@ class BrowserTestCaseTest extends AbstractTestCase
 	/**
 	 * Returns test case fixture.
 	 *
+	 * @param boolean               $return_strategy  Session strategy manager would be asked for a strategy.
 	 * @param ISessionStrategy|null $session_strategy Session strategy.
 	 *
 	 * @return WithoutBrowserConfig
 	 */
-	protected function getFixture(ISessionStrategy $session_strategy = null)
+	protected function getFixture($return_strategy, ISessionStrategy $session_strategy = null)
 	{
 		if ( !isset($session_strategy) ) {
 			$session_strategy = m::mock(self::SESSION_STRATEGY_INTERFACE);
@@ -676,10 +693,11 @@ class BrowserTestCaseTest extends AbstractTestCase
 
 		/** @var SessionStrategyManager $manager */
 		$manager = m::mock(self::MANAGER_CLASS);
-		$manager->shouldReceive('getSessionStrategy')->andReturn($session_strategy);
+		$manager->shouldReceive('getSessionStrategy')
+			->times($return_strategy ? 1 : 0)
+			->andReturn($session_strategy);
 
 		$test_case = new WithoutBrowserConfig('test name');
-		$test_case->setBrowserConfigurationFactory($this->browserConfigurationFactory);
 		$test_case->setSessionStrategyManager($manager);
 
 		return $test_case;
