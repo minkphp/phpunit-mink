@@ -153,15 +153,6 @@ class ApiIntegrationFixture extends BrowserTestCase
 	}
 
 	/**
-	 * @inheritDoc
-	 */
-	public function getCollectCodeCoverageInformation()
-	{
-		// FIXME: Workaround for https://github.com/minkphp/phpunit-mink/issues/35 bug.
-		return false;
-	}
-
-	/**
 	 * Test description.
 	 *
 	 * @param boolean $data Data.

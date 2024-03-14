@@ -303,6 +303,10 @@ abstract class BrowserTestCase extends AbstractTestCase
 	 */
 	public function getCollectCodeCoverageInformation()
 	{
+		if ( !$this->_remoteCoverageScriptUrl ) {
+			return false;
+		}
+
 		$result = $this->getTestResultObject();
 
 		if ( !is_object($result) ) {
