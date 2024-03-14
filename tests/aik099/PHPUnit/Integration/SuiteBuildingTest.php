@@ -49,12 +49,15 @@ class SuiteBuildingTest extends AbstractTestCase
 
 		$this->checkArray($test_suites, 2, self::BROWSER_SUITE_CLASS);
 
+		$property = new \ReflectionProperty(BrowserTestCase::class, '_sessionStrategy');
+		$property->setAccessible(true);
+
 		foreach ( $test_suites as $test_suite ) {
 			/** @var BrowserTestCase[] $suite_tests */
 			$suite_tests = $test_suite->tests();
 			$this->checkArray($suite_tests, 2, self::TEST_CASE_WITH_CONFIG);
 
-			$this->assertInstanceOf(ISessionStrategy::class, $suite_tests[0]->getSessionStrategy());
+			$this->assertInstanceOf(ISessionStrategy::class, $property->getValue($suite_tests[0]));
 		}
 	}
 
