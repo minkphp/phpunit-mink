@@ -20,7 +20,7 @@ use Behat\Mink\Session;
  *
  * @method \Mockery\Expectation shouldReceive(string $name)
  */
-class IsolatedSessionStrategy implements ISessionStrategy
+class IsolatedSessionStrategy extends AbstractSessionStrategy
 {
 
 	/**
@@ -41,15 +41,14 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	}
 
 	/**
-	 * Returns Mink session with given browser configuration.
-	 *
-	 * @param BrowserConfiguration $browser Browser configuration for a session.
-	 *
-	 * @return Session
+	 * @inheritDoc
 	 */
 	public function session(BrowserConfiguration $browser)
 	{
-		return $this->_sessionFactory->createSession($browser);
+		$session = $this->_sessionFactory->createSession($browser);
+		$this->isFreshSession = true;
+
+		return $session;
 	}
 
 	/**
@@ -59,25 +58,7 @@ class IsolatedSessionStrategy implements ISessionStrategy
 	{
 		$session = $test_case->getSession(false);
 
-		if ( $session !== null && $session->isStarted() ) {
-			$session->stop();
-		}
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function onTestFailed(BrowserTestCase $test_case, $exception)
-	{
-
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function onTestSuiteEnded(BrowserTestCase $test_case)
-	{
-
+		$this->stopSession($session);
 	}
 
 }

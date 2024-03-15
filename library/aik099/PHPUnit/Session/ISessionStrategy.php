@@ -33,6 +33,13 @@ interface ISessionStrategy
 	public function session(BrowserConfiguration $browser);
 
 	/**
+	 * Determines if the session was just started.
+	 *
+	 * @return boolean|null
+	 */
+	public function isFreshSession();
+
+	/**
 	 * Hook, called from "BrowserTestCase::tearDownTest" method.
 	 *
 	 * @param BrowserTestCase $test_case Test case.
