@@ -286,7 +286,7 @@ abstract class BrowserTestCase extends AbstractTestCase
 	{
 		$result = $this->getTestResultObject();
 
-		if ( $result->getCollectCodeCoverageInformation() ) {
+		if ( $this->getCollectCodeCoverageInformation() ) {
 			$result->getCodeCoverage()->append($this->getRemoteCodeCoverageInformation(), $this);
 		}
 
@@ -359,11 +359,7 @@ abstract class BrowserTestCase extends AbstractTestCase
 	 */
 	protected function getRemoteCodeCoverageInformation()
 	{
-		if ( $this->_remoteCoverageScriptUrl ) {
-			return $this->_remoteCoverageHelper->get($this->_remoteCoverageScriptUrl, $this->_testId);
-		}
-
-		return $this->_remoteCoverageHelper->getEmpty();
+		return $this->_remoteCoverageHelper->get($this->_remoteCoverageScriptUrl, $this->_testId);
 	}
 
 	/**
