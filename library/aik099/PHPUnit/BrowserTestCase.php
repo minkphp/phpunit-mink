@@ -145,7 +145,7 @@ abstract class BrowserTestCase extends AbstractTestCase
 	}
 
 	/**
-	 * Set session meta-info for "Sauce Labs".
+	 * Set session meta-info for an API-based browser configurations.
 	 *
 	 * @return void
 	 * @before
