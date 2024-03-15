@@ -17,7 +17,7 @@ use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use Behat\Mink\Session;
 use aik099\PHPUnit\BrowserTestCase;
 
-class SessionStrategyTestCase extends AbstractTestCase
+abstract class AbstractSessionStrategyTestCase extends AbstractTestCase
 {
 
 	const BROWSER_CLASS = BrowserConfiguration::class;
@@ -32,5 +32,10 @@ class SessionStrategyTestCase extends AbstractTestCase
 	 * @var ISessionStrategy
 	 */
 	protected $strategy;
+
+	public function testUnknownSessionFreshnessStateUntilItsStarted()
+	{
+		$this->assertNull($this->strategy->isFreshSession());
+	}
 
 }

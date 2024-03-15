@@ -12,6 +12,7 @@ namespace tests\aik099\PHPUnit\Session;
 
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
+use aik099\PHPUnit\Session\ISessionStrategy;
 use aik099\PHPUnit\Session\IsolatedSessionStrategy;
 use aik099\PHPUnit\Session\SharedSessionStrategy;
 use Behat\Mink\Session;
@@ -20,7 +21,7 @@ use ConsoleHelpers\PHPUnitCompat\Framework\SkippedTestError;
 use Mockery as m;
 use Mockery\MockInterface;
 
-class SharedSessionStrategyTest extends SessionStrategyTestCase
+class SharedSessionStrategyTest extends AbstractSessionStrategyTestCase
 {
 
 	/**
@@ -28,7 +29,7 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 	 *
 	 * @var IsolatedSessionStrategy
 	 */
-	private $_isolatedStrategy;
+	private $_originalStrategy;
 
 	/**
 	 * First created session.
@@ -52,8 +53,8 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 		$this->_session1 = $this->createSession();
 		$this->_session2 = $this->createSession();
 
-		$this->_isolatedStrategy = m::mock(IsolatedSessionStrategy::class);
-		$this->strategy = new SharedSessionStrategy($this->_isolatedStrategy);
+		$this->_originalStrategy = m::mock(ISessionStrategy::class);
+		$this->strategy = new SharedSessionStrategy($this->_originalStrategy);
 	}
 
 	/**
@@ -68,17 +69,20 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 	{
 		/** @var BrowserConfiguration $browser */
 		$browser = m::mock(self::BROWSER_CLASS);
-		$this->_isolatedStrategy->shouldReceive('session')->once()->with($browser)->andReturn($this->_session1);
+		$this->_originalStrategy->shouldReceive('session')->once()->with($browser)->andReturn($this->_session1);
+		$this->_originalStrategy->shouldReceive('isFreshSession')->once()->andReturn(true);
 
 		$this->_session1->shouldReceive('switchToWindow')->once();
 
 		$this->assertSame($this->_session1, $this->strategy->session($browser));
+		$this->assertTrue($this->strategy->isFreshSession(), 'First created session must be fresh');
 
 		if ( isset($e) ) {
 			$this->_sessionFailure($e);
 		}
 
 		$this->assertSame($this->_session1, $this->strategy->session($browser));
+		$this->assertFalse($this->strategy->isFreshSession(), 'Reused session must not be fresh');
 	}
 
 	/**
@@ -89,9 +93,9 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 	public static function ignoreExceptionDataProvider()
 	{
 		return array(
-			array(null),
-			array(new IncompleteTestError()),
-			array(new SkippedTestError()),
+			'no error' => array(null),
+			'incomplete test' => array(new IncompleteTestError()),
+			'skipped test' => array(new SkippedTestError()),
 		);
 	}
 
@@ -105,22 +109,31 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 		/** @var BrowserConfiguration $browser */
 		$browser = m::mock(self::BROWSER_CLASS);
 
-		$this->_isolatedStrategy
+		$this->_originalStrategy
 			->shouldReceive('session')
 			->with($browser)
 			->twice()
 			->andReturn($this->_session1, $this->_session2);
+		$this->_originalStrategy
+			->shouldReceive('isFreshSession')
+			->twice()
+			->andReturn(true);
 
+		$this->_session1->shouldReceive('isStarted')->once()->andReturn(true);
 		$this->_session1->shouldReceive('stop')->once();
 		$this->_session2->shouldReceive('switchToWindow')->once();
 
 		$session = $this->strategy->session($browser);
 		$this->assertSame($this->_session1, $session);
+		$this->assertTrue($this->strategy->isFreshSession(), 'First created session must be fresh');
 
 		$this->_sessionFailure(new \Exception());
 
 		$this->assertSame($this->_session2, $this->strategy->session($browser));
+		$this->assertTrue($this->strategy->isFreshSession(), 'First created session after failure must be fresh');
+
 		$this->assertSame($this->_session2, $this->strategy->session($browser));
+		$this->assertFalse($this->strategy->isFreshSession(), 'Reused session must not be fresh');
 	}
 
 	/**
@@ -132,8 +145,11 @@ class SharedSessionStrategyTest extends SessionStrategyTestCase
 	{
 		$this->_sessionFailure(new \Exception());
 
-		$this->_isolatedStrategy->shouldReceive('session')->once()->andReturn($this->_session1);
+		$this->_originalStrategy->shouldReceive('session')->once()->andReturn($this->_session1);
+		$this->_originalStrategy->shouldReceive('isFreshSession')->once()->andReturn(true);
+
 		$this->assertSame($this->_session1, $this->strategy->session(m::mock(self::BROWSER_CLASS)));
+		$this->assertTrue($this->strategy->isFreshSession(), 'First created session after failure must be fresh');
 	}
 
 	/**

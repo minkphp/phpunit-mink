@@ -16,7 +16,7 @@ use aik099\PHPUnit\Session\IsolatedSessionStrategy;
 use Mockery as m;
 use Mockery\MockInterface;
 
-class IsolatedSessionStrategyTest extends SessionStrategyTestCase
+class IsolatedSessionStrategyTest extends AbstractSessionStrategyTestCase
 {
 
 	/**
@@ -55,6 +55,18 @@ class IsolatedSessionStrategyTest extends SessionStrategyTestCase
 
 		$this->assertEquals($session1, $this->strategy->session($browser));
 		$this->assertEquals($session2, $this->strategy->session($browser));
+	}
+
+	public function testIsFreshSessionAfterSessionIsStarted()
+	{
+		$browser = m::mock(self::BROWSER_CLASS);
+		$session = m::mock(self::SESSION_CLASS);
+
+		$this->_factory->shouldReceive('createSession')->with($browser)->once()->andReturn($session);
+
+		$this->strategy->session($browser);
+
+		$this->assertTrue($this->strategy->isFreshSession());
 	}
 
 	/**

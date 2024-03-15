@@ -22,7 +22,7 @@ use ConsoleHelpers\PHPUnitCompat\Framework\SkippedTestError;
  *
  * @method \Mockery\Expectation shouldReceive(string $name)
  */
-class SharedSessionStrategy implements ISessionStrategy
+class SharedSessionStrategy extends AbstractSessionStrategy
 {
 
 	/**
@@ -57,23 +57,21 @@ class SharedSessionStrategy implements ISessionStrategy
 	}
 
 	/**
-	 * Returns Mink session with given browser configuration.
-	 *
-	 * @param BrowserConfiguration $browser Browser configuration for a session.
-	 *
-	 * @return Session
+	 * @inheritDoc
 	 */
 	public function session(BrowserConfiguration $browser)
 	{
 		if ( $this->_lastTestFailed ) {
-			$this->stopSession();
+			$this->stopAndForgetSession();
 			$this->_lastTestFailed = false;
 		}
 
 		if ( $this->_session === null ) {
 			$this->_session = $this->_originalStrategy->session($browser);
+			$this->isFreshSession = $this->_originalStrategy->isFreshSession();
 		}
 		else {
+			$this->isFreshSession = false;
 			$this->_switchToMainWindow();
 		}
 
@@ -81,18 +79,16 @@ class SharedSessionStrategy implements ISessionStrategy
 	}
 
 	/**
-	 * Stops session.
+	 * Stops and forgets a session.
 	 *
 	 * @return void
 	 */
-	protected function stopSession()
+	protected function stopAndForgetSession()
 	{
-		if ( $this->_session === null ) {
-			return;
+		if ( $this->_session !== null ) {
+			$this->stopSession($this->_session);
+			$this->_session = null;
 		}
-
-		$this->_session->stop();
-		$this->_session = null;
 	}
 
 	/**
@@ -103,14 +99,6 @@ class SharedSessionStrategy implements ISessionStrategy
 	private function _switchToMainWindow()
 	{
 		$this->_session->switchToWindow(null);
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function onTestEnded(BrowserTestCase $test_case)
-	{
-
 	}
 
 	/**
@@ -132,9 +120,7 @@ class SharedSessionStrategy implements ISessionStrategy
 	{
 		$session = $test_case->getSession(false);
 
-		if ( $session !== null && $session->isStarted() ) {
-			$session->stop();
-		}
+		$this->stopSession($session);
 	}
 
 }

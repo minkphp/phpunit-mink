@@ -29,13 +29,13 @@ in that test case class.
 Browser Session Sharing
 ^^^^^^^^^^^^^^^^^^^^^^^
 As a benefit of the shared (per test case) browser configuration, that was described above is an ability
-to not only to share the browser configuration, that is used to create `Mink`_ session, but to actually share
+to not only share the browser configuration, that is used to create `Mink`_ session, but to actually share
 created sessions between all tests in a single test case. This can be done by adding the ``sessionStrategy``
 option (line 15) to the browser configuration.
 
 .. literalinclude:: examples/configuration/per_test_case_browser_config.php
        :linenos:
-       :emphasize-lines: 15
+       :emphasize-lines: 15,26,48
 
 Selecting the Mink Driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^
