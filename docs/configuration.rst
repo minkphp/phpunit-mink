@@ -11,7 +11,7 @@ an instance of the ``\aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration``
 
 .. literalinclude:: examples/configuration/config_via_setup_method.php
    :linenos:
-   :emphasize-lines: 11,16,25,34-38,41
+   :emphasize-lines: 14,19,28,37-41,44
 
 Per Test Case Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
