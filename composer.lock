@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "494c2858cc1bd23a8dc3131ef787d0c6",
+    "content-hash": "308a4f814b44da8fd1eea8bd79b02b69",
     "packages": [
         {
             "name": "behat/mink",
@@ -139,16 +139,16 @@
         },
         {
             "name": "console-helpers/phpunit-compat",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/console-helpers/phpunit-compat.git",
-                "reference": "ec8608c3863d75b0389ebb5c0a1f5703b638c451"
+                "reference": "6b7dcb5a4f5c334b9eb7f41acba5554382d2d5c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/console-helpers/phpunit-compat/zipball/ec8608c3863d75b0389ebb5c0a1f5703b638c451",
-                "reference": "ec8608c3863d75b0389ebb5c0a1f5703b638c451",
+                "url": "https://api.github.com/repos/console-helpers/phpunit-compat/zipball/6b7dcb5a4f5c334b9eb7f41acba5554382d2d5c1",
+                "reference": "6b7dcb5a4f5c334b9eb7f41acba5554382d2d5c1",
                 "shasum": ""
             },
             "require": {
@@ -182,9 +182,9 @@
             "description": "Compatibility layer for PHPUnit test cases/test suite to work on different major PHPUnit versions",
             "support": {
                 "issues": "https://github.com/console-helpers/phpunit-compat/issues",
-                "source": "https://github.com/console-helpers/phpunit-compat/tree/v1.0.1"
+                "source": "https://github.com/console-helpers/phpunit-compat/tree/v1.0.2"
             },
-            "time": "2024-03-03T21:01:14+00:00"
+            "time": "2024-03-12T11:33:58+00:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -1020,16 +1020,16 @@
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/code-unit-reverse-lookup.git",
-                "reference": "1de8cd5c010cb153fcd68b8d0f64606f523f7619"
+                "reference": "92a1a52e86d34cde6caa54f1b5ffa9fda18e5d54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/code-unit-reverse-lookup/zipball/1de8cd5c010cb153fcd68b8d0f64606f523f7619",
-                "reference": "1de8cd5c010cb153fcd68b8d0f64606f523f7619",
+                "url": "https://api.github.com/repos/sebastianbergmann/code-unit-reverse-lookup/zipball/92a1a52e86d34cde6caa54f1b5ffa9fda18e5d54",
+                "reference": "92a1a52e86d34cde6caa54f1b5ffa9fda18e5d54",
                 "shasum": ""
             },
             "require": {
@@ -1063,7 +1063,7 @@
             "homepage": "https://github.com/sebastianbergmann/code-unit-reverse-lookup/",
             "support": {
                 "issues": "https://github.com/sebastianbergmann/code-unit-reverse-lookup/issues",
-                "source": "https://github.com/sebastianbergmann/code-unit-reverse-lookup/tree/1.0.2"
+                "source": "https://github.com/sebastianbergmann/code-unit-reverse-lookup/tree/1.0.3"
             },
             "funding": [
                 {
@@ -1071,7 +1071,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-30T08:15:22+00:00"
+            "time": "2024-03-01T13:45:45+00:00"
         },
         {
             "name": "sebastian/comparator",

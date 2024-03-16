@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Reduce memory consumption by rewriting `SessionStrategyFactory` and `SessionStrategyManager` classes.
 - (Not a BC break) Some public methods of the `BrowserTestCase` class are protected now. Affected methods: `setRemoteCoverageScriptUrl`, `setBrowser`, `getBrowser`, `setSessionStrategy`, `getSessionStrategy`, `getCollectCodeCoverageInformation`, `getRemoteCodeCoverageInformation`.
 - (Not a BC break) Some protected properties of the `BrowserTestCase` class are private now. Affected properties: `sessionStrategyManager`, `remoteCoverageHelper`, `sessionStrategy`.
+- Bumped minimal required `Behat/Mink` version to 1.8 (needed after `SessionProxy` class removal).
 
 ### Fixed
 - Don't set remote code coverage collection cookies, when the remote code coverage script URL isn't specified.
