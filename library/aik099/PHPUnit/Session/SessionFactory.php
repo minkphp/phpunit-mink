@@ -31,7 +31,7 @@ class SessionFactory implements ISessionFactory
 	 */
 	public function createSession(BrowserConfiguration $browser)
 	{
-		return new SessionProxy($browser->createDriver());
+		return new Session($browser->createDriver());
 	}
 
 }
