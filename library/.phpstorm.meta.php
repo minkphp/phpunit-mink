@@ -2,7 +2,6 @@
 
 namespace PHPSTORM_META {
 	override(\aik099\PHPUnit\Application::getObject(), map([
-		'session_factory' => \aik099\PHPUnit\Session\SessionFactory::class,
 		'session_strategy_factory' => \aik099\PHPUnit\Session\SessionStrategyFactory::class,
 		'session_strategy_manager' => \aik099\PHPUnit\Session\SessionStrategyManager::class,
 		'remote_url' => \aik099\PHPUnit\RemoteCoverage\RemoteUrl::class,

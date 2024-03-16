@@ -25,7 +25,6 @@ use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use aik099\PHPUnit\Session\IsolatedSessionStrategy;
-use aik099\PHPUnit\Session\SessionFactory;
 use aik099\PHPUnit\Session\SessionStrategyFactory;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use aik099\PHPUnit\Session\SharedSessionStrategy;
@@ -60,22 +59,18 @@ class DIContainer extends Container implements IApplicationAware
 	{
 		parent::__construct($values);
 
-		$this['session_factory'] = function () {
-			return new SessionFactory();
-		};
-
 		$this['session_strategy_factory'] = function ($c) {
 			$session_strategy_factory = new SessionStrategyFactory();
 
 			$session_strategy_factory->register(
 				ISessionStrategyFactory::TYPE_ISOLATED,
-				new IsolatedSessionStrategy($c['session_factory'])
+				new IsolatedSessionStrategy()
 			);
 
 			$session_strategy_factory->register(
 				ISessionStrategyFactory::TYPE_SHARED,
 				new SharedSessionStrategy(
-					new IsolatedSessionStrategy($c['session_factory'])
+					new IsolatedSessionStrategy()
 				)
 			);
 

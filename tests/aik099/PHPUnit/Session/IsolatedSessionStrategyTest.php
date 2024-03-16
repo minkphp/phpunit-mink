@@ -11,28 +11,20 @@
 namespace tests\aik099\PHPUnit\Session;
 
 
-use aik099\PHPUnit\Session\ISessionFactory;
 use aik099\PHPUnit\Session\IsolatedSessionStrategy;
+use Behat\Mink\Driver\DriverInterface;
+use Behat\Mink\Session;
 use Mockery as m;
-use Mockery\MockInterface;
 
 class IsolatedSessionStrategyTest extends AbstractSessionStrategyTestCase
 {
-
-	/**
-	 * Session factory.
-	 *
-	 * @var ISessionFactory|MockInterface
-	 */
-	private $_factory;
 
 	/**
 	 * @before
 	 */
 	protected function setUpTest()
 	{
-		$this->_factory = m::mock(ISessionFactory::class);
-		$this->strategy = new IsolatedSessionStrategy($this->_factory);
+		$this->strategy = new IsolatedSessionStrategy();
 	}
 
 	/**
@@ -44,25 +36,30 @@ class IsolatedSessionStrategyTest extends AbstractSessionStrategyTestCase
 	{
 		$browser = m::mock(self::BROWSER_CLASS);
 
-		$session1 = m::mock(self::SESSION_CLASS);
-		$session2 = m::mock(self::SESSION_CLASS);
+		$driver1 = m::mock(DriverInterface::class);
+		$driver1->shouldReceive('setSession')->with(m::type(Session::class))->once();
 
-		$this->_factory
-			->shouldReceive('createSession')
-			->with($browser)
-			->twice()
-			->andReturn($session1, $session2);
+		$driver2 = m::mock(DriverInterface::class);
+		$driver2->shouldReceive('setSession')->with(m::type(Session::class))->once();
 
-		$this->assertEquals($session1, $this->strategy->session($browser));
-		$this->assertEquals($session2, $this->strategy->session($browser));
+		$browser->shouldReceive('createDriver')->twice()->andReturn($driver1, $driver2);
+
+		$session1 = $this->strategy->session($browser);
+		$this->assertInstanceOf(Session::class, $session1);
+		$this->assertSame($driver1, $session1->getDriver());
+
+		$session2 = $this->strategy->session($browser);
+		$this->assertInstanceOf(Session::class, $session2);
+		$this->assertSame($driver2, $session2->getDriver());
 	}
 
 	public function testIsFreshSessionAfterSessionIsStarted()
 	{
-		$browser = m::mock(self::BROWSER_CLASS);
-		$session = m::mock(self::SESSION_CLASS);
+		$driver = m::mock(DriverInterface::class);
+		$driver->shouldReceive('setSession')->with(m::type(Session::class))->once();
 
-		$this->_factory->shouldReceive('createSession')->with($browser)->once()->andReturn($session);
+		$browser = m::mock(self::BROWSER_CLASS);
+		$browser->shouldReceive('createDriver')->once()->andReturn($driver);
 
 		$this->strategy->session($browser);
 
