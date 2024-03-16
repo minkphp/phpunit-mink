@@ -28,7 +28,6 @@ use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
 use aik099\PHPUnit\Session\ISessionStrategyFactory;
 use aik099\PHPUnit\Session\IsolatedSessionStrategy;
-use aik099\PHPUnit\Session\SessionFactory;
 use aik099\PHPUnit\Session\SessionStrategyFactory;
 use aik099\PHPUnit\Session\SessionStrategyManager;
 use aik099\PHPUnit\Session\SharedSessionStrategy;
@@ -82,7 +81,6 @@ class DIContainerTest extends AbstractTestCase
 	{
 		return array(
 			array('application', Application::class),
-			array('session_factory', SessionFactory::class),
 			array('session_strategy_factory', SessionStrategyFactory::class),
 			array('session_strategy_manager', SessionStrategyManager::class),
 			array('remote_url', RemoteUrl::class),
