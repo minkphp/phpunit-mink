@@ -1,7 +1,7 @@
 # PHPUnit-Mink
 [![CI](https://github.com/minkphp/phpunit-mink/actions/workflows/tests.yml/badge.svg)](https://github.com/minkphp/phpunit-mink/actions/workflows/tests.yml)
 [![Docs](https://github.com/minkphp/phpunit-mink/actions/workflows/docs.yml/badge.svg)](https://github.com/minkphp/phpunit-mink/actions/workflows/docs.yml)
-[![Documentation](https://readthedocs.org/projects/phpunit-mink/badge/?version=latest)](http://phpunit-mink.readthedocs.org/en/latest/)
+[![Documentation Status](https://readthedocs.org/projects/phpunit-mink/badge/?version=latest)](https://phpunit-mink.readthedocs.io/en/latest/?badge=latest)
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/minkphp/phpunit-mink/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/minkphp/phpunit-mink/?branch=master)
 [![codecov](https://codecov.io/gh/minkphp/phpunit-mink/branch/master/graph/badge.svg?token=GV4K2at1WW)](https://codecov.io/gh/minkphp/phpunit-mink)
@@ -13,7 +13,7 @@ This library is an extension for [PHPUnit](https://phpunit.de), that allows to w
 
 ## Documentation
 
-* http://phpunit-mink.readthedocs.org
+* https://phpunit-mink.readthedocs.io/
 
 ## Service Integrations
 
