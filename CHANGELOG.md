@@ -19,7 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Bumped minimal required `Behat/Mink` version to 1.8 (needed after `SessionProxy` class removal).
 
 ### Fixed
-- Don't set remote code coverage collection cookies, when the remote code coverage script URL isn't specified.
+- The remote code coverage collection cookies were set even, when the remote code coverage script URL wasn't specified.
 - The `BrowserTestCase::onTestSuiteEnded` method was called for tests, excluded through the `--filter` option of the PHPUnit.
 
 ## [2.3.0] - 2022-11-24
