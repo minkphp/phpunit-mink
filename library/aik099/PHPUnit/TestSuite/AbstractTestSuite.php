@@ -134,24 +134,24 @@ abstract class AbstractTestSuite extends PHPUnitCompatAbstractTestSuite
 	/**
 	 * Report back suite ending to each it's test.
 	 *
-	 * @param array $tests Tests to process.
+	 * @param \IteratorAggregate|null $test_suite Test suite.
 	 *
 	 * @return void
 	 */
-	protected function triggerTestSuiteEnded(array $tests = null)
+	protected function triggerTestSuiteEnded(\IteratorAggregate $test_suite = null)
 	{
-		if ( !isset($tests) ) {
-			$tests = $this->tests();
+		if ( $test_suite === null ) {
+			$test_suite = $this;
 		}
 
-		foreach ( $tests as $test ) {
+		foreach ( $test_suite as $test ) {
 			if ( $test instanceof DataProviderTestSuite ) {
 				/*
 				 * Use our test suite method to tear down
 				 * supported test suites wrapped in a data
 				 * provider test suite.
 				 */
-				$this->triggerTestSuiteEnded($test->tests());
+				$this->triggerTestSuiteEnded($test);
 			}
 			else {
 				/*

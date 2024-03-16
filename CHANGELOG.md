@@ -19,6 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Don't set remote code coverage collection cookies, when the remote code coverage script URL isn't specified.
+- The `BrowserTestCase::onTestSuiteEnded` method was called for tests, excluded through the `--filter` option of the PHPUnit.
 
 ## [2.3.0] - 2022-11-24
 ### Changed
