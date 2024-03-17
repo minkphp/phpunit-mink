@@ -60,10 +60,28 @@ class DriverFactoryRegistryTest extends AbstractTestCase
 		$this->_driverFactoryRegistry->add($factory);
 	}
 
-	public function testGettingNonExisting()
+	public function testGettingNonExistingWithoutAlternatives()
 	{
 		$this->expectException('OutOfBoundsException');
-		$this->expectExceptionMessage('No driver factory for "test" driver.');
+		$this->expectExceptionMessage('The "test" driver is unknown.');
+
+		$this->_driverFactoryRegistry->get('test');
+	}
+
+	public function testGettingNonExistingWithAlternatives()
+	{
+		$this->expectException('OutOfBoundsException');
+		$this->expectExceptionMessage(
+			'The "test" driver is unknown. Please instead use any of these supported drivers: "driver1", "driver2".'
+		);
+
+		$factory1 = m::mock(IMinkDriverFactory::class);
+		$factory1->shouldReceive('getDriverName')->once()->andReturn('driver1');
+		$this->_driverFactoryRegistry->add($factory1);
+
+		$factory2 = m::mock(IMinkDriverFactory::class);
+		$factory2->shouldReceive('getDriverName')->once()->andReturn('driver2');
+		$this->_driverFactoryRegistry->add($factory2);
 
 		$this->_driverFactoryRegistry->get('test');
 	}

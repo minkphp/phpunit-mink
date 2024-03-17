@@ -52,7 +52,14 @@ class DriverFactoryRegistry
 	public function get($driver_name)
 	{
 		if ( !isset($this->_registry[$driver_name]) ) {
-			throw new \OutOfBoundsException(sprintf('No driver factory for "%s" driver.', $driver_name));
+			$error_msg = 'The "' . $driver_name . '" driver is unknown.';
+
+			if ( $this->_registry ) {
+				$drivers = '"' . implode('", "', array_keys($this->_registry)) . '"';
+				$error_msg .= ' Please instead use any of these supported drivers: ' . $drivers . '.';
+			}
+
+			throw new \OutOfBoundsException($error_msg);
 		}
 
 		return $this->_registry[$driver_name];
