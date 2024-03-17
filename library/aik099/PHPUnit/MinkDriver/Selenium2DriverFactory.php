@@ -13,9 +13,8 @@ namespace aik099\PHPUnit\MinkDriver;
 
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
-use Behat\Mink\Driver\DriverInterface;
 
-class Selenium2DriverFactory implements IMinkDriverFactory
+class Selenium2DriverFactory extends AbstractDriverFactory
 {
 
 	/**
@@ -26,6 +25,14 @@ class Selenium2DriverFactory implements IMinkDriverFactory
 	public function getDriverName()
 	{
 		return 'selenium2';
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getDriverPackageUrl()
+	{
+		return 'https://packagist.org/packages/behat/mink-selenium2-driver';
 	}
 
 	/**
@@ -42,20 +49,11 @@ class Selenium2DriverFactory implements IMinkDriverFactory
 	}
 
 	/**
-	 * Returns a new driver instance according to the browser configuration.
-	 *
-	 * @param BrowserConfiguration $browser The browser configuration.
-	 *
-	 * @return DriverInterface
-	 * @throws \RuntimeException When driver isn't installed.
+	 * @inheritDoc
 	 */
 	public function createDriver(BrowserConfiguration $browser)
 	{
-		if ( !class_exists('Behat\Mink\Driver\Selenium2Driver') ) {
-			throw new \RuntimeException(
-				'Install MinkSelenium2Driver in order to use selenium2 driver.'
-			);
-		}
+		$this->assertInstalled('Behat\Mink\Driver\Selenium2Driver');
 
 		$browser_name = $browser->getBrowserName();
 		$capabilities = $browser->getDesiredCapabilities();

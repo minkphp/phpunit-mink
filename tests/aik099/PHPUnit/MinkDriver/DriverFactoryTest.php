@@ -53,11 +53,14 @@ class DriverFactoryTest extends AbstractTestCase
 
 		/** @var IMinkDriverFactory $factory */
 		$factory = new $factory_class();
-		$driver_class_parts = explode('\\', $driver_class);
 
 		$this->expectException('RuntimeException');
 		$this->expectExceptionMessage(
-			'Install Mink' . end($driver_class_parts) . ' in order to use ' . $factory->getDriverName() . ' driver.'
+			sprintf(
+				'The "%s" driver package is not installed. Please follow installation instructions at %s.',
+				$factory->getDriverName(),
+				$factory->getDriverPackageUrl()
+			)
 		);
 		$factory->createDriver($this->createBrowserConfiguration($factory));
 	}

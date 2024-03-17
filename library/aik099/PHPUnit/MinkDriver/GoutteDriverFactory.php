@@ -13,9 +13,8 @@ namespace aik099\PHPUnit\MinkDriver;
 
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
-use Behat\Mink\Driver\DriverInterface;
 
-class GoutteDriverFactory implements IMinkDriverFactory
+class GoutteDriverFactory extends AbstractDriverFactory
 {
 
 	/**
@@ -26,6 +25,14 @@ class GoutteDriverFactory implements IMinkDriverFactory
 	public function getDriverName()
 	{
 		return 'goutte';
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getDriverPackageUrl()
+	{
+		return 'https://packagist.org/packages/behat/mink-goutte-driver';
 	}
 
 	/**
@@ -44,20 +51,11 @@ class GoutteDriverFactory implements IMinkDriverFactory
 	}
 
 	/**
-	 * Returns a new driver instance according to the browser configuration.
-	 *
-	 * @param BrowserConfiguration $browser The browser configuration.
-	 *
-	 * @return DriverInterface
-	 * @throws \RuntimeException When driver isn't installed.
+	 * @inheritDoc
 	 */
 	public function createDriver(BrowserConfiguration $browser)
 	{
-		if ( !class_exists('Behat\Mink\Driver\GoutteDriver') ) {
-			throw new \RuntimeException(
-				'Install MinkGoutteDriver in order to use goutte driver.'
-			);
-		}
+		$this->assertInstalled('Behat\Mink\Driver\GoutteDriver');
 
 		$driver_options = $browser->getDriverOptions();
 

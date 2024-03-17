@@ -13,9 +13,8 @@ namespace aik099\PHPUnit\MinkDriver;
 
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
-use Behat\Mink\Driver\DriverInterface;
 
-class ZombieDriverFactory implements IMinkDriverFactory
+class ZombieDriverFactory extends AbstractDriverFactory
 {
 
 	/**
@@ -26,6 +25,14 @@ class ZombieDriverFactory implements IMinkDriverFactory
 	public function getDriverName()
 	{
 		return 'zombie';
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getDriverPackageUrl()
+	{
+		return 'https://packagist.org/packages/behat/mink-zombie-driver';
 	}
 
 	/**
@@ -47,20 +54,11 @@ class ZombieDriverFactory implements IMinkDriverFactory
 	}
 
 	/**
-	 * Returns a new driver instance according to the browser configuration.
-	 *
-	 * @param BrowserConfiguration $browser The browser configuration.
-	 *
-	 * @return DriverInterface
-	 * @throws \RuntimeException When driver isn't installed.
+	 * @inheritDoc
 	 */
 	public function createDriver(BrowserConfiguration $browser)
 	{
-		if ( !class_exists('Behat\Mink\Driver\ZombieDriver') ) {
-			throw new \RuntimeException(
-				'Install MinkZombieDriver in order to use zombie driver.'
-			);
-		}
+		$this->assertInstalled('Behat\Mink\Driver\ZombieDriver');
 
 		$driver_options = $browser->getDriverOptions();
 
