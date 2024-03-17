@@ -13,9 +13,8 @@ namespace aik099\PHPUnit\MinkDriver;
 
 
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
-use Behat\Mink\Driver\DriverInterface;
 
-class SahiDriverFactory implements IMinkDriverFactory
+class SahiDriverFactory extends AbstractDriverFactory
 {
 
 	/**
@@ -26,6 +25,14 @@ class SahiDriverFactory implements IMinkDriverFactory
 	public function getDriverName()
 	{
 		return 'sahi';
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getDriverPackageUrl()
+	{
+		return 'https://packagist.org/packages/behat/mink-sahi-driver';
 	}
 
 	/**
@@ -46,20 +53,11 @@ class SahiDriverFactory implements IMinkDriverFactory
 	}
 
 	/**
-	 * Returns a new driver instance according to the browser configuration.
-	 *
-	 * @param BrowserConfiguration $browser The browser configuration.
-	 *
-	 * @return DriverInterface
-	 * @throws \RuntimeException When driver isn't installed.
+	 * @inheritDoc
 	 */
 	public function createDriver(BrowserConfiguration $browser)
 	{
-		if ( !class_exists('Behat\Mink\Driver\SahiDriver') ) {
-			throw new \RuntimeException(
-				'Install MinkSahiDriver in order to use sahi driver.'
-			);
-		}
+		$this->assertInstalled('Behat\Mink\Driver\SahiDriver');
 
 		$driver_options = $browser->getDriverOptions();
 
