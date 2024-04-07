@@ -34,7 +34,7 @@ class SharedSessionStrategyTest extends BrowserStackAwareTestCase
 	/**
 	 * @large
 	 */
-	public function testOne()
+	public function testOpensPage()
 	{
 		$session = $this->getSession();
 		$session->visit('https://www.google.com');
@@ -44,14 +44,37 @@ class SharedSessionStrategyTest extends BrowserStackAwareTestCase
 
 	/**
 	 * @large
-	 * @depends testOne
+	 * @depends testOpensPage
 	 */
-	public function testTwo()
+	public function testUsesOpenedPage()
 	{
 		$session = $this->getSession();
 		$url = $session->getCurrentUrl();
 
 		$this->assertStringContainsString('https://www.google.com', $url);
+	}
+
+	public function testOpensPopups()
+	{
+		$session = $this->getSession();
+		$session->visit('https://the-internet.herokuapp.com/windows');
+
+		$page = $session->getPage();
+		$page->clickLink('Click Here');
+		$page->clickLink('Click Here');
+
+		$this->assertCount(3, $session->getWindowNames()); // Main window + 2 popups.
+	}
+
+	/**
+	 * @depends testOpensPopups
+	 */
+	public function testNoPopupsBeforeTest()
+	{
+		$session = $this->getSession();
+		$this->assertEquals('https://the-internet.herokuapp.com/windows', $session->getCurrentUrl());
+
+		$this->assertCount(1, $session->getWindowNames()); // Main window.
 	}
 
 }

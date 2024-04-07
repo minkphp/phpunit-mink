@@ -98,7 +98,18 @@ class SharedSessionStrategy extends AbstractSessionStrategy
 	 */
 	private function _switchToMainWindow()
 	{
-		$this->_session->switchToWindow(null);
+		$this->_session->switchToWindow();
+		$actual_initial_window_name = $this->_session->getWindowName(); // Account for initial window rename.
+
+		foreach ( $this->_session->getWindowNames() as $name ) {
+			if ( $name === $actual_initial_window_name ) {
+				continue;
+			}
+
+			$this->_session->switchToWindow($name);
+			$this->_session->executeScript('window.close();');
+			$this->_session->switchToWindow();
+		}
 	}
 
 	/**
