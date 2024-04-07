@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - (Not a BC break) Some public methods of the `BrowserTestCase` class are protected now. Affected methods: `setRemoteCoverageScriptUrl`, `setBrowser`, `getBrowser`, `setSessionStrategy`, `getSessionStrategy`, `getCollectCodeCoverageInformation`, `getRemoteCodeCoverageInformation`.
 - (Not a BC break) Some protected properties of the `BrowserTestCase` class are private now. Affected properties: `sessionStrategyManager`, `remoteCoverageHelper`, `sessionStrategy`.
 - Bumped minimal required `Behat/Mink` version to 1.8 (needed after `SessionProxy` class removal).
+- Shared session strategy now also closes popups left order from the previous test before switching back to the main window.
 
 ### Fixed
 - The remote code coverage collection cookies were set even, when the remote code coverage script URL wasn't specified.

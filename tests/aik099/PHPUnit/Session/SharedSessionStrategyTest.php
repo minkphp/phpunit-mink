@@ -72,7 +72,7 @@ class SharedSessionStrategyTest extends AbstractSessionStrategyTestCase
 		$this->_originalStrategy->shouldReceive('session')->once()->with($browser)->andReturn($this->_session1);
 		$this->_originalStrategy->shouldReceive('isFreshSession')->once()->andReturn(true);
 
-		$this->_session1->shouldReceive('switchToWindow')->once();
+		$this->expectNoPopups($this->_session1);
 
 		$this->assertSame($this->_session1, $this->strategy->session($browser));
 		$this->assertTrue($this->strategy->isFreshSession(), 'First created session must be fresh');
@@ -83,6 +83,21 @@ class SharedSessionStrategyTest extends AbstractSessionStrategyTestCase
 
 		$this->assertSame($this->_session1, $this->strategy->session($browser));
 		$this->assertFalse($this->strategy->isFreshSession(), 'Reused session must not be fresh');
+	}
+
+	/**
+	 * Expects no popups.
+	 *
+	 * @param MockInterface $session Session.
+	 *
+	 * @return void
+	 */
+	protected function expectNoPopups(MockInterface $session)
+	{
+		// Testing if popup windows are actually closed will be done in the integration test.
+		$session->shouldReceive('switchToWindow')->atLeast()->once();
+		$session->shouldReceive('getWindowName')->once()->andReturn('initial-window-name');
+		$session->shouldReceive('getWindowNames')->once()->andReturn(array('initial-window-name'));
 	}
 
 	/**
@@ -121,7 +136,7 @@ class SharedSessionStrategyTest extends AbstractSessionStrategyTestCase
 
 		$this->_session1->shouldReceive('isStarted')->once()->andReturn(true);
 		$this->_session1->shouldReceive('stop')->once();
-		$this->_session2->shouldReceive('switchToWindow')->once();
+		$this->expectNoPopups($this->_session2);
 
 		$session = $this->strategy->session($browser);
 		$this->assertSame($this->_session1, $session);
