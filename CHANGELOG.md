@@ -5,8 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Specify failed PHPUnit assertion text to the BrowserStack ("reason" field)/SauceLabs("custom-data" field) test.
-- Added the `$auto_create` parameter to the `BrowserTestCase::getSession` method, which allows to verify is session is already started.
-- Added the `ISessionStrategy::isFreshSession` method to indicate fact, that previous `ISessionStrategy::session` call have created a new session instead of reusing a previously created one. Can be used to perform a login once per a test case class. 
+- Added the `$auto_create` parameter to the `BrowserTestCase::getSession` method, which allows to verify if session is already started.
+- Added the `ISessionStrategy::isFreshSession` method to indicate fact, that previous `ISessionStrategy::session` call has created a new session instead of reusing a previously created one. Can be used to perform a login once per a test case class. 
 
 ### Changed
 - Bumped minimum PHP version to 5.6.
@@ -17,7 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - (Not a BC break) Some public methods of the `BrowserTestCase` class are protected now. Affected methods: `setRemoteCoverageScriptUrl`, `setBrowser`, `getBrowser`, `setSessionStrategy`, `getSessionStrategy`, `getCollectCodeCoverageInformation`, `getRemoteCodeCoverageInformation`.
 - (Not a BC break) Some protected properties of the `BrowserTestCase` class are private now. Affected properties: `sessionStrategyManager`, `remoteCoverageHelper`, `sessionStrategy`.
 - Bumped minimal required `Behat/Mink` version to 1.8 (needed after `SessionProxy` class removal).
-- Shared session strategy now also closes popups left order from the previous test before switching back to the main window.
+- Shared session strategy now also closes popups left over from the previous test before switching back to the main window.
 
 ### Fixed
 - The remote code coverage collection cookies were set even, when the remote code coverage script URL wasn't specified.
