@@ -4,6 +4,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+... 
+
+### Changed
+...
+
+### Fixed
+...
+
+## [2.4.0] - 2024-07-15
+### Added
 - Specify failed PHPUnit assertion text to the BrowserStack ("reason" field)/SauceLabs("custom-data" field) test.
 - Added the `$auto_create` parameter to the `BrowserTestCase::getSession` method, which allows to verify if session is already started.
 - Added the `ISessionStrategy::isFreshSession` method to indicate fact, that previous `ISessionStrategy::session` call has created a new session instead of reusing a previously created one. Can be used to perform a login once per a test case class. 
@@ -105,7 +115,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/minkphp/phpunit-mink/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/minkphp/phpunit-mink/compare/v2.4.0...HEAD
+[2.4.0]: https://github.com/minkphp/phpunit-mink/compare/v2.3.0...v2.4.0
+[2.3.0]: https://github.com/minkphp/phpunit-mink/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/minkphp/phpunit-mink/compare/v2.1.1...v2.2.0
 [2.1.1]: https://github.com/minkphp/phpunit-mink/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/minkphp/phpunit-mink/compare/v2.0.1...v2.1.0
