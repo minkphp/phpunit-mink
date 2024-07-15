@@ -37,7 +37,7 @@ class SharedSessionStrategyTest extends BrowserStackAwareTestCase
 	public function testOpensPage()
 	{
 		$session = $this->getSession();
-		$session->visit('https://www.google.com');
+		$this->openPageWithBackoff($session, 'https://www.google.com');
 
 		$this->assertTrue(true);
 	}
@@ -57,7 +57,7 @@ class SharedSessionStrategyTest extends BrowserStackAwareTestCase
 	public function testOpensPopups()
 	{
 		$session = $this->getSession();
-		$session->visit('https://the-internet.herokuapp.com/windows');
+		$this->openPageWithBackoff($session, 'https://the-internet.herokuapp.com/windows');
 
 		$page = $session->getPage();
 		$page->clickLink('Click Here');

@@ -12,6 +12,8 @@ namespace tests\aik099\PHPUnit\Integration;
 
 
 use aik099\PHPUnit\BrowserTestCase;
+use Behat\Mink\Exception\DriverException;
+use Behat\Mink\Session;
 
 abstract class BrowserStackAwareTestCase extends BrowserTestCase
 {
@@ -26,6 +28,32 @@ abstract class BrowserStackAwareTestCase extends BrowserTestCase
 			'alias' => 'default',
 		),
 	);
+
+	/**
+	 * Visit specified URL and automatically start session if not already running.
+	 *
+	 * @param Session $session Session.
+	 * @param string  $url     Url of the page.
+	 *
+	 * @return void
+	 * @throws DriverException
+	 */
+	protected function openPageWithBackoff(Session $session, $url)
+	{
+		try {
+			$session->visit($url);
+		}
+		catch ( DriverException $e ) {
+			if ( strpos($e->getMessage(), '[BROWSERSTACK_QUEUE_SIZE_EXCEEDED]') !== false ) {
+				sleep(30);
+				$this->openPageWithBackoff($session, $url);
+
+				return;
+			}
+
+			throw $e;
+		}
+	}
 
 	/**
 	 * @before

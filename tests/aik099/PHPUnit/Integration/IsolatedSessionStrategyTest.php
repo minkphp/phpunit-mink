@@ -37,7 +37,7 @@ class IsolatedSessionStrategyTest extends BrowserStackAwareTestCase
 	public function testOne()
 	{
 		$session = $this->getSession();
-		$session->visit('https://www.google.com');
+		$this->openPageWithBackoff($session, 'https://www.google.com');
 
 		$this->assertTrue(true);
 	}
