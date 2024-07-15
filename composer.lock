@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "308a4f814b44da8fd1eea8bd79b02b69",
+    "content-hash": "b267284ec13645ff1a614f50a181cc1a",
     "packages": [
         {
             "name": "behat/mink",
@@ -139,16 +139,16 @@
         },
         {
             "name": "console-helpers/phpunit-compat",
-            "version": "v1.0.2",
+            "version": "v1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/console-helpers/phpunit-compat.git",
-                "reference": "6b7dcb5a4f5c334b9eb7f41acba5554382d2d5c1"
+                "reference": "096c6e42ebd090415ab03d9ce9edff8ed978a319"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/console-helpers/phpunit-compat/zipball/6b7dcb5a4f5c334b9eb7f41acba5554382d2d5c1",
-                "reference": "6b7dcb5a4f5c334b9eb7f41acba5554382d2d5c1",
+                "url": "https://api.github.com/repos/console-helpers/phpunit-compat/zipball/096c6e42ebd090415ab03d9ce9edff8ed978a319",
+                "reference": "096c6e42ebd090415ab03d9ce9edff8ed978a319",
                 "shasum": ""
             },
             "require": {
@@ -164,8 +164,10 @@
                 }
             },
             "autoload": {
+                "files": [
+                    "phpunitcompat_autoloader.php"
+                ],
                 "psr-4": {
-                    "ConsoleHelpers\\PHPUnitCompat\\": "src/PHPUnitCompat/",
                     "Tests\\ConsoleHelpers\\PHPUnitCompat\\": "tests/PHPUnitCompat/"
                 }
             },
@@ -182,9 +184,9 @@
             "description": "Compatibility layer for PHPUnit test cases/test suite to work on different major PHPUnit versions",
             "support": {
                 "issues": "https://github.com/console-helpers/phpunit-compat/issues",
-                "source": "https://github.com/console-helpers/phpunit-compat/tree/v1.0.2"
+                "source": "https://github.com/console-helpers/phpunit-compat/tree/v1.0.3"
             },
-            "time": "2024-03-12T11:33:58+00:00"
+            "time": "2024-07-11T11:28:01+00:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -260,16 +262,16 @@
         },
         {
             "name": "instaclick/php-webdriver",
-            "version": "1.4.18",
+            "version": "1.4.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/instaclick/php-webdriver.git",
-                "reference": "a61a8459f86c79dd1f19934ea3929804f2e41f8c"
+                "reference": "3b2a2ddc4e0a690cc691d7e5952964cc4b9538b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/instaclick/php-webdriver/zipball/a61a8459f86c79dd1f19934ea3929804f2e41f8c",
-                "reference": "a61a8459f86c79dd1f19934ea3929804f2e41f8c",
+                "url": "https://api.github.com/repos/instaclick/php-webdriver/zipball/3b2a2ddc4e0a690cc691d7e5952964cc4b9538b1",
+                "reference": "3b2a2ddc4e0a690cc691d7e5952964cc4b9538b1",
                 "shasum": ""
             },
             "require": {
@@ -317,9 +319,9 @@
             ],
             "support": {
                 "issues": "https://github.com/instaclick/php-webdriver/issues",
-                "source": "https://github.com/instaclick/php-webdriver/tree/1.4.18"
+                "source": "https://github.com/instaclick/php-webdriver/tree/1.4.19"
             },
-            "time": "2023-12-08T07:11:19+00:00"
+            "time": "2024-03-19T01:58:53+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -2013,16 +2015,16 @@
         },
         {
             "name": "yoast/phpunit-polyfills",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Yoast/PHPUnit-Polyfills.git",
-                "reference": "224e4a1329c03d8bad520e3fc4ec980034a4b212"
+                "reference": "a0f7d708794a738f328d7b6c94380fd1d6c40446"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Yoast/PHPUnit-Polyfills/zipball/224e4a1329c03d8bad520e3fc4ec980034a4b212",
-                "reference": "224e4a1329c03d8bad520e3fc4ec980034a4b212",
+                "url": "https://api.github.com/repos/Yoast/PHPUnit-Polyfills/zipball/a0f7d708794a738f328d7b6c94380fd1d6c40446",
+                "reference": "a0f7d708794a738f328d7b6c94380fd1d6c40446",
                 "shasum": ""
             },
             "require": {
@@ -2030,7 +2032,9 @@
                 "phpunit/phpunit": "^4.8.36 || ^5.7.21 || ^6.0 || ^7.0 || ^8.0 || ^9.0"
             },
             "require-dev": {
-                "yoast/yoastcs": "^2.3.0"
+                "php-parallel-lint/php-console-highlighter": "^1.0.0",
+                "php-parallel-lint/php-parallel-lint": "^1.4.0",
+                "yoast/yoastcs": "^3.1.0"
             },
             "type": "library",
             "extra": {
@@ -2067,9 +2071,10 @@
             ],
             "support": {
                 "issues": "https://github.com/Yoast/PHPUnit-Polyfills/issues",
+                "security": "https://github.com/Yoast/PHPUnit-Polyfills/security/policy",
                 "source": "https://github.com/Yoast/PHPUnit-Polyfills"
             },
-            "time": "2023-08-19T14:25:08+00:00"
+            "time": "2024-04-05T16:01:51+00:00"
         }
     ],
     "aliases": [],
