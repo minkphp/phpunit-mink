@@ -47,7 +47,7 @@ class BrowserConfiguration
 		'driver' => 'selenium2',
 		'driverOptions' => array(),
 
-		// TODO: Move under 'driverOptions' of 'selenium2' driver (BC break).
+		// TODO: Move under 'driverOptions' of 'selenium2'/'webdriver-classic' driver (BC break).
 		'desiredCapabilities' => array(),
 		'timeout' => 60,
 

@@ -15,6 +15,7 @@ namespace tests\aik099\PHPUnit\MinkDriver;
 use aik099\PHPUnit\BrowserConfiguration\BrowserConfiguration;
 use aik099\PHPUnit\DIContainer;
 use aik099\PHPUnit\MinkDriver\IMinkDriverFactory;
+use aik099\PHPUnit\MinkDriver\WebdriverClassicFactory;
 use tests\aik099\PHPUnit\AbstractTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 use aik099\PHPUnit\MinkDriver\GoutteDriverFactory;
@@ -96,6 +97,10 @@ class DriverFactoryTest extends AbstractTestCase
 			'selenium2' => array(
 				'\Behat\Mink\Driver\Selenium2Driver',
 				Selenium2DriverFactory::class,
+			),
+			'webdriver-classic' => array(
+				'\Mink\WebdriverClassicDriver\WebdriverClassicDriver',
+				WebdriverClassicFactory::class,
 			),
 			'zombie' => array(
 				'\Behat\Mink\Driver\ZombieDriver',
