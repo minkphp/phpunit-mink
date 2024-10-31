@@ -23,6 +23,7 @@ use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use aik099\PHPUnit\MinkDriver\GoutteDriverFactory;
 use aik099\PHPUnit\MinkDriver\SahiDriverFactory;
 use aik099\PHPUnit\MinkDriver\Selenium2DriverFactory;
+use aik099\PHPUnit\MinkDriver\WebdriverClassicFactory;
 use aik099\PHPUnit\MinkDriver\ZombieDriverFactory;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
@@ -116,6 +117,7 @@ class DIContainerTest extends AbstractTestCase
 		$driver_factory_registry = $this->_container['driver_factory_registry'];
 
 		$this->assertInstanceOf(Selenium2DriverFactory::class, $driver_factory_registry->get('selenium2'));
+		$this->assertInstanceOf(WebdriverClassicFactory::class, $driver_factory_registry->get('webdriver-classic'));
 		$this->assertInstanceOf(SahiDriverFactory::class, $driver_factory_registry->get('sahi'));
 		$this->assertInstanceOf(GoutteDriverFactory::class, $driver_factory_registry->get('goutte'));
 		$this->assertInstanceOf(ZombieDriverFactory::class, $driver_factory_registry->get('zombie'));

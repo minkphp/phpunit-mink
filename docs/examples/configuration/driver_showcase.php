@@ -37,6 +37,14 @@ class DriverShowCaseTest extends BrowserTestCase
         ),
 
         array(
+            'driver' => 'webdriver-classic',
+
+            // Defaults for this driver.
+            'port' => 4444,
+            'driverOptions' => array(),
+        ),
+
+        array(
             'driver' => 'zombie',
 
             // Defaults for this driver.

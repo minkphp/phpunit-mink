@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-... 
+- Added support for WebdriverClassicDriver Mink's Driver (supports Selenium 2, 3, 4) as `webdriver-classic`. 
 
 ### Changed
 ...

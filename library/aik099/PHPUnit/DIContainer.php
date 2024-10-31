@@ -20,6 +20,7 @@ use aik099\PHPUnit\MinkDriver\DriverFactoryRegistry;
 use aik099\PHPUnit\MinkDriver\GoutteDriverFactory;
 use aik099\PHPUnit\MinkDriver\SahiDriverFactory;
 use aik099\PHPUnit\MinkDriver\Selenium2DriverFactory;
+use aik099\PHPUnit\MinkDriver\WebdriverClassicFactory;
 use aik099\PHPUnit\MinkDriver\ZombieDriverFactory;
 use aik099\PHPUnit\RemoteCoverage\RemoteCoverageHelper;
 use aik099\PHPUnit\RemoteCoverage\RemoteUrl;
@@ -112,6 +113,7 @@ class DIContainer extends Container implements IApplicationAware
 			$registry = new DriverFactoryRegistry();
 
 			$registry->add(new Selenium2DriverFactory());
+			$registry->add(new WebdriverClassicFactory());
 			$registry->add(new SahiDriverFactory());
 			$registry->add(new GoutteDriverFactory());
 			$registry->add(new ZombieDriverFactory());
