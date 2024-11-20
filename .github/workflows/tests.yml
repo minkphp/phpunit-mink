@@ -67,7 +67,7 @@ jobs:
           BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
         if: "${{ matrix.with_coverage == true }}"
         run: |
-          vendor/bin/phpunit -v --coverage-clover=coverage.clover
+          vendor/bin/phpunit -v --coverage-clover=coverage.clover --log-junit junit.xml
 
       - name: Run tests without Coverage
         env:
@@ -79,9 +79,15 @@ jobs:
         run: |
           vendor/bin/phpunit -v
 
-      - name: Upload Coverage to CodeCov
-        if: "${{ matrix.with_coverage == true }}"
+      - name: Upload coverage to Codecov
+        if: ${{ matrix.with_coverage == true && !cancelled() }}
         uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload test results to Codecov
+        if: ${{ matrix.with_coverage == true && !cancelled() }}
+        uses: codecov/test-results-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
