@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- Added support for WebdriverClassicDriver Mink's Driver (supports Selenium 2, 3, 4) as `webdriver-classic`. 
+... 
 
 ### Changed
 ...
@@ -12,6 +12,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 ...
 
+## [2.5.0] - 2024-11-30
+### Added
+- Added support for WebdriverClassicDriver Mink's Driver (supports Selenium 2, 3, 4) as `webdriver-classic`.
+ 
 ## [2.4.0] - 2024-07-15
 ### Added
 - Specify failed PHPUnit assertion text to the BrowserStack ("reason" field)/SauceLabs("custom-data" field) test.
@@ -115,7 +119,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/minkphp/phpunit-mink/compare/v2.4.0...HEAD
+[Unreleased]: https://github.com/minkphp/phpunit-mink/compare/v2.5.0...HEAD
+[2.5.0]: https://github.com/minkphp/phpunit-mink/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/minkphp/phpunit-mink/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/minkphp/phpunit-mink/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/minkphp/phpunit-mink/compare/v2.1.1...v2.2.0
