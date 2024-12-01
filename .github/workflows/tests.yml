@@ -55,7 +55,7 @@ jobs:
           composer require --no-update --dev scrutinizer/ocular
 
       - name: Install dependencies
-        uses: "ramsey/composer-install@v2"
+        uses: "ramsey/composer-install@v3"
         with:
           dependency-versions: "highest"
 
